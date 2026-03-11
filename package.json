@@ -1,0 +1,25 @@
+{
+  "name": "just-quiz-me",
+  "version": "1.0.0",
+  "description": "A Cloudflare-hosted quiz site.",
+  "scripts": {
+    "dev": "wrangler dev",
+    "deploy": "wrangler deploy",
+    "cf:whoami": "wrangler whoami"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mattander/just-quiz-me.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "module",
+  "bugs": {
+    "url": "https://github.com/mattander/just-quiz-me/issues"
+  },
+  "homepage": "https://github.com/mattander/just-quiz-me#readme",
+  "devDependencies": {
+    "wrangler": "^4.72.0"
+  }
+}
