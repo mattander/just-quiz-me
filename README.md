@@ -1,29 +1,24 @@
-Placeholder text.
+# Just Quiz Me
 
-Cloudflare setup:
+Just Quiz Me is a minimal Cloudflare Worker project that serves a branded coming-soon landing page from static assets.
 
-- Install dependencies with `npm install`
-- Authenticate with `npx wrangler login`
-- Verify the account with `npm run cf:whoami`
-- Run locally with `npm run dev`
-- Deploy with `npm run deploy`
+## Project shape
 
-Symphony setup:
+- `src/index.js` passes incoming requests through to the `ASSETS` binding.
+- `public/index.html` contains the landing page.
+- `wrangler.jsonc` defines the Worker entrypoint and asset binding.
 
-- The repo now includes a starter [`WORKFLOW.md`](/Users/matt/dev/just-quiz-me/WORKFLOW.md) tailored for this Cloudflare Worker.
-- The workflow is already pointed at the Linear project [`Just Quiz Me`](https://linear.app/mattdev/project/just-quiz-me-50696acecb69/overview).
-- This setup uses your current Linear states: `Todo`, `In Progress`, `In Review`, `Done`, `Canceled`, and `Duplicate`.
-- Set `LINEAR_API_KEY` before starting Symphony.
-- The workflow uses this Codex app-server command: `codex --config shell_environment_policy.inherit=all --config model_reasoning_effort=xhigh --model gpt-5.3-codex app-server`
-- Run Symphony from a checkout of [`openai/symphony`](https://github.com/openai/symphony), usually from its `elixir/` directory, and point it at this repo's [`WORKFLOW.md`](/Users/matt/dev/just-quiz-me/WORKFLOW.md).
-
-Example:
+## Commands
 
 ```bash
-export LINEAR_API_KEY=your_linear_token
-cd /path/to/symphony/elixir
-mise trust
-mise install
-mise exec -- mix setup
-mise exec -- ./bin/symphony /Users/matt/dev/just-quiz-me/WORKFLOW.md --port 4300 --i-understand-that-this-will-be-running-without-the-usual-guardrails
+npm install
+npm run dev
+npm run cf:whoami
+npm run deploy
 ```
+
+## Workflow
+
+- Keep implementation work on a dedicated branch or worktree.
+- Land changes through a pull request rather than committing on the primary branch.
+- Use [`WORKFLOW.md`](./WORKFLOW.md) when running the repo through Symphony.
