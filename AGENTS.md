@@ -20,6 +20,7 @@
 - All code changes must land through a pull request. Do not commit directly to the primary branch.
 - Every pull request must be reviewed by a reviewer agent before merge.
 - Review feedback must be addressed fully. Keep iterating until the reviewer is satisfied, then merge.
+- When creating Linear issues for this project, assign them to Matt Anderson by default unless told otherwise.
 
 ## Working style
 
