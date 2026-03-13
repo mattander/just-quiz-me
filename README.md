@@ -11,6 +11,8 @@ Just Quiz Me is now a TanStack Start app shell for Phase 1, running on React, Ty
 - `src/lib/runtime-config.ts` centralizes validated runtime config parsing for the server.
 - `src/lib/app-settings.ts` validates the seeded Phase 1 app settings contract.
 - `src/lib/app-settings-repository.ts` provides the backend settings read path, preferring D1 and falling back to the seeded defaults when the database binding is unavailable.
+- `src/lib/analytics.ts` owns the lightweight analytics adapter boundary and browser-event default implementation.
+- `src/lib/quiz-analytics.ts` provides quiz-specific tracking helpers for start, submit, result, and share events.
 - `src/routeTree.gen.ts` is generated on demand by `npm run generate:routes` and stays out of git.
 - `src/tailwind.source.css` is compiled into the generated `src/tailwind.css` utility layer.
 - `src/styles.css` defines the shared visual tokens and non-generated app styles.
@@ -19,7 +21,7 @@ Just Quiz Me is now a TanStack Start app shell for Phase 1, running on React, Ty
 - `public/` holds static assets such as the favicon and robots file.
 - `migrations/` contains the D1 schema migrations for Phase 1 quiz data.
 - `wrangler.jsonc` points Cloudflare at the built Start server bundle and client assets.
-- `worker-configuration.d.ts` is generated from Wrangler config via `npm run cf:typegen`.
+- `worker-configuration.d.ts` is generated from Wrangler config via `npm run cf:typegen`, then sanitized to remove build-only type imports so clean-checkout typechecks stay reliable.
 
 ## Commands
 
@@ -48,7 +50,7 @@ npm run deploy
 ## Hosting notes
 
 - Local development uses Vite on port `3000` and runs a Tailwind CLI watcher in parallel so the generated utility layer stays current.
-- `npm run dev` also refreshes `worker-configuration.d.ts` and loads the `env.local` bindings from `wrangler.jsonc` into the Node SSR process before Vite starts.
+- `npm run dev` also refreshes and sanitizes `worker-configuration.d.ts`, then loads the `env.local` bindings from `wrangler.jsonc` into the Node SSR process before Vite starts.
 - Production deploys should go through `npm run deploy`, which builds the TanStack Start output and then hands the generated Cloudflare bundle to Wrangler.
 - The landing page now renders the existing coming-soon hero through TanStack Start so the production path stays on the app shell without reintroducing a separate static runtime.
 - `workers_dev` remains disabled so the existing custom-domain deployment setup stays intact.
@@ -56,6 +58,7 @@ npm run deploy
 - A local-only D1 binding named `QUIZ_DB` now backs the Phase 1 schema for development and seed validation without checking placeholder remote database IDs into shared deploy config.
 - Quiz authoring manifests and default settings live in code and can be checked with `npm run content:validate`, then synced into local D1 with `npm run db:migrate:local` followed by `npm run content:sync:local`. The migration command targets Wrangler's `local` environment because the `QUIZ_DB` binding is intentionally scoped there.
 - Runtime settings reads now flow through a server-side repository path so the app can honor D1-backed settings when available while keeping the seeded `adsEnabled: false` default intact for environments without a database binding yet.
+- Analytics remains opt-in and lightweight by default: the shipped browser adapter simply dispatches a typed `justquizme:analytics` event on `window`, and richer integrations can be injected into quiz tracking call sites without introducing shared runtime state.
 
 ## License
 
