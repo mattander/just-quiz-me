@@ -7,6 +7,7 @@ Just Quiz Me is a minimal Cloudflare Worker project that serves a branded coming
 - `src/index.js` passes incoming requests through to the `ASSETS` binding.
 - `public/index.html` contains the landing page.
 - `wrangler.jsonc` defines the Worker entrypoint and asset binding.
+- Production serves the existing `justquiz.me` custom domain with `workers_dev` disabled in `wrangler.jsonc`.
 
 ## Commands
 

@@ -2,6 +2,7 @@
   "$schema": "./node_modules/wrangler/config-schema.json",
   "name": "just-quiz-me",
   "main": "src/index.js",
+  "workers_dev": false,
   "compatibility_date": "2026-03-11",
   "assets": {
     "directory": "./public",
