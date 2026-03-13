@@ -79,6 +79,14 @@ export function scoreQuizAnswers(
   manifest: QuizManifest,
   answers: readonly QuizAnswerSelection[],
 ): QuizScoreOutcome {
+  const knownQuestionIds = new Set(manifest.questions.map((question) => question.id))
+
+  for (const answer of answers) {
+    if (!knownQuestionIds.has(answer.questionId)) {
+      throw new Error(`Answer references unknown question "${answer.questionId}".`)
+    }
+  }
+
   const optionSelectionsByQuestionId = new Map(
     answers.map((answer) => [answer.questionId, answer.optionId]),
   )

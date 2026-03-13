@@ -177,4 +177,29 @@ assert(
   'Quiz scoring should expose the tied result set for downstream use.',
 )
 
+let unknownQuestionRejected = false
+
+try {
+  scoreQuizAnswers(tieBreakerQuiz, [
+    {
+      questionId: 'unknown-question',
+      optionId: 'balanced-option',
+    },
+  ])
+} catch (error) {
+  if (
+    error instanceof Error &&
+    error.message === 'Answer references unknown question "unknown-question".'
+  ) {
+    unknownQuestionRejected = true
+  } else {
+    throw error
+  }
+}
+
+assert(
+  unknownQuestionRejected,
+  'Quiz scoring should reject answers that reference unknown questions.',
+)
+
 console.log('Validated publication filtering, homepage feed selection, and quiz scoring.')
