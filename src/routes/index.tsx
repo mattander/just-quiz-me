@@ -1,13 +1,46 @@
 import { Link, createFileRoute } from '@tanstack/react-router'
 import { getAppSettings } from '../lib/app-settings-service.ts'
+import { getRuntimeConfig } from '../lib/runtime-config.ts'
+import {
+  buildAbsoluteUrl,
+  createCanonicalLinks,
+  createPageMetadata,
+} from '../lib/seo.ts'
 
 export const Route = createFileRoute('/')({
-  loader: () => getAppSettings(),
+  loader: async () => {
+    const [settings, runtimeConfig] = await Promise.all([
+      getAppSettings(),
+      getRuntimeConfig(),
+    ])
+
+    return {
+      settings,
+      siteUrl: runtimeConfig.publicSiteUrl,
+    }
+  },
+  head: ({ loaderData }) => {
+    if (!loaderData) {
+      return {}
+    }
+
+    const canonicalUrl = buildAbsoluteUrl(loaderData.siteUrl, '/')
+
+    return {
+      meta: createPageMetadata({
+        title: 'Just Quiz Me | Play absurd personality quizzes',
+        description:
+          'Play weirdly polished personality quizzes, get an immediate result, and share the outcome without creating an account.',
+        canonicalUrl,
+      }),
+      links: createCanonicalLinks(canonicalUrl),
+    }
+  },
   component: HomePage,
 })
 
 function HomePage() {
-  const settings = Route.useLoaderData()
+  const { settings } = Route.useLoaderData()
 
   return (
     <main

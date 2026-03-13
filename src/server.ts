@@ -1,6 +1,11 @@
 import type {} from './lib/server-context'
 import { createStartHandler, defaultStreamHandler } from '@tanstack/react-start/server'
-import type { RuntimeConfigInput } from './lib/runtime-config'
+import { createQuizRepository } from './lib/quiz-repository.ts'
+import { buildAbsoluteUrl, buildRobotsTxt, buildSitemapXml } from './lib/seo.ts'
+import {
+  parseRuntimeConfig,
+  type RuntimeConfigInput,
+} from './lib/runtime-config'
 
 const handleRequest = createStartHandler(defaultStreamHandler)
 
@@ -11,12 +16,55 @@ function getRuntimeBindings(workerEnv?: CloudflareEnv): RuntimeConfigInput {
   }
 }
 
+async function handleMetadataRequest(
+  request: Request,
+  workerEnv?: CloudflareEnv,
+): Promise<Response | null> {
+  const requestUrl = new URL(request.url)
+  const runtimeConfig = parseRuntimeConfig(getRuntimeBindings(workerEnv))
+
+  if (requestUrl.pathname === '/robots.txt') {
+    return new Response(buildRobotsTxt(runtimeConfig.publicSiteUrl), {
+      headers: {
+        'content-type': 'text/plain; charset=utf-8',
+      },
+    })
+  }
+
+  if (requestUrl.pathname === '/sitemap.xml') {
+    const repository = createQuizRepository(workerEnv?.QUIZ_DB)
+    const quizzes = await repository.listPublished()
+    const sitemapXml = buildSitemapXml([
+      {
+        url: buildAbsoluteUrl(runtimeConfig.publicSiteUrl, '/'),
+      },
+      ...quizzes.map((quiz) => ({
+        url: buildAbsoluteUrl(runtimeConfig.publicSiteUrl, `/quiz/${quiz.slug}`),
+      })),
+    ])
+
+    return new Response(sitemapXml, {
+      headers: {
+        'content-type': 'application/xml; charset=utf-8',
+      },
+    })
+  }
+
+  return null
+}
+
 const server = {
   async fetch(
     request: Request,
     workerEnv?: CloudflareEnv,
     executionContext?: ExecutionContext,
   ) {
+    const metadataResponse = await handleMetadataRequest(request, workerEnv)
+
+    if (metadataResponse) {
+      return metadataResponse
+    }
+
     return handleRequest(request, {
       context: {
         cloudflare: {

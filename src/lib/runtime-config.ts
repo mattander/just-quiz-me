@@ -26,7 +26,7 @@ export type RuntimeConfig = {
   publicSiteUrl: RuntimeBindings['PUBLIC_SITE_URL']
 }
 
-function parseRuntimeConfig(input: RuntimeConfigInput): RuntimeConfig {
+export function parseRuntimeConfig(input: RuntimeConfigInput): RuntimeConfig {
   const result = safeParse(runtimeConfigSchema, input)
 
   if (!result.success) {

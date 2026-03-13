@@ -22,7 +22,15 @@ export const Route = createRootRoute({
       {
         name: 'description',
         content:
-          'Just Quiz Me is coming soon with polished, absurd quizzes, quick turns, and a quietly strange sense of humor.',
+          'Play weirdly polished personality quizzes and get immediate results.',
+      },
+      {
+        property: 'og:site_name',
+        content: 'Just Quiz Me',
+      },
+      {
+        name: 'twitter:card',
+        content: 'summary',
       },
       {
         name: 'theme-color',
