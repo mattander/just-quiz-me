@@ -32,6 +32,7 @@ npm run content:validate
 npm run db:migrate:local
 npm run content:sync:local
 npm run generate:routes
+npm test
 npm run test:repository
 npm run dev
 npm run build
