@@ -90,6 +90,7 @@
           linear-gradient(180deg, rgba(255, 255, 255, 0.16), transparent 36%),
           var(--panel);
         box-shadow: var(--shadow);
+        -webkit-backdrop-filter: blur(18px);
         backdrop-filter: blur(18px);
       }
 
@@ -142,6 +143,23 @@
         .hero {
           border-radius: 1.5rem;
           padding: 1.25rem;
+        }
+      }
+
+      @media (max-width: 24rem) {
+        h1 {
+          font-size: clamp(2.3rem, 12vw, 2.75rem);
+          line-height: 0.98;
+        }
+
+        p {
+          font-size: 1rem;
+          line-height: 1.55;
+        }
+
+        .hero {
+          gap: 1rem;
+          padding: 1rem;
         }
       }
     </style>
