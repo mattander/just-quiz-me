@@ -21,6 +21,7 @@ Just Quiz Me is now a TanStack Start app shell for Phase 1, running on React, Ty
 ```bash
 npm install
 npm run cf:typegen
+npm run content:validate
 npm run generate:routes
 npm run dev
 npm run build
@@ -44,6 +45,7 @@ npm run deploy
 - The landing page now renders the existing coming-soon hero through TanStack Start so the production path stays on the app shell without reintroducing a separate static runtime.
 - `workers_dev` remains disabled so the existing custom-domain deployment setup stays intact.
 - Runtime config is currently validated from two Wrangler-managed bindings: `APP_ENV` and `PUBLIC_SITE_URL`, with production defaults plus preview and local-development overrides defined in `wrangler.jsonc`.
+- Quiz authoring manifests live in code and can be checked with `npm run content:validate`, which validates the registry and fails fast on structural or editorial content issues before future sync work uses the manifests.
 
 ## License
 
