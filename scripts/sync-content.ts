@@ -32,6 +32,16 @@ async function main() {
   })
 
   try {
+    const featuredQuizExists = quizManifests.some(
+      (manifest) => manifest.slug === appSettings.featuredQuizSlug,
+    )
+
+    if (!featuredQuizExists) {
+      throw new Error(
+        `Featured quiz slug "${appSettings.featuredQuizSlug}" does not match a registered quiz manifest.`,
+      )
+    }
+
     const statements: D1PreparedStatement[] = []
     const manifestSlugs = quizManifests.map((manifest) => manifest.slug)
 
