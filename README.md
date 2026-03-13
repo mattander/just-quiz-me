@@ -7,7 +7,10 @@ Just Quiz Me is now a TanStack Start app shell for Phase 1, running on React, Ty
 - `src/router.tsx` registers the TanStack Start router.
 - `src/server.ts` bridges Cloudflare Worker bindings into the TanStack Start request context.
 - `src/routes/__root.tsx` owns the document shell and shared route metadata.
-- `src/routes/index.tsx` renders the current landing hero through the new app shell.
+- `src/routes/index.tsx` renders the current landing hero and featured quiz entry point through the new app shell.
+- `src/routes/quiz.$quizSlug.tsx` renders the playable quiz questionnaire and submission flow.
+- `src/routes/quiz.$quizSlug.result.tsx` renders the resolved result view for a scored quiz run.
+- `src/lib/quiz-service.ts` owns the server-side published quiz reads plus submission validation and scoring.
 - `src/lib/runtime-config.ts` centralizes validated runtime config parsing for the server.
 - `src/lib/app-settings.ts` validates the seeded Phase 1 app settings contract.
 - `src/lib/app-settings-repository.ts` provides the backend settings read path, preferring D1 and falling back to the seeded defaults when the database binding is unavailable.
@@ -59,6 +62,7 @@ npm run deploy
 - A local-only D1 binding named `QUIZ_DB` now backs the Phase 1 schema for development and seed validation without checking placeholder remote database IDs into shared deploy config.
 - Quiz authoring manifests and default settings live in code and can be checked with `npm run content:validate`, then synced into local D1 with `npm run db:migrate:local` followed by `npm run content:sync:local`. The migration command targets Wrangler's `local` environment because the `QUIZ_DB` binding is intentionally scoped there.
 - Runtime settings reads now flow through a server-side repository path so the app can honor D1-backed settings when available while keeping the seeded `adsEnabled: false` default intact for environments without a database binding yet.
+- The first Phase 1 interactive flow now runs at `/quiz/:quizSlug`, validates a full answer set on submission, and redirects into `/quiz/:quizSlug/result` using URL state instead of persisted attempts.
 - Analytics remains opt-in and lightweight by default: the shipped browser adapter simply dispatches a typed `justquizme:analytics` event on `window`, and richer integrations can be injected into quiz tracking call sites without introducing shared runtime state.
 
 ## License

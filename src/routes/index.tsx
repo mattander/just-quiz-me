@@ -1,4 +1,4 @@
-import { createFileRoute } from '@tanstack/react-router'
+import { Link, createFileRoute } from '@tanstack/react-router'
 import { getAppSettings } from '../lib/app-settings-service.ts'
 
 export const Route = createFileRoute('/')({
@@ -18,17 +18,31 @@ function HomePage() {
       <section className="glass-panel w-full overflow-hidden rounded-[2rem] px-6 py-8 sm:px-10 sm:py-12">
         <div className="grid gap-8 lg:grid-cols-[minmax(0,1fr)_minmax(20rem,0.95fr)] lg:items-center">
           <div className="max-w-2xl">
+            <p className="eyebrow">Phase 1 preview</p>
             <h1 className="display-type text-4xl leading-[0.96] tracking-[-0.04em] text-[var(--ink)] sm:text-5xl lg:text-7xl">
-              Just Quiz Me is coming soon
+              Just Quiz Me has its first playable quiz
             </h1>
 
             <p className="mt-5 text-base leading-7 text-[var(--muted)] sm:text-lg">
-              Just Quiz Me is building a polished little internet home for
-              strange quizzes, where kitchen appliances feud, Greek gods get
-              passive-aggressive, and every result arrives with a straight
-              face. Come back soon for absurd questions, quick turns, and
-              quietly unserious revelations.
+              The landing shell is still warming up, but the core quiz loop is
+              live: answer a full set of questions, submit once, and get an
+              immediate result without saving an attempt anywhere.
             </p>
+
+            <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:items-center">
+              <Link
+                to="/quiz/$quizSlug"
+                params={{
+                  quizSlug: settings.featuredQuizSlug,
+                }}
+                className="inline-flex items-center justify-center rounded-full bg-[color:var(--ink)] px-6 py-3 text-sm font-semibold text-white no-underline transition hover:opacity-90"
+              >
+                Play the featured quiz
+              </Link>
+              <p className="text-sm leading-6 text-[var(--muted)]">
+                Featured quiz slug: {settings.featuredQuizSlug}
+              </p>
+            </div>
           </div>
 
           <figure className="glass-panel-soft rounded-[1.5rem] p-4 sm:p-6">

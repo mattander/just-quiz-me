@@ -1,6 +1,13 @@
 import type { AppSettings } from './app-settings.ts'
 import type { QuizManifest } from './quiz-manifest.ts'
 
+type QuizScoringManifest = Pick<
+  QuizManifest,
+  'slug' | 'title' | 'description' | 'results' | 'questions'
+> & {
+  id?: string
+}
+
 export type QuizAnswerSelection = {
   questionId: string
   optionId: string
@@ -76,7 +83,7 @@ export function buildHomepageQuizFeed(
 }
 
 export function scoreQuizAnswers(
-  manifest: QuizManifest,
+  manifest: QuizScoringManifest,
   answers: readonly QuizAnswerSelection[],
 ): QuizScoreOutcome {
   const knownQuestionIds = new Set(manifest.questions.map((question) => question.id))
@@ -161,10 +168,23 @@ export function scoreQuizAnswers(
   }
 
   return {
-    quizId: manifest.id,
+    quizId: manifest.id ?? manifest.slug,
     quizSlug: manifest.slug,
     winningResult,
     results,
     answeredQuestionCount: optionSelectionsByQuestionId.size,
   }
+}
+
+export function resolveCompletedQuizAnswers(
+  manifest: QuizScoringManifest,
+  answers: readonly QuizAnswerSelection[],
+): QuizScoreOutcome {
+  const outcome = scoreQuizAnswers(manifest, answers)
+
+  if (outcome.answeredQuestionCount !== manifest.questions.length) {
+    throw new Error('Quiz answers must include exactly one option for every question.')
+  }
+
+  return outcome
 }
