@@ -17,11 +17,9 @@ const runtimeConfigSchema = object({
 })
 
 type RuntimeBindings = InferOutput<typeof runtimeConfigSchema>
+type RuntimeBindingKey = 'APP_ENV' | 'PUBLIC_SITE_URL'
 
-export type RuntimeConfigInput = {
-  APP_ENV: string | undefined
-  PUBLIC_SITE_URL: string | undefined
-}
+export type RuntimeConfigInput = Partial<Pick<CloudflareEnv, RuntimeBindingKey>>
 
 export type RuntimeConfig = {
   appEnv: RuntimeBindings['APP_ENV']
