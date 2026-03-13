@@ -1,4 +1,5 @@
 import { createFileRoute } from '@tanstack/react-router'
+import { getRuntimeConfig } from '../lib/runtime-config'
 
 type StackCard = {
   title: string
@@ -49,10 +50,17 @@ const bootstrapNotes = [
 ]
 
 export const Route = createFileRoute('/')({
+  loader: () => getRuntimeConfig(),
   component: HomePage,
 })
 
 function HomePage() {
+  const runtimeConfig = Route.useLoaderData()
+  const phaseLabel =
+    runtimeConfig.appEnv === 'production'
+      ? 'Phase 1 app shell'
+      : `Phase 1 app shell · ${runtimeConfig.appEnv}`
+
   return (
     <main className="mx-auto flex min-h-screen w-full max-w-6xl flex-col justify-center px-4 py-8 sm:px-6 lg:px-8">
       <section className="glass-panel relative overflow-hidden rounded-[2rem] px-6 py-8 sm:px-10 sm:py-12">
@@ -62,7 +70,7 @@ function HomePage() {
 
         <div className="grid gap-8 lg:grid-cols-[minmax(0,1.1fr)_minmax(18rem,0.9fr)] lg:items-center">
           <div>
-            <p className="eyebrow mb-4">Phase 1 app shell</p>
+            <p className="eyebrow mb-4">{phaseLabel}</p>
             <div className="mb-5 flex flex-wrap gap-2">
               {stackBadges.map((badge) => (
                 <span

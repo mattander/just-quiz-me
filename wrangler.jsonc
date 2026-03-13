@@ -8,6 +8,24 @@
   "workers_dev": false,
   "compatibility_date": "2026-03-10",
   "compatibility_flags": ["nodejs_compat"],
+  "vars": {
+    "APP_ENV": "production",
+    "PUBLIC_SITE_URL": "https://justquiz.me"
+  },
+  "env": {
+    "preview": {
+      "vars": {
+        "APP_ENV": "preview",
+        "PUBLIC_SITE_URL": "https://justquiz.me"
+      }
+    },
+    "local": {
+      "vars": {
+        "APP_ENV": "development",
+        "PUBLIC_SITE_URL": "http://localhost:3000"
+      }
+    }
+  },
   "observability": {
     "enabled": true
   }
