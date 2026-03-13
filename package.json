@@ -4,12 +4,13 @@
   "description": "A TanStack Start app shell for Just Quiz Me on Cloudflare Workers.",
   "private": true,
   "scripts": {
+    "cf:typegen": "wrangler types --env-interface CloudflareEnv",
     "generate:routes": "node ./scripts/generate-routes.mjs",
     "build:css": "tailwindcss -i ./src/tailwind.source.css -o ./src/tailwind.css",
     "watch:css": "tailwindcss -i ./src/tailwind.source.css -o ./src/tailwind.css --watch",
-    "dev": "npm run build:css && npm run generate:routes && concurrently \"npm run watch:css\" \"vite dev --port 3000\"",
-    "build": "npm run build:css && npm run generate:routes && vite build",
-    "typecheck": "npm run generate:routes && tsc --noEmit",
+    "dev": "npm run cf:typegen && npm run build:css && npm run generate:routes && concurrently \"npm run watch:css\" \"vite dev --port 3000\"",
+    "build": "npm run cf:typegen && npm run build:css && npm run generate:routes && vite build",
+    "typecheck": "npm run cf:typegen && npm run generate:routes && tsc --noEmit",
     "deploy": "npm run build && wrangler deploy",
     "cf:whoami": "wrangler whoami"
   },
@@ -38,6 +39,7 @@
     "valibot": "^1.2.0"
   },
   "devDependencies": {
+    "@types/node": "^25.5.0",
     "@types/react": "^19.2.14",
     "@types/react-dom": "^19.2.3",
     "@vitejs/plugin-react": "^6.0.1",

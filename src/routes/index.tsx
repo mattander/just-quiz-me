@@ -2,6 +2,7 @@ import { createFileRoute } from '@tanstack/react-router'
 import { useQuery } from '@tanstack/react-query'
 import { useForm } from '@tanstack/react-form'
 import { useState } from 'react'
+import { getRuntimeConfig } from '../lib/runtime-config'
 
 import {
   foundationEmailSchema,
@@ -14,6 +15,7 @@ import {
 } from '../lib/foundation'
 
 export const Route = createFileRoute('/')({
+  loader: () => getRuntimeConfig(),
   component: HomePage,
 })
 
@@ -33,6 +35,11 @@ function getFirstErrorMessage(errors: readonly unknown[]): string | null {
 }
 
 function HomePage() {
+  const runtimeConfig = Route.useLoaderData()
+  const phaseLabel =
+    runtimeConfig.appEnv === 'production'
+      ? 'Phase 1 app shell'
+      : `Phase 1 app shell · ${runtimeConfig.appEnv}`
   const { data } = useQuery({
     queryKey: ['foundation-snapshot'],
     queryFn: loadFoundationSnapshot,
@@ -63,7 +70,7 @@ function HomePage() {
 
         <div className="grid gap-8 lg:grid-cols-[minmax(0,1.1fr)_minmax(18rem,0.9fr)] lg:items-center">
           <div>
-            <p className="eyebrow mb-4">Phase 1 app shell</p>
+            <p className="eyebrow mb-4">{phaseLabel}</p>
             <div className="mb-5 flex flex-wrap gap-2">
               {data.badges.map((badge) => (
                 <span
