@@ -1,0 +1,111 @@
+:root {
+  color-scheme: light;
+  --page-top: #fbf4e8;
+  --page-bottom: #ead8b9;
+  --ink: #1d2431;
+  --muted: #576171;
+  --panel: rgba(255, 249, 241, 0.8);
+  --panel-strong: rgba(255, 252, 247, 0.88);
+  --panel-border: rgba(29, 36, 49, 0.1);
+  --shadow: 0 30px 80px rgba(55, 33, 19, 0.14);
+  --accent-coral: #eb7042;
+  --accent-teal: #1d8a7e;
+  --accent-gold: #dfb451;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  min-height: 100%;
+}
+
+body {
+  margin: 0;
+  color: var(--ink);
+  font-family: "Avenir Next", "Segoe UI", "Trebuchet MS", "Gill Sans",
+    sans-serif;
+  background:
+    radial-gradient(circle at 14% 18%, rgba(235, 112, 66, 0.18), transparent 22rem),
+    radial-gradient(circle at 84% 14%, rgba(29, 138, 126, 0.18), transparent 20rem),
+    radial-gradient(circle at 50% 110%, rgba(223, 180, 81, 0.12), transparent 20rem),
+    linear-gradient(180deg, var(--page-top), var(--page-bottom));
+}
+
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  background:
+    radial-gradient(circle at 18% 24%, rgba(255, 255, 255, 0.48), transparent 20rem),
+    radial-gradient(circle at 78% 28%, rgba(255, 255, 255, 0.32), transparent 18rem);
+  opacity: 0.8;
+}
+
+a {
+  color: inherit;
+}
+
+::selection {
+  background: rgba(29, 138, 126, 0.18);
+}
+
+.display-type {
+  font-family: "Iowan Old Style", "Palatino Linotype", "Book Antiqua",
+    Palatino, Georgia, serif;
+}
+
+.eyebrow {
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: color-mix(in srgb, var(--accent-teal) 72%, var(--ink));
+}
+
+.glass-panel {
+  border: 1px solid var(--panel-border);
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.2), transparent 34%),
+    var(--panel);
+  box-shadow: var(--shadow);
+  backdrop-filter: blur(18px);
+}
+
+.glass-panel-soft {
+  border: 1px solid color-mix(in srgb, var(--panel-border) 88%, white);
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.18), transparent 34%),
+    var(--panel-strong);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.68),
+    0 18px 40px rgba(55, 33, 19, 0.08);
+  backdrop-filter: blur(14px);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    color-scheme: dark;
+    --page-top: #0b1725;
+    --page-bottom: #18314a;
+    --ink: #f7f0e6;
+    --muted: #c4ced8;
+    --panel: rgba(14, 27, 41, 0.82);
+    --panel-strong: rgba(12, 24, 37, 0.9);
+    --panel-border: rgba(247, 240, 230, 0.12);
+    --shadow: 0 34px 90px rgba(2, 6, 12, 0.45);
+    --accent-coral: #ff9268;
+    --accent-teal: #59c0b5;
+    --accent-gold: #efcb75;
+  }
+
+  body::before {
+    background:
+      radial-gradient(circle at 18% 24%, rgba(255, 255, 255, 0.08), transparent 22rem),
+      radial-gradient(circle at 78% 28%, rgba(89, 192, 181, 0.12), transparent 20rem);
+    opacity: 1;
+  }
+}
