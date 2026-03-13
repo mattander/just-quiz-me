@@ -1,10 +1,16 @@
 {
   "name": "just-quiz-me",
   "version": "1.0.0",
-  "description": "A Cloudflare-hosted quiz site.",
+  "description": "A TanStack Start app shell for Just Quiz Me on Cloudflare Workers.",
+  "private": true,
   "scripts": {
-    "dev": "wrangler dev",
-    "deploy": "wrangler deploy",
+    "generate:routes": "node ./scripts/generate-routes.mjs",
+    "build:css": "tailwindcss -i ./src/tailwind.source.css -o ./src/tailwind.css",
+    "watch:css": "tailwindcss -i ./src/tailwind.source.css -o ./src/tailwind.css --watch",
+    "dev": "npm run build:css && npm run generate:routes && concurrently \"npm run watch:css\" \"vite dev --port 3000\"",
+    "build": "npm run build:css && npm run generate:routes && vite build",
+    "typecheck": "npm run generate:routes && tsc --noEmit",
+    "deploy": "npm run build && wrangler deploy",
     "cf:whoami": "wrangler whoami"
   },
   "repository": {
@@ -19,7 +25,21 @@
     "url": "https://github.com/mattander/just-quiz-me/issues"
   },
   "homepage": "https://github.com/mattander/just-quiz-me#readme",
+  "dependencies": {
+    "@tailwindcss/cli": "^4.2.1",
+    "@tanstack/react-router": "^1.166.7",
+    "@tanstack/react-start": "^1.166.8",
+    "concurrently": "^9.2.1",
+    "react": "^19.2.4",
+    "react-dom": "^19.2.4",
+    "tailwindcss": "^4.2.1"
+  },
   "devDependencies": {
-    "wrangler": "^4.72.0"
+    "@types/react": "^19.2.14",
+    "@types/react-dom": "^19.2.3",
+    "@vitejs/plugin-react": "^6.0.1",
+    "typescript": "^5.9.3",
+    "vite": "^8.0.0",
+    "wrangler": "^4.73.0"
   }
 }

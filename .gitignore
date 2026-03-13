@@ -1,5 +1,10 @@
-node_modules/
-.wrangler/
+node_modules
 .DS_Store
-.codex/
-.claude/
+dist
+.tanstack
+.vinxi
+.wrangler
+src/routeTree.gen.ts
+src/tailwind.css
+*.local
+__unconfig*
