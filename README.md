@@ -36,3 +36,13 @@ npm run deploy
 - Local development uses Vite on port `3000` and runs a Tailwind CLI watcher in parallel so the generated utility layer stays current.
 - Production deploys should go through `npm run deploy`, which builds the TanStack Start output and then hands the generated Cloudflare bundle to Wrangler.
 - `workers_dev` remains disabled so the existing custom-domain deployment setup stays intact.
+
+## License
+
+This repository is intentionally `UNLICENSED` for now.
+
+- The current product and business model are still forming, so the repo is staying proprietary while commercialization options remain open.
+- That avoids granting open-source or source-available rights by accident through placeholder metadata.
+- The licensing decision should be revisited intentionally if the project is later prepared for a public release.
+
+Until that changes, all rights are reserved. See [`LICENSE`](./LICENSE) for the current terms.
