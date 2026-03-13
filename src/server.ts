@@ -1,4 +1,5 @@
 import type {} from './lib/server-context'
+import type { Register } from '@tanstack/react-router'
 import { createStartHandler, defaultStreamHandler } from '@tanstack/react-start/server'
 import { createQuizRepository } from './lib/quiz-repository.ts'
 import { getAppRequestContext, type AppRequestContext } from './lib/server-context.ts'
@@ -8,7 +9,7 @@ import {
   type RuntimeConfigInput,
 } from './lib/runtime-config'
 
-const handleRequest = createStartHandler(defaultStreamHandler)
+const handleRequest = createStartHandler<Register>(defaultStreamHandler)
 
 function getRuntimeBindings(workerEnv?: CloudflareEnv): RuntimeConfigInput {
   return {
