@@ -8,3 +8,7 @@ src/routeTree.gen.ts
 src/tailwind.css
 *.local
 __unconfig*
+.playwright
+.playwright-cli
+playwright-report
+test-results

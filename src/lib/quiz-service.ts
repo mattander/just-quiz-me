@@ -1,6 +1,7 @@
 import { createServerFn } from '@tanstack/react-start'
 import * as v from 'valibot'
 import { createQuizRepository } from './quiz-repository.ts'
+import { getAppRequestContext } from './server-context.ts'
 import {
   resolveCompletedQuizAnswers,
   type QuizAnswerSelection,
@@ -71,7 +72,10 @@ export function parseQuizResultSearch(input: unknown): QuizResultSearch {
 export const readPublishedQuiz = createServerFn({ method: 'GET' })
   .inputValidator(parseReadPublishedQuizInput)
   .handler(async ({ context, data }) => {
-    const repository = createQuizRepository(context.cloudflare.bindings.QUIZ_DB)
+    const requestContext = getAppRequestContext(context)
+    const repository = createQuizRepository(
+      requestContext.cloudflare.bindings.QUIZ_DB,
+    )
 
     return repository.readPublished(data.quizSlug)
   })
@@ -79,7 +83,10 @@ export const readPublishedQuiz = createServerFn({ method: 'GET' })
 export const resolveQuizSubmission = createServerFn({ method: 'POST' })
   .inputValidator(parseResolveQuizSubmissionInput)
   .handler(async ({ context, data }) => {
-    const repository = createQuizRepository(context.cloudflare.bindings.QUIZ_DB)
+    const requestContext = getAppRequestContext(context)
+    const repository = createQuizRepository(
+      requestContext.cloudflare.bindings.QUIZ_DB,
+    )
     const quiz = await repository.readPublished(data.quizSlug)
 
     if (!quiz) {

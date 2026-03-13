@@ -37,6 +37,7 @@ npm run content:sync:local
 npm run generate:routes
 npm test
 npm run test:repository
+npm run test:e2e
 npm run dev
 npm run build
 npm run typecheck
@@ -55,6 +56,7 @@ npm run deploy
 
 - Local development uses Vite on port `3000` and runs a Tailwind CLI watcher in parallel so the generated utility layer stays current.
 - `npm run dev` also refreshes and sanitizes `worker-configuration.d.ts`, then loads the `env.local` bindings from `wrangler.jsonc` into the Node SSR process before Vite starts.
+- `npm run dev:e2e` starts the app on port `4173` without long-running watchers so Playwright can run against a stable local target.
 - Production deploys should go through `npm run deploy`, which builds the TanStack Start output and then hands the generated Cloudflare bundle to Wrangler.
 - The landing page now renders the existing coming-soon hero through TanStack Start so the production path stays on the app shell without reintroducing a separate static runtime.
 - `workers_dev` remains disabled so the existing custom-domain deployment setup stays intact.
@@ -63,6 +65,7 @@ npm run deploy
 - Quiz authoring manifests and default settings live in code and can be checked with `npm run content:validate`, then synced into local D1 with `npm run db:migrate:local` followed by `npm run content:sync:local`. The migration command targets Wrangler's `local` environment because the `QUIZ_DB` binding is intentionally scoped there.
 - Runtime settings reads now flow through a server-side repository path so the app can honor D1-backed settings when available while keeping the seeded `adsEnabled: false` default intact for environments without a database binding yet.
 - The first Phase 1 interactive flow now runs at `/quiz/:quizSlug`, validates a full answer set on submission, and redirects into `/quiz/:quizSlug/result` using URL state instead of persisted attempts.
+- Browser-level confidence for the public loop now lives in `tests/e2e/public-flow.spec.ts`, covering homepage discovery, the featured quiz submission flow, and an invalid quiz route boundary.
 - Route-level metadata now covers the homepage, quiz, and result pages, while the Worker serves `robots.txt` and `sitemap.xml` from the same runtime-configured site URL and published quiz list.
 - Analytics remains opt-in and lightweight by default: the shipped browser adapter simply dispatches a typed `justquizme:analytics` event on `window`, and richer integrations can be injected into quiz tracking call sites without introducing shared runtime state.
 

@@ -1,5 +1,6 @@
 import type {} from './server-context'
 import { createServerFn } from '@tanstack/react-start'
+import { getAppRequestContext } from './server-context.ts'
 import {
   object,
   picklist,
@@ -43,6 +44,8 @@ export function parseRuntimeConfig(input: RuntimeConfigInput): RuntimeConfig {
 
 export const getRuntimeConfig = createServerFn({ method: 'GET' }).handler(
   ({ context }) => {
-    return parseRuntimeConfig(context.cloudflare.runtime)
+    const requestContext = getAppRequestContext(context)
+
+    return parseRuntimeConfig(requestContext.cloudflare.runtime)
   },
 )
