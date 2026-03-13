@@ -2,6 +2,9 @@ import type { RuntimeConfigInput } from './runtime-config'
 
 export type AppRequestContext = {
   cloudflare: {
+    bindings: {
+      QUIZ_DB: D1Database | undefined
+    }
     runtime: RuntimeConfigInput
     executionContext: ExecutionContext | undefined
   }

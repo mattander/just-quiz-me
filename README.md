@@ -10,6 +10,7 @@ Just Quiz Me is now a TanStack Start app shell for Phase 1, running on React, Ty
 - `src/routes/index.tsx` renders the current landing hero through the new app shell.
 - `src/lib/runtime-config.ts` centralizes validated runtime config parsing for the server.
 - `src/lib/app-settings.ts` validates the seeded Phase 1 app settings contract.
+- `src/lib/app-settings-repository.ts` provides the backend settings read path, preferring D1 and falling back to the seeded defaults when the database binding is unavailable.
 - `src/routeTree.gen.ts` is generated on demand by `npm run generate:routes` and stays out of git.
 - `src/tailwind.source.css` is compiled into the generated `src/tailwind.css` utility layer.
 - `src/styles.css` defines the shared visual tokens and non-generated app styles.
@@ -53,6 +54,7 @@ npm run deploy
 - Runtime config is currently validated from two Wrangler-managed bindings: `APP_ENV` and `PUBLIC_SITE_URL`, with production defaults plus preview and local-development overrides defined in `wrangler.jsonc`.
 - A local-only D1 binding named `QUIZ_DB` now backs the Phase 1 schema for development and seed validation without checking placeholder remote database IDs into shared deploy config.
 - Quiz authoring manifests and default settings live in code and can be checked with `npm run content:validate`, then synced into local D1 with `npm run db:migrate:local` followed by `npm run content:sync:local`. The migration command targets Wrangler's `local` environment because the `QUIZ_DB` binding is intentionally scoped there.
+- Runtime settings reads now flow through a server-side repository path so the app can honor D1-backed settings when available while keeping the seeded `adsEnabled: false` default intact for environments without a database binding yet.
 
 ## License
 
