@@ -9,22 +9,58 @@ import {
 import type { FormEvent } from 'react'
 import { useState } from 'react'
 import type { QuizAnswerSelection } from '../lib/quiz-domain.ts'
-import type { PublishedQuiz } from '../lib/quiz-repository.ts'
+import { getRuntimeConfig } from '../lib/runtime-config.ts'
 import { readPublishedQuiz, resolveQuizSubmission } from '../lib/quiz-service.ts'
+import {
+  buildAbsoluteUrl,
+  createCanonicalLinks,
+  createPageMetadata,
+} from '../lib/seo.ts'
 
 export const Route = createFileRoute('/quiz/$quizSlug')({
-  loader: async ({ params }): Promise<PublishedQuiz> => {
-    const quiz = await readPublishedQuiz({
-      data: {
-        quizSlug: params.quizSlug,
-      },
-    })
+  loader: async ({ params }) => {
+    const [quiz, runtimeConfig] = await Promise.all([
+      readPublishedQuiz({
+        data: {
+          quizSlug: params.quizSlug,
+        },
+      }),
+      getRuntimeConfig(),
+    ])
 
     if (!quiz) {
       throw notFound()
     }
 
-    return quiz
+    return {
+      quiz,
+      siteUrl: runtimeConfig.publicSiteUrl,
+    }
+  },
+  head: ({ loaderData, match, matches }) => {
+    if (!loaderData) {
+      return {}
+    }
+
+    const leafMatch = matches[matches.length - 1]
+
+    if (!leafMatch || leafMatch.id !== match.id) {
+      return {}
+    }
+
+    const canonicalUrl = buildAbsoluteUrl(
+      loaderData.siteUrl,
+      `/quiz/${loaderData.quiz.slug}`,
+    )
+
+    return {
+      meta: createPageMetadata({
+        title: `${loaderData.quiz.title} | Just Quiz Me`,
+        description: loaderData.quiz.description,
+        canonicalUrl,
+      }),
+      links: createCanonicalLinks(canonicalUrl),
+    }
   },
   component: QuizRouteShell,
 })
@@ -40,7 +76,7 @@ function QuizRouteShell() {
 }
 
 function QuizPlayPage() {
-  const quiz: PublishedQuiz = Route.useLoaderData()
+  const { quiz } = Route.useLoaderData()
   const navigate = useNavigate()
   const [selectedOptionIds, setSelectedOptionIds] = useState<Record<string, string>>({})
   const [clientError, setClientError] = useState<string | null>(null)

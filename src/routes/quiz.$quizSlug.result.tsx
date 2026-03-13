@@ -1,15 +1,24 @@
 import { Link, createFileRoute, notFound } from '@tanstack/react-router'
+import { getRuntimeConfig } from '../lib/runtime-config.ts'
+import {
+  buildAbsoluteUrl,
+  createCanonicalLinks,
+  createPageMetadata,
+} from '../lib/seo.ts'
 import { parseQuizResultSearch, readPublishedQuiz } from '../lib/quiz-service.ts'
 
 export const Route = createFileRoute('/quiz/$quizSlug/result')({
   validateSearch: parseQuizResultSearch,
   loaderDeps: ({ search }) => search,
   loader: async ({ params, deps }) => {
-    const quiz = await readPublishedQuiz({
-      data: {
-        quizSlug: params.quizSlug,
-      },
-    })
+    const [quiz, runtimeConfig] = await Promise.all([
+      readPublishedQuiz({
+        data: {
+          quizSlug: params.quizSlug,
+        },
+      }),
+      getRuntimeConfig(),
+    ])
 
     if (!quiz) {
       throw notFound()
@@ -25,6 +34,32 @@ export const Route = createFileRoute('/quiz/$quizSlug/result')({
       quiz,
       result,
       answeredQuestionCount: deps.answered,
+      siteUrl: runtimeConfig.publicSiteUrl,
+    }
+  },
+  head: ({ loaderData }) => {
+    if (!loaderData) {
+      return {}
+    }
+
+    const canonicalUrl = buildAbsoluteUrl(
+      loaderData.siteUrl,
+      `/quiz/${loaderData.quiz.slug}/result`,
+      new URLSearchParams({
+        resultId: loaderData.result.id,
+        answered: String(loaderData.answeredQuestionCount),
+      }),
+    )
+
+    return {
+      meta: createPageMetadata({
+        title: `${loaderData.result.title} | ${loaderData.quiz.title} | Just Quiz Me`,
+        description: loaderData.result.description,
+        canonicalUrl,
+        pageType: 'article',
+        robots: 'noindex,follow',
+      }),
+      links: createCanonicalLinks(canonicalUrl),
     }
   },
   component: QuizResultPage,

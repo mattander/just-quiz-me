@@ -21,7 +21,7 @@ Just Quiz Me is now a TanStack Start app shell for Phase 1, running on React, Ty
 - `src/styles.css` defines the shared visual tokens and non-generated app styles.
 - `src/content/settings/index.ts` holds the default seeded runtime settings.
 - `src/content/quizzes/index.ts` holds the authored quiz manifests that seed D1.
-- `public/` holds static assets such as the favicon and robots file.
+- `public/` holds static assets such as the favicon.
 - `migrations/` contains the D1 schema migrations for Phase 1 quiz data.
 - `wrangler.jsonc` points Cloudflare at the built Start server bundle and client assets.
 - `worker-configuration.d.ts` is generated from Wrangler config via `npm run cf:typegen`, then sanitized to remove build-only type imports so clean-checkout typechecks stay reliable.
@@ -63,6 +63,7 @@ npm run deploy
 - Quiz authoring manifests and default settings live in code and can be checked with `npm run content:validate`, then synced into local D1 with `npm run db:migrate:local` followed by `npm run content:sync:local`. The migration command targets Wrangler's `local` environment because the `QUIZ_DB` binding is intentionally scoped there.
 - Runtime settings reads now flow through a server-side repository path so the app can honor D1-backed settings when available while keeping the seeded `adsEnabled: false` default intact for environments without a database binding yet.
 - The first Phase 1 interactive flow now runs at `/quiz/:quizSlug`, validates a full answer set on submission, and redirects into `/quiz/:quizSlug/result` using URL state instead of persisted attempts.
+- Route-level metadata now covers the homepage, quiz, and result pages, while the Worker serves `robots.txt` and `sitemap.xml` from the same runtime-configured site URL and published quiz list.
 - Analytics remains opt-in and lightweight by default: the shipped browser adapter simply dispatches a typed `justquizme:analytics` event on `window`, and richer integrations can be injected into quiz tracking call sites without introducing shared runtime state.
 
 ## License
