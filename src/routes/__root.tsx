@@ -34,7 +34,7 @@ export const Route = createRootRoute({
       },
       {
         name: 'theme-color',
-        content: '#f6ecdc',
+        content: '#f6f1e9',
       },
     ],
     links: [
@@ -78,7 +78,7 @@ function RootDocument({ children }: { children: ReactNode }) {
 function NotFoundPage() {
   return (
     <main className="mx-auto flex min-h-screen w-full max-w-3xl items-center justify-center px-4 py-16 text-center sm:px-6">
-      <div className="glass-panel-soft rounded-[1.5rem] px-6 py-8">
+      <div className="w-full border-t border-[color:var(--line)] px-2 pt-6">
         <p className="eyebrow mb-3">Not found</p>
         <h1 className="display-type text-3xl text-[var(--ink)] sm:text-4xl">
           This route has not been built yet.
