@@ -22,7 +22,7 @@ export const Route = createRootRoute({
       {
         name: 'description',
         content:
-          'Just Quiz Me now runs on a TanStack Start foundation with React, TypeScript, Tailwind, and Cloudflare-ready output.',
+          'Just Quiz Me is coming soon with polished, absurd quizzes, quick turns, and a quietly strange sense of humor.',
       },
       {
         name: 'theme-color',
