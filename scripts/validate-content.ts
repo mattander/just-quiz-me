@@ -1,18 +1,9 @@
 import { appSettings } from '../src/content/settings/index.ts'
 import { quizManifests } from '../src/content/quizzes/index.ts'
+import { validateAuthoredContent } from '../src/lib/content-validation.ts'
 
-const manifestCountLabel = quizManifests.length === 1 ? 'manifest' : 'manifests'
-
-const featuredQuizExists = quizManifests.some(
-  (manifest) => manifest.slug === appSettings.featuredQuizSlug,
-)
-
-if (!featuredQuizExists) {
-  throw new Error(
-    `Featured quiz slug "${appSettings.featuredQuizSlug}" does not match a registered quiz manifest.`,
-  )
-}
+const summary = validateAuthoredContent(quizManifests, appSettings)
 
 console.log(
-  `Validated ${quizManifests.length} quiz ${manifestCountLabel} and app settings.`,
+  `Validated ${summary.manifestCount} quiz ${summary.manifestCountLabel} and app settings.`,
 )
