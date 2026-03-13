@@ -9,7 +9,7 @@
     "db:migrate:local": "wrangler d1 migrations apply QUIZ_DB --local --env local",
     "content:sync:local": "node --experimental-strip-types ./scripts/sync-content.ts",
     "generate:routes": "node ./scripts/generate-routes.mjs",
-    "test": "node --experimental-strip-types --test --test-concurrency=1 ./tests/*.test.ts",
+    "test": "node --experimental-strip-types --test --test-concurrency=1 ./tests/app-settings.test.ts ./tests/content-validation.test.ts ./tests/quiz-domain.test.ts",
     "test:repository": "node --experimental-strip-types --test --test-concurrency=1 ./tests/quiz-repository.test.ts",
     "build:css": "tailwindcss -i ./src/tailwind.source.css -o ./src/tailwind.css",
     "watch:css": "tailwindcss -i ./src/tailwind.source.css -o ./src/tailwind.css --watch",
