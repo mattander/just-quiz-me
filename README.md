@@ -1,6 +1,6 @@
 # Just Quiz Me
 
-Just Quiz Me is now a TanStack Start app shell for Phase 1, running on React, TypeScript, Vite 8, Tailwind, and Cloudflare Workers.
+Just Quiz Me is now a TanStack Start app shell for Phase 1, running on React, TypeScript, Vite 8, Tailwind, React Query, TanStack Form, Valibot, and Cloudflare Workers.
 
 ## Project shape
 
@@ -9,6 +9,7 @@ Just Quiz Me is now a TanStack Start app shell for Phase 1, running on React, Ty
 - `src/routes/__root.tsx` owns the document shell and shared route metadata.
 - `src/routes/index.tsx` renders the current Phase 1 app shell landing experience.
 - `src/lib/runtime-config.ts` centralizes validated runtime config parsing for the server.
+- `src/lib/foundation.ts` holds the typed shell snapshot plus the Valibot-backed input schemas used at the current foundation boundary.
 - `src/routeTree.gen.ts` is generated on demand by `npm run generate:routes` and stays out of git.
 - `src/tailwind.source.css` is compiled into the generated `src/tailwind.css` utility layer.
 - `src/styles.css` defines the shared visual tokens and non-generated app styles.
@@ -34,12 +35,14 @@ npm run deploy
 - Keep implementation work on a dedicated branch or worktree.
 - Land changes through a pull request rather than committing on the primary branch.
 - Use [`WORKFLOW.md`](./WORKFLOW.md) when running the repo through Symphony.
+- The current Symphony Codex command is `codex --config shell_environment_policy.inherit=all --config model_reasoning_effort=medium --model gpt-5.4 app-server`.
 
 ## Hosting notes
 
 - Local development uses Vite on port `3000` and runs a Tailwind CLI watcher in parallel so the generated utility layer stays current.
 - `npm run dev` also refreshes `worker-configuration.d.ts` and loads the `env.local.vars` bindings from `wrangler.jsonc` into the Node SSR process before Vite starts.
 - Production deploys should go through `npm run deploy`, which builds the TanStack Start output and then hands the generated Cloudflare bundle to Wrangler.
+- The landing shell now exercises React Query, TanStack Form, and Valibot directly so the declared Phase 1 stack is wired into the running app instead of only installed as dependencies.
 - `workers_dev` remains disabled so the existing custom-domain deployment setup stays intact.
 - Runtime config is currently validated from two Wrangler-managed bindings: `APP_ENV` and `PUBLIC_SITE_URL`, with `production`, `preview`, and `local` values defined in `wrangler.jsonc`.
 

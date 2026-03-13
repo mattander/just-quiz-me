@@ -1,58 +1,38 @@
 import { createFileRoute } from '@tanstack/react-router'
+import { useQuery } from '@tanstack/react-query'
+import { useForm } from '@tanstack/react-form'
+import { useState } from 'react'
 import { getRuntimeConfig } from '../lib/runtime-config'
 
-type StackCard = {
-  title: string
-  description: string
-}
-
-const stackBadges = [
-  'TanStack Start',
-  'React 19',
-  'TypeScript',
-  'Vite 8',
-  'Tailwind 4',
-  'Cloudflare Workers',
-]
-
-const stackCards: StackCard[] = [
-  {
-    title: 'TanStack Start app shell',
-    description:
-      'A real Start router now owns the page shell instead of a static HTML document.',
-  },
-  {
-    title: 'React + TypeScript',
-    description:
-      'The UI is rendered through React components with strict TypeScript compiler settings.',
-  },
-  {
-    title: 'Vite 8 target',
-    description:
-      'The build and local dev workflow now runs through the Vite 8 toolchain.',
-  },
-  {
-    title: 'Tailwind working',
-    description:
-      'Utility classes and Tailwind v4 styling power the new responsive shell.',
-  },
-  {
-    title: 'Cloudflare-ready output',
-    description:
-      'Wrangler now deploys the built Start server bundle and static client assets.',
-  },
-]
-
-const bootstrapNotes = [
-  'Router shell and landing surface live in React components.',
-  'Tailwind utilities style the new Phase 1 foundation without extra config churn.',
-  'Cloudflare deploys are aligned to the built Start server output in dist/server.',
-]
+import {
+  foundationEmailSchema,
+  foundationInterestSchema,
+  foundationNameSchema,
+  foundationSnapshot,
+  foundationTrackSchema,
+  loadFoundationSnapshot,
+  type FoundationInterestInput,
+} from '../lib/foundation'
 
 export const Route = createFileRoute('/')({
   loader: () => getRuntimeConfig(),
   component: HomePage,
 })
+
+function getFirstErrorMessage(errors: readonly unknown[]): string | null {
+  for (const error of errors) {
+    if (
+      typeof error === 'object' &&
+      error !== null &&
+      'message' in error &&
+      typeof error.message === 'string'
+    ) {
+      return error.message
+    }
+  }
+
+  return null
+}
 
 function HomePage() {
   const runtimeConfig = Route.useLoaderData()
@@ -60,6 +40,26 @@ function HomePage() {
     runtimeConfig.appEnv === 'production'
       ? 'Phase 1 app shell'
       : `Phase 1 app shell · ${runtimeConfig.appEnv}`
+  const { data } = useQuery({
+    queryKey: ['foundation-snapshot'],
+    queryFn: loadFoundationSnapshot,
+    initialData: foundationSnapshot,
+  })
+  const [submittedInterest, setSubmittedInterest] =
+    useState<FoundationInterestInput | null>(null)
+  const form = useForm({
+    defaultValues: {
+      name: '',
+      email: '',
+      track: '',
+    } satisfies FoundationInterestInput,
+    validators: {
+      onSubmit: foundationInterestSchema,
+    },
+    onSubmit: async ({ value }) => {
+      setSubmittedInterest(value)
+    },
+  })
 
   return (
     <main className="mx-auto flex min-h-screen w-full max-w-6xl flex-col justify-center px-4 py-8 sm:px-6 lg:px-8">
@@ -72,7 +72,7 @@ function HomePage() {
           <div>
             <p className="eyebrow mb-4">{phaseLabel}</p>
             <div className="mb-5 flex flex-wrap gap-2">
-              {stackBadges.map((badge) => (
+              {data.badges.map((badge) => (
                 <span
                   key={badge}
                   className="rounded-full border border-[var(--panel-border)] bg-[rgba(255,255,255,0.68)] px-3 py-1 text-xs font-semibold tracking-[0.16em] text-[var(--ink)] uppercase"
@@ -117,7 +117,7 @@ function HomePage() {
           <aside className="glass-panel-soft rounded-[1.5rem] px-5 py-5 sm:px-6">
             <p className="eyebrow mb-3">Bootstrapped here</p>
             <ul className="m-0 space-y-4 p-0">
-              {bootstrapNotes.map((note) => (
+              {data.notes.map((note) => (
                 <li key={note} className="flex list-none gap-3">
                   <span className="mt-1.5 h-2.5 w-2.5 flex-none rounded-full bg-[var(--accent-teal)]" />
                   <span className="text-sm leading-6 text-[var(--muted)]">
@@ -130,21 +130,179 @@ function HomePage() {
         </div>
       </section>
 
-      <section className="mt-6 grid gap-4 md:grid-cols-2 xl:grid-cols-5">
-        {stackCards.map((card) => (
-          <article
-            key={card.title}
-            className="glass-panel-soft rounded-[1.5rem] px-5 py-5"
+      <section className="mt-6 grid gap-4 xl:grid-cols-[minmax(0,1.3fr)_minmax(22rem,0.9fr)]">
+        <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
+          {data.cards.map((card) => (
+            <article
+              key={card.title}
+              className="glass-panel-soft rounded-[1.5rem] px-5 py-5"
+            >
+              <p className="eyebrow mb-2">Ready</p>
+              <h2 className="text-lg font-semibold text-[var(--ink)]">
+                {card.title}
+              </h2>
+              <p className="mt-3 text-sm leading-6 text-[var(--muted)]">
+                {card.description}
+              </p>
+            </article>
+          ))}
+        </div>
+
+        <section className="glass-panel-soft rounded-[1.5rem] px-5 py-5 sm:px-6">
+          <p className="eyebrow mb-2">Foundation wiring</p>
+          <h2 className="text-2xl font-semibold text-[var(--ink)]">
+            Query, Form, and Valibot are live in the shell.
+          </h2>
+          <p className="mt-3 text-sm leading-6 text-[var(--muted)]">
+            This small form keeps the Phase 1 foundation honest: React Query
+            provides the shell snapshot, TanStack Form manages state, and
+            Valibot validates the typed input boundary before submission.
+          </p>
+
+          <form
+            className="mt-6 space-y-4"
+            onSubmit={(event) => {
+              event.preventDefault()
+              event.stopPropagation()
+              void form.handleSubmit()
+            }}
           >
-            <p className="eyebrow mb-2">Ready</p>
-            <h2 className="text-lg font-semibold text-[var(--ink)]">
-              {card.title}
-            </h2>
-            <p className="mt-3 text-sm leading-6 text-[var(--muted)]">
-              {card.description}
-            </p>
-          </article>
-        ))}
+            <form.Field
+              name="name"
+              validators={{
+                onBlur: foundationNameSchema,
+                onChange: foundationNameSchema,
+              }}
+            >
+              {(field) => {
+                const errorMessage = getFirstErrorMessage(
+                  field.state.meta.errors,
+                )
+
+                return (
+                  <label className="block">
+                    <span className="mb-2 block text-sm font-semibold text-[var(--ink)]">
+                      Name
+                    </span>
+                    <input
+                      className="w-full rounded-2xl border border-[var(--panel-border)] bg-[rgba(255,255,255,0.76)] px-4 py-3 text-sm text-[var(--ink)] outline-none transition focus:border-[rgba(29,138,126,0.42)] focus:ring-2 focus:ring-[rgba(29,138,126,0.18)]"
+                      value={field.state.value}
+                      onBlur={field.handleBlur}
+                      onChange={(event) => field.handleChange(event.target.value)}
+                      placeholder="Matt Anderson"
+                    />
+                    {errorMessage ? (
+                      <span className="mt-2 block text-sm text-[var(--accent-coral)]">
+                        {errorMessage}
+                      </span>
+                    ) : null}
+                  </label>
+                )
+              }}
+            </form.Field>
+
+            <form.Field
+              name="email"
+              validators={{
+                onBlur: foundationEmailSchema,
+                onChange: foundationEmailSchema,
+              }}
+            >
+              {(field) => {
+                const errorMessage = getFirstErrorMessage(
+                  field.state.meta.errors,
+                )
+
+                return (
+                  <label className="block">
+                    <span className="mb-2 block text-sm font-semibold text-[var(--ink)]">
+                      Email
+                    </span>
+                    <input
+                      className="w-full rounded-2xl border border-[var(--panel-border)] bg-[rgba(255,255,255,0.76)] px-4 py-3 text-sm text-[var(--ink)] outline-none transition focus:border-[rgba(29,138,126,0.42)] focus:ring-2 focus:ring-[rgba(29,138,126,0.18)]"
+                      type="email"
+                      value={field.state.value}
+                      onBlur={field.handleBlur}
+                      onChange={(event) => field.handleChange(event.target.value)}
+                      placeholder="matt@example.com"
+                    />
+                    {errorMessage ? (
+                      <span className="mt-2 block text-sm text-[var(--accent-coral)]">
+                        {errorMessage}
+                      </span>
+                    ) : null}
+                  </label>
+                )
+              }}
+            </form.Field>
+
+            <form.Field
+              name="track"
+              validators={{
+                onBlur: foundationTrackSchema,
+                onChange: foundationTrackSchema,
+              }}
+            >
+              {(field) => {
+                const errorMessage = getFirstErrorMessage(
+                  field.state.meta.errors,
+                )
+
+                return (
+                  <label className="block">
+                    <span className="mb-2 block text-sm font-semibold text-[var(--ink)]">
+                      First Phase 1 focus
+                    </span>
+                    <select
+                      className="w-full rounded-2xl border border-[var(--panel-border)] bg-[rgba(255,255,255,0.76)] px-4 py-3 text-sm text-[var(--ink)] outline-none transition focus:border-[rgba(29,138,126,0.42)] focus:ring-2 focus:ring-[rgba(29,138,126,0.18)]"
+                      value={field.state.value}
+                      onBlur={field.handleBlur}
+                      onChange={(event) => field.handleChange(event.target.value)}
+                    >
+                      <option value="">Choose a track</option>
+                      {data.trackOptions.map((track) => (
+                        <option key={track} value={track}>
+                          {track}
+                        </option>
+                      ))}
+                    </select>
+                    {errorMessage ? (
+                      <span className="mt-2 block text-sm text-[var(--accent-coral)]">
+                        {errorMessage}
+                      </span>
+                    ) : null}
+                  </label>
+                )
+              }}
+            </form.Field>
+
+            <form.Subscribe
+              selector={(state) => ({
+                canSubmit: state.canSubmit,
+                isSubmitting: state.isSubmitting,
+              })}
+            >
+              {({ canSubmit, isSubmitting }) => (
+                <button
+                  type="submit"
+                  className="inline-flex items-center rounded-full border border-[rgba(29,36,49,0.14)] bg-[var(--ink)] px-5 py-3 text-sm font-semibold text-white transition hover:-translate-y-0.5 hover:bg-[color-mix(in_srgb,var(--ink)_88%,black)] disabled:cursor-not-allowed disabled:opacity-60"
+                  disabled={!canSubmit}
+                >
+                  {isSubmitting ? 'Saving focus...' : 'Save Phase 1 focus'}
+                </button>
+              )}
+            </form.Subscribe>
+          </form>
+
+          {submittedInterest ? (
+            <div className="mt-4 rounded-[1.25rem] border border-[rgba(29,138,126,0.2)] bg-[rgba(29,138,126,0.1)] px-4 py-4 text-sm leading-6 text-[var(--ink)]">
+              <strong className="font-semibold">Recorded locally.</strong>{' '}
+              {submittedInterest.name} is interested in{' '}
+              {submittedInterest.track.toLowerCase()} updates at{' '}
+              {submittedInterest.email}.
+            </div>
+          ) : null}
+        </section>
       </section>
     </main>
   )
