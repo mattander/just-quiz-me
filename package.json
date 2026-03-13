@@ -5,6 +5,7 @@
   "private": true,
   "scripts": {
     "cf:typegen": "wrangler types --env-interface CloudflareEnv",
+    "content:validate": "node --experimental-strip-types ./scripts/validate-content.ts",
     "generate:routes": "node ./scripts/generate-routes.mjs",
     "build:css": "tailwindcss -i ./src/tailwind.source.css -o ./src/tailwind.css",
     "watch:css": "tailwindcss -i ./src/tailwind.source.css -o ./src/tailwind.css --watch",
