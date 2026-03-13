@@ -30,6 +30,7 @@ npm run deploy
 - Keep implementation work on a dedicated branch or worktree.
 - Land changes through a pull request rather than committing on the primary branch.
 - Use [`WORKFLOW.md`](./WORKFLOW.md) when running the repo through Symphony.
+- The current Symphony Codex command is `codex --config shell_environment_policy.inherit=all --config model_reasoning_effort=medium --model gpt-5.4 app-server`.
 
 ## Hosting notes
 

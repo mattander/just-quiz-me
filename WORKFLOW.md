@@ -23,7 +23,7 @@ agent:
   max_concurrent_agents: 3
   max_turns: 20
 codex:
-  command: /Applications/Codex.app/Contents/Resources/codex --config shell_environment_policy.inherit=all --config model_reasoning_effort=xhigh --model gpt-5.3-codex app-server
+  command: /Applications/Codex.app/Contents/Resources/codex --config shell_environment_policy.inherit=all --config model_reasoning_effort=medium --model gpt-5.4 app-server
   approval_policy: never
   thread_sandbox: danger-full-access
   turn_sandbox_policy:
