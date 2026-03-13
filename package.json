@@ -18,7 +18,7 @@
     "dev:e2e": "npm run cf:typegen && npm run build:css && npm run generate:routes && vite dev --port 4173 --strictPort",
     "build": "npm run cf:typegen && npm run build:css && npm run generate:routes && vite build",
     "typecheck": "npm run cf:typegen && npm run generate:routes && tsc --noEmit",
-    "deploy": "npm run build && wrangler deploy",
+    "deploy": "npm run build && wrangler deploy --env=\"\"",
     "cf:whoami": "wrangler whoami"
   },
   "repository": {

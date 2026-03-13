@@ -57,7 +57,7 @@ npm run deploy
 - Local development uses Vite on port `3000` and runs a Tailwind CLI watcher in parallel so the generated utility layer stays current.
 - `npm run dev` also refreshes and sanitizes `worker-configuration.d.ts`, then loads the `env.local` bindings from `wrangler.jsonc` into the Node SSR process before Vite starts.
 - `npm run dev:e2e` starts the app on port `4173` without long-running watchers so Playwright can run against a stable local target.
-- Production deploys should go through `npm run deploy`, which builds the TanStack Start output and then hands the generated Cloudflare bundle to Wrangler.
+- Production deploys should go through `npm run deploy`, which builds the TanStack Start output and then hands the generated Cloudflare bundle to Wrangler while explicitly targeting the top-level production environment.
 - The landing page now renders the existing coming-soon hero through TanStack Start so the production path stays on the app shell without reintroducing a separate static runtime.
 - `workers_dev` remains disabled so the existing custom-domain deployment setup stays intact.
 - Runtime config is currently validated from two Wrangler-managed bindings: `APP_ENV` and `PUBLIC_SITE_URL`, with production defaults plus preview and local-development overrides defined in `wrangler.jsonc`.
