@@ -51,8 +51,8 @@ npm run deploy
 - The landing page now renders the existing coming-soon hero through TanStack Start so the production path stays on the app shell without reintroducing a separate static runtime.
 - `workers_dev` remains disabled so the existing custom-domain deployment setup stays intact.
 - Runtime config is currently validated from two Wrangler-managed bindings: `APP_ENV` and `PUBLIC_SITE_URL`, with production defaults plus preview and local-development overrides defined in `wrangler.jsonc`.
-- A local D1 binding named `QUIZ_DB` now backs the Phase 1 schema; the checked-in IDs in `wrangler.jsonc` are placeholders for local development and must be replaced with real Cloudflare database IDs before remote deploy workflows can use D1.
-- Quiz authoring manifests and default settings live in code and can be checked with `npm run content:validate`, then synced into local D1 with `npm run db:migrate:local` followed by `npm run content:sync:local`.
+- A local-only D1 binding named `QUIZ_DB` now backs the Phase 1 schema for development and seed validation without checking placeholder remote database IDs into shared deploy config.
+- Quiz authoring manifests and default settings live in code and can be checked with `npm run content:validate`, then synced into local D1 with `npm run db:migrate:local` followed by `npm run content:sync:local`. The migration command targets Wrangler's `local` environment because the `QUIZ_DB` binding is intentionally scoped there.
 
 ## License
 

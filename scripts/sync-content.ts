@@ -33,6 +33,19 @@ async function main() {
 
   try {
     const statements: D1PreparedStatement[] = []
+    const manifestSlugs = quizManifests.map((manifest) => manifest.slug)
+
+    if (manifestSlugs.length > 0) {
+      const slugPlaceholders = manifestSlugs.map(() => '?').join(', ')
+
+      statements.push(
+        env.QUIZ_DB.prepare(
+          `DELETE FROM quizzes WHERE slug NOT IN (${slugPlaceholders})`,
+        ).bind(...manifestSlugs),
+      )
+    } else {
+      statements.push(env.QUIZ_DB.prepare('DELETE FROM quizzes'))
+    }
 
     statements.push(
       env.QUIZ_DB.prepare(
@@ -59,6 +72,13 @@ async function main() {
 
     for (const manifest of quizManifests) {
       const currentQuizRowId = quizRowId(manifest.id)
+
+      statements.push(
+        env.QUIZ_DB.prepare('DELETE FROM quizzes WHERE slug = ? AND id != ?').bind(
+          manifest.slug,
+          currentQuizRowId,
+        ),
+      )
 
       statements.push(
         env.QUIZ_DB.prepare('DELETE FROM quizzes WHERE id = ?').bind(currentQuizRowId),
