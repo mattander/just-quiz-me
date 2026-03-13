@@ -4,7 +4,13 @@
   --page-bottom: #f3eee7;
   --ink: #1d2431;
   --muted: #576171;
+  --panel: rgba(255, 251, 245, 0.74);
+  --panel-strong: rgba(255, 252, 248, 0.84);
+  --panel-border: rgba(29, 36, 49, 0.1);
+  --shadow: 0 22px 56px rgba(55, 33, 19, 0.1);
+  --accent-coral: #d96f4d;
   --accent-teal: #1d8a7e;
+  --accent-gold: #d4b067;
   --line: rgba(29, 36, 49, 0.14);
 }
 
@@ -55,6 +61,22 @@ a {
   color: color-mix(in srgb, var(--accent-teal) 72%, var(--ink));
 }
 
+.glass-panel {
+  border: 1px solid var(--panel-border);
+  background: var(--panel);
+  box-shadow: var(--shadow);
+  backdrop-filter: blur(12px);
+}
+
+.glass-panel-soft {
+  border: 1px solid color-mix(in srgb, var(--panel-border) 88%, white);
+  background: var(--panel-strong);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.58),
+    0 12px 32px rgba(55, 33, 19, 0.07);
+  backdrop-filter: blur(10px);
+}
+
 .landing-meta {
   border-top: 1px solid var(--line);
   padding-top: 1.25rem;
@@ -75,7 +97,13 @@ a {
     --page-bottom: #131c25;
     --ink: #f6f0e6;
     --muted: #c5ced7;
+    --panel: rgba(18, 25, 33, 0.78);
+    --panel-strong: rgba(14, 22, 30, 0.86);
+    --panel-border: rgba(246, 240, 230, 0.12);
+    --shadow: 0 26px 62px rgba(2, 6, 12, 0.32);
+    --accent-coral: #ec8a6b;
     --accent-teal: #72c6bc;
+    --accent-gold: #e0c07a;
     --line: rgba(246, 240, 230, 0.16);
   }
 
