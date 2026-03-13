@@ -20,6 +20,9 @@ const server = {
     return handleRequest(request, {
       context: {
         cloudflare: {
+          bindings: {
+            QUIZ_DB: workerEnv?.QUIZ_DB,
+          },
           runtime: getRuntimeBindings(workerEnv),
           executionContext,
         },

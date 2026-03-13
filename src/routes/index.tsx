@@ -1,12 +1,20 @@
 import { createFileRoute } from '@tanstack/react-router'
+import { getAppSettings } from '../lib/app-settings-service.ts'
 
 export const Route = createFileRoute('/')({
+  loader: () => getAppSettings(),
   component: HomePage,
 })
 
 function HomePage() {
+  const settings = Route.useLoaderData()
+
   return (
-    <main className="mx-auto flex min-h-screen w-full max-w-6xl items-center px-4 py-8 sm:px-6 lg:px-8">
+    <main
+      className="mx-auto flex min-h-screen w-full max-w-6xl items-center px-4 py-8 sm:px-6 lg:px-8"
+      data-ads-enabled={settings.adsEnabled ? 'true' : 'false'}
+      data-featured-quiz-slug={settings.featuredQuizSlug}
+    >
       <section className="glass-panel w-full overflow-hidden rounded-[2rem] px-6 py-8 sm:px-10 sm:py-12">
         <div className="grid gap-8 lg:grid-cols-[minmax(0,1fr)_minmax(20rem,0.95fr)] lg:items-center">
           <div className="max-w-2xl">
