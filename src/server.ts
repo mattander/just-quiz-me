@@ -1,6 +1,7 @@
 import type {} from './lib/server-context'
 import { createStartHandler, defaultStreamHandler } from '@tanstack/react-start/server'
 import { createQuizRepository } from './lib/quiz-repository.ts'
+import { getAppRequestContext, type AppRequestContext } from './lib/server-context.ts'
 import { buildAbsoluteUrl, buildRobotsTxt, buildSitemapXml } from './lib/seo.ts'
 import {
   parseRuntimeConfig,
@@ -65,16 +66,18 @@ const server = {
       return metadataResponse
     }
 
-    return handleRequest(request, {
-      context: {
-        cloudflare: {
-          bindings: {
-            QUIZ_DB: workerEnv?.QUIZ_DB,
-          },
-          runtime: getRuntimeBindings(workerEnv),
-          executionContext,
+    const requestContext: AppRequestContext = getAppRequestContext({
+      cloudflare: {
+        bindings: {
+          QUIZ_DB: workerEnv?.QUIZ_DB,
         },
+        runtime: getRuntimeBindings(workerEnv),
+        executionContext,
       },
+    })
+
+    return handleRequest(request, {
+      context: requestContext,
     })
   },
 } satisfies ExportedHandler<CloudflareEnv>

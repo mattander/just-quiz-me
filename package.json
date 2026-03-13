@@ -11,9 +11,11 @@
     "generate:routes": "node ./scripts/generate-routes.mjs",
     "test": "node --experimental-strip-types --test --test-concurrency=1 ./tests/app-settings.test.ts ./tests/content-validation.test.ts ./tests/quiz-domain.test.ts",
     "test:repository": "node --experimental-strip-types --test --test-concurrency=1 ./tests/quiz-repository.test.ts",
+    "test:e2e": "playwright test",
     "build:css": "tailwindcss -i ./src/tailwind.source.css -o ./src/tailwind.css",
     "watch:css": "tailwindcss -i ./src/tailwind.source.css -o ./src/tailwind.css --watch",
     "dev": "npm run cf:typegen && npm run build:css && npm run generate:routes && concurrently \"npm run watch:css\" \"vite dev --port 3000\"",
+    "dev:e2e": "npm run cf:typegen && npm run build:css && npm run generate:routes && vite dev --port 4173 --strictPort",
     "build": "npm run cf:typegen && npm run build:css && npm run generate:routes && vite build",
     "typecheck": "npm run cf:typegen && npm run generate:routes && tsc --noEmit",
     "deploy": "npm run build && wrangler deploy",
@@ -44,6 +46,7 @@
     "valibot": "^1.2.0"
   },
   "devDependencies": {
+    "@playwright/test": "^1.57.0",
     "@types/node": "^25.5.0",
     "@types/react": "^19.2.14",
     "@types/react-dom": "^19.2.3",

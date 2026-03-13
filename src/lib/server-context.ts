@@ -10,6 +10,27 @@ export type AppRequestContext = {
   }
 }
 
+export function getAppRequestContext(
+  context?: AppRequestContext,
+): AppRequestContext {
+  if (context) {
+    return context
+  }
+
+  return {
+    cloudflare: {
+      bindings: {
+        QUIZ_DB: undefined,
+      },
+      runtime: {
+        APP_ENV: process.env.APP_ENV,
+        PUBLIC_SITE_URL: process.env.PUBLIC_SITE_URL,
+      },
+      executionContext: undefined,
+    },
+  }
+}
+
 declare module '@tanstack/router-core' {
   interface Register {
     server: {
