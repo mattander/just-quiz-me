@@ -6,7 +6,7 @@ test('homepage to quiz to result flow stays playable', async ({ page }) => {
   await expect(
     page.getByRole('heading', {
       level: 1,
-      name: 'Just Quiz Me has its first playable quiz',
+      name: 'One absurd quiz. No signup. Immediate result.',
     }),
   ).toBeVisible()
 
