@@ -15,30 +15,10 @@ const storedPublishedQuizSummaryRowSchema = v.object({
 })
 
 const storedPublishedQuizRowSchema = v.object({
-  stored_id: quizIdentifierSchema,
   slug: quizIdentifierSchema,
-  status: v.literal('published'),
   title: v.pipe(v.string(), v.trim(), v.minLength(1)),
   description: v.pipe(v.string(), v.trim(), v.minLength(1)),
-})
-
-const storedQuizResultRowSchema = v.object({
-  result_key: quizIdentifierSchema,
-  title: v.pipe(v.string(), v.trim(), v.minLength(1)),
-  description: v.pipe(v.string(), v.trim(), v.minLength(1)),
-})
-
-const storedQuizQuestionOptionWeightRowSchema = v.object({
-  question_key: quizIdentifierSchema,
-  prompt: v.pipe(v.string(), v.trim(), v.minLength(1)),
-  option_key: quizIdentifierSchema,
-  label: v.pipe(v.string(), v.trim(), v.minLength(1)),
-  result_key: quizIdentifierSchema,
-  weight: v.pipe(
-    v.number(),
-    v.integer('Weight values must be whole numbers.'),
-    v.minValue(1, 'Weight values must be positive.'),
-  ),
+  manifest_json: v.pipe(v.string(), v.trim(), v.minLength(1)),
 })
 
 export type PublishedQuiz = Omit<QuizManifest, 'id' | 'status'>
@@ -52,10 +32,6 @@ type StoredPublishedQuizSummaryRow = v.InferOutput<
   typeof storedPublishedQuizSummaryRowSchema
 >
 type StoredPublishedQuizRow = v.InferOutput<typeof storedPublishedQuizRowSchema>
-type StoredQuizResultRow = v.InferOutput<typeof storedQuizResultRowSchema>
-type StoredQuizQuestionOptionWeightRow = v.InferOutput<
-  typeof storedQuizQuestionOptionWeightRowSchema
->
 
 export type QuizRepository = {
   listPublished(): Promise<PublishedQuizSummary[]>
@@ -107,8 +83,7 @@ function createD1QuizRepository(database: D1Database): QuizRepository {
         .prepare(
           `
             SELECT slug, title, description
-            FROM quizzes
-            WHERE status = 'published'
+            FROM published_quizzes
             ORDER BY slug ASC
           `,
         )
@@ -117,173 +92,45 @@ function createD1QuizRepository(database: D1Database): QuizRepository {
       return rowResult.results.map(parseStoredPublishedQuizSummaryRow)
     },
     async readPublished(slug) {
-      const quizRow = await database
-        .prepare(
-          `
-            SELECT id AS stored_id, slug, status, title, description
-            FROM quizzes
-            WHERE slug = ? AND status = 'published'
-            LIMIT 1
-          `,
-        )
-        .bind(slug)
-        .first<StoredPublishedQuizRow>()
-
-      if (!quizRow) {
-        return null
-      }
-
-      const storedQuiz = parseStoredPublishedQuizRow(quizRow)
-      const resultRows = await database
-        .prepare(
-          `
-            SELECT result_key, title, description
-            FROM quiz_results
-            WHERE quiz_id = ?
-            ORDER BY position ASC
-          `,
-        )
-        .bind(storedQuiz.stored_id)
-        .all<StoredQuizResultRow>()
-      const questionOptionWeightRows = await database
-        .prepare(
-          `
-            SELECT
-              quiz_questions.question_key,
-              quiz_questions.prompt,
-              quiz_options.option_key,
-              quiz_options.label,
-              quiz_results.result_key,
-              quiz_option_weights.weight
-            FROM quiz_questions
-            INNER JOIN quiz_options
-              ON quiz_options.question_id = quiz_questions.id
-            INNER JOIN quiz_option_weights
-              ON quiz_option_weights.option_id = quiz_options.id
-            INNER JOIN quiz_results
-              ON quiz_results.id = quiz_option_weights.result_id
-            WHERE quiz_questions.quiz_id = ?
-            ORDER BY
-              quiz_questions.position ASC,
-              quiz_options.position ASC,
-              quiz_results.position ASC
-          `,
-        )
-        .bind(storedQuiz.stored_id)
-        .all<StoredQuizQuestionOptionWeightRow>()
-
-      const manifest = parseQuizManifest({
-        // The published read surface keys quizzes by slug; the authored quiz id is
-        // not stored separately from the row primary key in D1 yet.
-        id: storedQuiz.slug,
-        slug: storedQuiz.slug,
-        status: storedQuiz.status,
-        title: storedQuiz.title,
-        description: storedQuiz.description,
-        results: resultRows.results.map((row) => {
-          const storedResult = parseStoredQuizResultRow(row)
-
-          return {
-            id: storedResult.result_key,
-            title: storedResult.title,
-            description: storedResult.description,
-          }
-        }),
-        questions: buildQuestions(questionOptionWeightRows.results),
-      })
-
-      return toPublishedQuiz(manifest)
+      return readStoredPublishedQuiz(database, slug)
     },
     async readPublishedResult(quizSlug, resultId) {
-      const resultRow = await database
-        .prepare(
-          `
-            SELECT
-              quiz_results.result_key,
-              quiz_results.title,
-              quiz_results.description
-            FROM quizzes
-            INNER JOIN quiz_results
-              ON quiz_results.quiz_id = quizzes.id
-            WHERE
-              quizzes.slug = ?
-              AND quizzes.status = 'published'
-              AND quiz_results.result_key = ?
-            LIMIT 1
-          `,
-        )
-        .bind(quizSlug, resultId)
-        .first<StoredQuizResultRow>()
+      const quiz = await readStoredPublishedQuiz(database, quizSlug)
 
-      if (!resultRow) {
+      if (!quiz) {
         return null
       }
 
-      const storedResult = parseStoredQuizResultRow(resultRow)
-
-      return {
-        id: storedResult.result_key,
-        title: storedResult.title,
-        description: storedResult.description,
-      }
+      return quiz.results.find((result) => result.id === resultId) ?? null
     },
   }
 }
 
-function buildQuestions(
-  rows: StoredQuizQuestionOptionWeightRow[],
-): PublishedQuiz['questions'] {
-  const questions = new Map<
-    string,
-    {
-      id: string
-      prompt: string
-      options: Array<{
-        id: string
-        label: string
-        weights: Array<{ resultId: string; value: number }>
-      }>
-      optionIndex: Map<string, number>
-    }
-  >()
+async function readStoredPublishedQuiz(
+  database: D1Database,
+  slug: string,
+): Promise<PublishedQuiz | null> {
+  const quizRow = await database
+    .prepare(
+      `
+        SELECT slug, title, description, manifest_json
+        FROM published_quizzes
+        WHERE slug = ?
+        LIMIT 1
+      `,
+    )
+    .bind(slug)
+    .first<StoredPublishedQuizRow>()
 
-  for (const row of rows) {
-    const storedRow = parseStoredQuizQuestionOptionWeightRow(row)
-    let question = questions.get(storedRow.question_key)
-
-    if (!question) {
-      question = {
-        id: storedRow.question_key,
-        prompt: storedRow.prompt,
-        options: [],
-        optionIndex: new Map(),
-      }
-      questions.set(storedRow.question_key, question)
-    }
-
-    const existingOptionIndex = question.optionIndex.get(storedRow.option_key)
-
-    if (existingOptionIndex === undefined) {
-      question.optionIndex.set(storedRow.option_key, question.options.length)
-      question.options.push({
-        id: storedRow.option_key,
-        label: storedRow.label,
-        weights: [{ resultId: storedRow.result_key, value: storedRow.weight }],
-      })
-      continue
-    }
-
-    question.options[existingOptionIndex].weights.push({
-      resultId: storedRow.result_key,
-      value: storedRow.weight,
-    })
+  if (!quizRow) {
+    return null
   }
 
-  return Array.from(questions.values()).map(({ id, prompt, options }) => ({
-    id,
-    prompt,
-    options,
-  }))
+  const storedQuiz = parseStoredPublishedQuizRow(quizRow)
+  const parsedManifest: unknown = JSON.parse(storedQuiz.manifest_json)
+  const manifest = parseQuizManifest(parsedManifest)
+
+  return toPublishedQuiz(manifest)
 }
 
 function findSeededPublishedManifest(slug: string): QuizManifest | undefined {
@@ -331,30 +178,6 @@ function parseStoredPublishedQuizRow(
 
   if (!result.success) {
     throw new Error(`Invalid published quiz row.\n${v.summarize(result.issues)}`)
-  }
-
-  return result.output
-}
-
-function parseStoredQuizResultRow(input: StoredQuizResultRow): StoredQuizResultRow {
-  const result = v.safeParse(storedQuizResultRowSchema, input)
-
-  if (!result.success) {
-    throw new Error(`Invalid quiz result row.\n${v.summarize(result.issues)}`)
-  }
-
-  return result.output
-}
-
-function parseStoredQuizQuestionOptionWeightRow(
-  input: StoredQuizQuestionOptionWeightRow,
-): StoredQuizQuestionOptionWeightRow {
-  const result = v.safeParse(storedQuizQuestionOptionWeightRowSchema, input)
-
-  if (!result.success) {
-    throw new Error(
-      `Invalid quiz question option weight row.\n${v.summarize(result.issues)}`,
-    )
   }
 
   return result.output

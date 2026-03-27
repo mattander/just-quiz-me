@@ -1,5 +1,5 @@
 import assert from 'node:assert/strict'
-import { readFile } from 'node:fs/promises'
+import { readFile, readdir } from 'node:fs/promises'
 import test from 'node:test'
 import { getPlatformProxy } from 'wrangler'
 import {
@@ -8,7 +8,7 @@ import {
 } from '../src/lib/quiz-repository.ts'
 import { parseQuizManifest, type QuizManifest } from '../src/lib/quiz-manifest.ts'
 
-const migrationFileUrl = new URL('../migrations/0001_phase1_schema.sql', import.meta.url)
+const migrationsDirectoryUrl = new URL('../migrations/', import.meta.url)
 
 const publishedQuizFixture = parseQuizManifest({
   id: 'which-chaotic-breakfast-are-you',
@@ -96,12 +96,12 @@ test('seeded repository lists the authored published quizzes without a database'
   const repository = createQuizRepository(undefined)
   const quizzes = await repository.listPublished()
 
-    assert.deepEqual(quizzes, [
-      {
-        slug: 'which-chaotic-breakfast-are-you',
-        title: 'Which Chaotic Breakfast Are You?',
-        description:
-          'A politely unhinged breakfast quiz about coping styles, social energy, and how much structure your morning can survive.',
+  assert.deepEqual(quizzes, [
+    {
+      slug: 'which-chaotic-breakfast-are-you',
+      title: 'Which Chaotic Breakfast Are You?',
+      description:
+        'A politely unhinged breakfast quiz about coping styles, social energy, and how much structure your morning can survive.',
     },
   ])
 })
@@ -179,12 +179,12 @@ async function withQuizDatabase(
 }
 
 async function resetQuizDatabase(database: D1Database): Promise<void> {
-  const migrationSql = await readFile(migrationFileUrl, 'utf8')
-  const migrationStatements = migrationSql
-    .split(';')
-    .map((statement) => statement.trim())
-    .filter((statement) => statement.length > 0)
+  const migrationStatements = await readMigrationStatements()
   const deleteStatements = [
+    'DELETE FROM published_quizzes',
+    'DELETE FROM quiz_publications',
+    'DELETE FROM quiz_revisions',
+    'DELETE FROM quiz_documents',
     'DELETE FROM quiz_option_weights',
     'DELETE FROM quiz_options',
     'DELETE FROM quiz_questions',
@@ -209,147 +209,142 @@ async function seedQuizFixtures(
   const statements: D1PreparedStatement[] = []
 
   for (const manifest of manifests) {
-    const quizId = quizRowId(manifest.id)
+    const quizId = quizDocumentId(manifest.id)
+    const revisionId = quizSeedRevisionId(manifest.id)
+    const manifestJson = JSON.stringify(manifest)
 
     statements.push(
       database
         .prepare(
           `
-            INSERT INTO quizzes (
+            INSERT INTO quiz_documents (
               id,
               slug,
-              status,
-              title,
-              description,
               created_at,
               updated_at
             )
-            VALUES (?, ?, ?, ?, ?, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+            VALUES (?, ?, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+          `,
+        )
+        .bind(quizId, manifest.slug),
+    )
+
+    statements.push(
+      database
+        .prepare(
+          `
+            INSERT INTO quiz_revisions (
+              id,
+              quiz_id,
+              revision_number,
+              source_kind,
+              source_identifier,
+              status,
+              title,
+              description,
+              manifest_json,
+              created_at,
+              updated_at
+            )
+            VALUES (?, ?, 1, 'seed_manifest', ?, ?, ?, ?, ?, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
           `,
         )
         .bind(
+          revisionId,
           quizId,
-          manifest.slug,
+          quizSeedSourceIdentifier(manifest.id),
           manifest.status,
           manifest.title,
           manifest.description,
+          manifestJson,
         ),
     )
 
-    for (const [resultIndex, result] of manifest.results.entries()) {
+    if (manifest.status === 'published') {
       statements.push(
         database
           .prepare(
             `
-              INSERT INTO quiz_results (
-                id,
+              INSERT INTO quiz_publications (
                 quiz_id,
-                result_key,
-                position,
-                title,
-                description
+                revision_id,
+                published_at,
+                updated_at
               )
-              VALUES (?, ?, ?, ?, ?, ?)
+              VALUES (?, ?, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+            `,
+          )
+          .bind(quizId, revisionId),
+      )
+
+      statements.push(
+        database
+          .prepare(
+            `
+              INSERT INTO published_quizzes (
+                quiz_id,
+                revision_id,
+                slug,
+                title,
+                description,
+                manifest_json,
+                updated_at
+              )
+              VALUES (?, ?, ?, ?, ?, ?, CURRENT_TIMESTAMP)
             `,
           )
           .bind(
-            resultRowId(manifest.id, result.id),
             quizId,
-            result.id,
-            resultIndex + 1,
-            result.title,
-            result.description,
+            revisionId,
+            manifest.slug,
+            manifest.title,
+            manifest.description,
+            manifestJson,
           ),
       )
-    }
-
-    for (const [questionIndex, question] of manifest.questions.entries()) {
-      const questionId = questionRowId(manifest.id, question.id)
-
-      statements.push(
-        database
-          .prepare(
-            `
-              INSERT INTO quiz_questions (
-                id,
-                quiz_id,
-                question_key,
-                position,
-                prompt
-              )
-              VALUES (?, ?, ?, ?, ?)
-            `,
-          )
-          .bind(questionId, quizId, question.id, questionIndex + 1, question.prompt),
-      )
-
-      for (const [optionIndex, option] of question.options.entries()) {
-        const optionId = optionRowId(manifest.id, question.id, option.id)
-
-        statements.push(
-          database
-            .prepare(
-              `
-                INSERT INTO quiz_options (
-                  id,
-                  question_id,
-                  option_key,
-                  position,
-                  label
-                )
-                VALUES (?, ?, ?, ?, ?)
-              `,
-            )
-            .bind(
-              optionId,
-              questionId,
-              option.id,
-              optionIndex + 1,
-              option.label,
-            ),
-        )
-
-        for (const weight of option.weights) {
-          statements.push(
-            database
-              .prepare(
-                `
-                  INSERT INTO quiz_option_weights (
-                    option_id,
-                    result_id,
-                    weight
-                  )
-                  VALUES (?, ?, ?)
-                `,
-              )
-              .bind(optionId, resultRowId(manifest.id, weight.resultId), weight.value),
-          )
-        }
-      }
     }
   }
 
   await database.batch(statements)
 }
 
-function quizRowId(quizId: string): string {
+async function readMigrationStatements(): Promise<string[]> {
+  const migrationEntries = await readdir(migrationsDirectoryUrl, {
+    withFileTypes: true,
+  })
+  const migrationFiles = migrationEntries
+    .filter((entry) => entry.isFile() && entry.name.endsWith('.sql'))
+    .map((entry) => entry.name)
+    .sort()
+  const migrationStatements: string[] = []
+
+  for (const migrationFile of migrationFiles) {
+    const migrationSql = await readFile(
+      new URL(migrationFile, migrationsDirectoryUrl),
+      'utf8',
+    )
+
+    for (const statement of migrationSql
+      .split(';')
+      .map((value) => value.trim())
+      .filter((value) => value.length > 0)) {
+      migrationStatements.push(statement)
+    }
+  }
+
+  return migrationStatements
+}
+
+function quizDocumentId(quizId: string): string {
   return `quiz:${quizId}`
 }
 
-function resultRowId(quizId: string, resultId: string): string {
-  return `${quizRowId(quizId)}:result:${resultId}`
+function quizSeedRevisionId(quizId: string): string {
+  return `${quizDocumentId(quizId)}:revision:seed`
 }
 
-function questionRowId(quizId: string, questionId: string): string {
-  return `${quizRowId(quizId)}:question:${questionId}`
-}
-
-function optionRowId(
-  quizId: string,
-  questionId: string,
-  optionId: string,
-): string {
-  return `${questionRowId(quizId, questionId)}:option:${optionId}`
+function quizSeedSourceIdentifier(quizId: string): string {
+  return `seed-manifest:${quizId}`
 }
 
 function toPublishedQuizFixture(manifest: QuizManifest): PublishedQuiz {
