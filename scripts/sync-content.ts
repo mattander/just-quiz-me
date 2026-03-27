@@ -1,29 +1,17 @@
 import { getPlatformProxy } from 'wrangler'
 import { appSettings } from '../src/content/settings/index.ts'
 import { quizManifests } from '../src/content/quizzes/index.ts'
+import {
+  editorialQuizRowId,
+  quizRevisionOptionRowId,
+  quizRevisionQuestionRowId,
+  quizRevisionResultRowId,
+  quizRevisionRowId,
+  seededQuizRevisionNumber,
+} from '../src/lib/quiz-storage.ts'
 
 function toSqliteBoolean(value: boolean): number {
   return value ? 1 : 0
-}
-
-function quizRowId(quizId: string): string {
-  return `quiz:${quizId}`
-}
-
-function resultRowId(quizId: string, resultId: string): string {
-  return `${quizRowId(quizId)}:result:${resultId}`
-}
-
-function questionRowId(quizId: string, questionId: string): string {
-  return `${quizRowId(quizId)}:question:${questionId}`
-}
-
-function optionRowId(
-  quizId: string,
-  questionId: string,
-  optionId: string,
-): string {
-  return `${questionRowId(quizId, questionId)}:option:${optionId}`
 }
 
 async function main() {
@@ -43,19 +31,30 @@ async function main() {
     }
 
     const statements: D1PreparedStatement[] = []
-    const manifestSlugs = quizManifests.map((manifest) => manifest.slug)
+    const editorialQuizIds = quizManifests.map((manifest) =>
+      editorialQuizRowId(manifest.id),
+    )
 
-    if (manifestSlugs.length > 0) {
-      const slugPlaceholders = manifestSlugs.map(() => '?').join(', ')
+    if (editorialQuizIds.length > 0) {
+      const editorialQuizPlaceholders = editorialQuizIds.map(() => '?').join(', ')
 
       statements.push(
         env.QUIZ_DB.prepare(
-          `DELETE FROM quizzes WHERE slug NOT IN (${slugPlaceholders})`,
-        ).bind(...manifestSlugs),
+          `
+            DELETE FROM editorial_quizzes
+            WHERE id NOT IN (${editorialQuizPlaceholders})
+          `,
+        ).bind(...editorialQuizIds),
       )
     } else {
-      statements.push(env.QUIZ_DB.prepare('DELETE FROM quizzes'))
+      statements.push(env.QUIZ_DB.prepare('DELETE FROM editorial_quizzes'))
     }
+
+    statements.push(env.QUIZ_DB.prepare('DELETE FROM quiz_option_weights'))
+    statements.push(env.QUIZ_DB.prepare('DELETE FROM quiz_options'))
+    statements.push(env.QUIZ_DB.prepare('DELETE FROM quiz_questions'))
+    statements.push(env.QUIZ_DB.prepare('DELETE FROM quiz_results'))
+    statements.push(env.QUIZ_DB.prepare('DELETE FROM quizzes'))
 
     statements.push(
       env.QUIZ_DB.prepare(
@@ -81,35 +80,50 @@ async function main() {
     )
 
     for (const manifest of quizManifests) {
-      const currentQuizRowId = quizRowId(manifest.id)
-
-      statements.push(
-        env.QUIZ_DB.prepare('DELETE FROM quizzes WHERE slug = ? AND id != ?').bind(
-          manifest.slug,
-          currentQuizRowId,
-        ),
+      const editorialQuizId = editorialQuizRowId(manifest.id)
+      const quizRevisionId = quizRevisionRowId(
+        manifest.id,
+        seededQuizRevisionNumber,
       )
 
       statements.push(
-        env.QUIZ_DB.prepare('DELETE FROM quizzes WHERE id = ?').bind(currentQuizRowId),
+        env.QUIZ_DB.prepare(
+          'DELETE FROM editorial_quizzes WHERE id = ?',
+        ).bind(editorialQuizId),
       )
 
       statements.push(
         env.QUIZ_DB.prepare(
           `
-            INSERT INTO quizzes (
+            INSERT INTO editorial_quizzes (
               id,
+              created_at,
+              updated_at
+            )
+            VALUES (?, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+          `,
+        ).bind(editorialQuizId),
+      )
+
+      statements.push(
+        env.QUIZ_DB.prepare(
+          `
+            INSERT INTO quiz_revisions (
+              id,
+              editorial_quiz_id,
+              revision_number,
               slug,
               status,
               title,
               description,
-              created_at,
-              updated_at
+              created_at
             )
-            VALUES (?, ?, ?, ?, ?, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+            VALUES (?, ?, ?, ?, ?, ?, ?, CURRENT_TIMESTAMP)
           `,
         ).bind(
-          currentQuizRowId,
+          quizRevisionId,
+          editorialQuizId,
+          seededQuizRevisionNumber,
           manifest.slug,
           manifest.status,
           manifest.title,
@@ -117,13 +131,29 @@ async function main() {
         ),
       )
 
+      if (manifest.status === 'published') {
+        statements.push(
+          env.QUIZ_DB.prepare(
+            `
+              INSERT INTO published_quiz_revisions (
+                editorial_quiz_id,
+                quiz_revision_id,
+                slug,
+                published_at
+              )
+              VALUES (?, ?, ?, CURRENT_TIMESTAMP)
+            `,
+          ).bind(editorialQuizId, quizRevisionId, manifest.slug),
+        )
+      }
+
       for (const [resultIndex, result] of manifest.results.entries()) {
         statements.push(
           env.QUIZ_DB.prepare(
             `
-              INSERT INTO quiz_results (
+              INSERT INTO quiz_revision_results (
                 id,
-                quiz_id,
+                quiz_revision_id,
                 result_key,
                 position,
                 title,
@@ -132,8 +162,12 @@ async function main() {
               VALUES (?, ?, ?, ?, ?, ?)
             `,
           ).bind(
-            resultRowId(manifest.id, result.id),
-            currentQuizRowId,
+            quizRevisionResultRowId(
+              manifest.id,
+              seededQuizRevisionNumber,
+              result.id,
+            ),
+            quizRevisionId,
             result.id,
             resultIndex + 1,
             result.title,
@@ -143,14 +177,18 @@ async function main() {
       }
 
       for (const [questionIndex, question] of manifest.questions.entries()) {
-        const currentQuestionRowId = questionRowId(manifest.id, question.id)
+        const currentQuestionRowId = quizRevisionQuestionRowId(
+          manifest.id,
+          seededQuizRevisionNumber,
+          question.id,
+        )
 
         statements.push(
           env.QUIZ_DB.prepare(
             `
-              INSERT INTO quiz_questions (
+              INSERT INTO quiz_revision_questions (
                 id,
-                quiz_id,
+                quiz_revision_id,
                 question_key,
                 position,
                 prompt
@@ -159,7 +197,7 @@ async function main() {
             `,
           ).bind(
             currentQuestionRowId,
-            currentQuizRowId,
+            quizRevisionId,
             question.id,
             questionIndex + 1,
             question.prompt,
@@ -167,12 +205,17 @@ async function main() {
         )
 
         for (const [optionIndex, option] of question.options.entries()) {
-          const currentOptionRowId = optionRowId(manifest.id, question.id, option.id)
+          const currentOptionRowId = quizRevisionOptionRowId(
+            manifest.id,
+            seededQuizRevisionNumber,
+            question.id,
+            option.id,
+          )
 
           statements.push(
             env.QUIZ_DB.prepare(
               `
-                INSERT INTO quiz_options (
+                INSERT INTO quiz_revision_options (
                   id,
                   question_id,
                   option_key,
@@ -194,7 +237,7 @@ async function main() {
             statements.push(
               env.QUIZ_DB.prepare(
                 `
-                  INSERT INTO quiz_option_weights (
+                  INSERT INTO quiz_revision_option_weights (
                     option_id,
                     result_id,
                     weight
@@ -203,7 +246,11 @@ async function main() {
                 `,
               ).bind(
                 currentOptionRowId,
-                resultRowId(manifest.id, weight.resultId),
+                quizRevisionResultRowId(
+                  manifest.id,
+                  seededQuizRevisionNumber,
+                  weight.resultId,
+                ),
                 weight.value,
               ),
             )

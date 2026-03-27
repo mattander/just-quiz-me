@@ -15,9 +15,8 @@ const storedPublishedQuizSummaryRowSchema = v.object({
 })
 
 const storedPublishedQuizRowSchema = v.object({
-  stored_id: quizIdentifierSchema,
+  revision_id: quizIdentifierSchema,
   slug: quizIdentifierSchema,
-  status: v.literal('published'),
   title: v.pipe(v.string(), v.trim(), v.minLength(1)),
   description: v.pipe(v.string(), v.trim(), v.minLength(1)),
 })
@@ -106,10 +105,14 @@ function createD1QuizRepository(database: D1Database): QuizRepository {
       const rowResult = await database
         .prepare(
           `
-            SELECT slug, title, description
-            FROM quizzes
-            WHERE status = 'published'
-            ORDER BY slug ASC
+            SELECT
+              published_quiz_revisions.slug AS slug,
+              quiz_revisions.title,
+              quiz_revisions.description
+            FROM published_quiz_revisions
+            INNER JOIN quiz_revisions
+              ON quiz_revisions.id = published_quiz_revisions.quiz_revision_id
+            ORDER BY published_quiz_revisions.slug ASC
           `,
         )
         .all<StoredPublishedQuizSummaryRow>()
@@ -120,9 +123,15 @@ function createD1QuizRepository(database: D1Database): QuizRepository {
       const quizRow = await database
         .prepare(
           `
-            SELECT id AS stored_id, slug, status, title, description
-            FROM quizzes
-            WHERE slug = ? AND status = 'published'
+            SELECT
+              quiz_revisions.id AS revision_id,
+              published_quiz_revisions.slug,
+              title,
+              description
+            FROM published_quiz_revisions
+            INNER JOIN quiz_revisions
+              ON quiz_revisions.id = published_quiz_revisions.quiz_revision_id
+            WHERE published_quiz_revisions.slug = ?
             LIMIT 1
           `,
         )
@@ -138,12 +147,12 @@ function createD1QuizRepository(database: D1Database): QuizRepository {
         .prepare(
           `
             SELECT result_key, title, description
-            FROM quiz_results
-            WHERE quiz_id = ?
+            FROM quiz_revision_results
+            WHERE quiz_revision_id = ?
             ORDER BY position ASC
           `,
         )
-        .bind(storedQuiz.stored_id)
+        .bind(storedQuiz.revision_id)
         .all<StoredQuizResultRow>()
       const questionOptionWeightRows = await database
         .prepare(
@@ -155,29 +164,27 @@ function createD1QuizRepository(database: D1Database): QuizRepository {
               quiz_options.label,
               quiz_results.result_key,
               quiz_option_weights.weight
-            FROM quiz_questions
-            INNER JOIN quiz_options
+            FROM quiz_revision_questions AS quiz_questions
+            INNER JOIN quiz_revision_options AS quiz_options
               ON quiz_options.question_id = quiz_questions.id
-            INNER JOIN quiz_option_weights
+            INNER JOIN quiz_revision_option_weights AS quiz_option_weights
               ON quiz_option_weights.option_id = quiz_options.id
-            INNER JOIN quiz_results
+            INNER JOIN quiz_revision_results AS quiz_results
               ON quiz_results.id = quiz_option_weights.result_id
-            WHERE quiz_questions.quiz_id = ?
+            WHERE quiz_questions.quiz_revision_id = ?
             ORDER BY
               quiz_questions.position ASC,
               quiz_options.position ASC,
               quiz_results.position ASC
           `,
         )
-        .bind(storedQuiz.stored_id)
+        .bind(storedQuiz.revision_id)
         .all<StoredQuizQuestionOptionWeightRow>()
 
       const manifest = parseQuizManifest({
-        // The published read surface keys quizzes by slug; the authored quiz id is
-        // not stored separately from the row primary key in D1 yet.
         id: storedQuiz.slug,
         slug: storedQuiz.slug,
-        status: storedQuiz.status,
+        status: 'published',
         title: storedQuiz.title,
         description: storedQuiz.description,
         results: resultRows.results.map((row) => {
@@ -202,12 +209,13 @@ function createD1QuizRepository(database: D1Database): QuizRepository {
               quiz_results.result_key,
               quiz_results.title,
               quiz_results.description
-            FROM quizzes
-            INNER JOIN quiz_results
-              ON quiz_results.quiz_id = quizzes.id
+            FROM published_quiz_revisions
+            INNER JOIN quiz_revisions
+              ON quiz_revisions.id = published_quiz_revisions.quiz_revision_id
+            INNER JOIN quiz_revision_results AS quiz_results
+              ON quiz_results.quiz_revision_id = quiz_revisions.id
             WHERE
-              quizzes.slug = ?
-              AND quizzes.status = 'published'
+              published_quiz_revisions.slug = ?
               AND quiz_results.result_key = ?
             LIMIT 1
           `,

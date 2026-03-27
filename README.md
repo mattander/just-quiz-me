@@ -22,7 +22,7 @@ Just Quiz Me is now a TanStack Start app shell for Phase 1, running on React, Ty
 - `src/content/settings/index.ts` holds the default seeded runtime settings.
 - `src/content/quizzes/index.ts` holds the authored quiz manifests that seed D1.
 - `public/` holds static assets such as the favicon.
-- `migrations/` contains the D1 schema migrations for Phase 1 quiz data.
+- `migrations/` contains the D1 schema migrations for the Phase 1 quiz data model, including the revision-aware quiz storage tables that now back published reads.
 - `wrangler.jsonc` points Cloudflare at the built Start server bundle and client assets.
 - `worker-configuration.d.ts` is generated from Wrangler config via `npm run cf:typegen`, then sanitized to remove build-only type imports so clean-checkout typechecks stay reliable.
 
@@ -62,7 +62,7 @@ npm run deploy
 - `workers_dev` remains disabled so the existing custom-domain deployment setup stays intact.
 - Runtime config is currently validated from two Wrangler-managed bindings: `APP_ENV` and `PUBLIC_SITE_URL`, with production defaults plus preview and local-development overrides defined in `wrangler.jsonc`.
 - A local-only D1 binding named `QUIZ_DB` now backs the Phase 1 schema for development and seed validation without checking placeholder remote database IDs into shared deploy config.
-- Quiz authoring manifests and default settings live in code and can be checked with `npm run content:validate`, then synced into local D1 with `npm run db:migrate:local` followed by `npm run content:sync:local`. The migration command targets Wrangler's `local` environment because the `QUIZ_DB` binding is intentionally scoped there.
+- Quiz authoring manifests and default settings live in code and can be checked with `npm run content:validate`, then synced into local D1 with `npm run db:migrate:local` followed by `npm run content:sync:local`. The sync path now seeds editorial quiz identities, immutable revision snapshots, and explicit publication pointers instead of writing directly to the public runtime tables. The migration command targets Wrangler's `local` environment because the `QUIZ_DB` binding is intentionally scoped there.
 - Runtime settings reads now flow through a server-side repository path so the app can honor D1-backed settings when available while keeping the seeded `adsEnabled: false` default intact for environments without a database binding yet.
 - The first Phase 1 interactive flow now runs at `/quiz/:quizSlug`, validates a full answer set on submission, and redirects into `/quiz/:quizSlug/result` using URL state instead of persisted attempts.
 - Browser-level confidence for the public loop now lives in `tests/e2e/public-flow.spec.ts`, covering homepage discovery, the featured quiz submission flow, and an invalid quiz route boundary.

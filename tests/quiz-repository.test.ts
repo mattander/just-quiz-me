@@ -1,5 +1,6 @@
 import assert from 'node:assert/strict'
 import { readFile } from 'node:fs/promises'
+import { readdir } from 'node:fs/promises'
 import test from 'node:test'
 import { getPlatformProxy } from 'wrangler'
 import {
@@ -7,8 +8,15 @@ import {
   type PublishedQuiz,
 } from '../src/lib/quiz-repository.ts'
 import { parseQuizManifest, type QuizManifest } from '../src/lib/quiz-manifest.ts'
+import {
+  editorialQuizRowId,
+  quizRevisionOptionRowId,
+  quizRevisionQuestionRowId,
+  quizRevisionResultRowId,
+  quizRevisionRowId,
+} from '../src/lib/quiz-storage.ts'
 
-const migrationFileUrl = new URL('../migrations/0001_phase1_schema.sql', import.meta.url)
+const migrationsDirectoryUrl = new URL('../migrations/', import.meta.url)
 
 const publishedQuizFixture = parseQuizManifest({
   id: 'which-chaotic-breakfast-are-you',
@@ -160,6 +168,35 @@ test('repository result lookup returns published results and hides draft results
   })
 })
 
+test('repository reads the explicitly published revision when newer drafts exist', async () => {
+  await withQuizDatabase(async (database) => {
+    await seedQuizRevisionFixture(database, {
+      editorialQuizId: publishedQuizFixture.id,
+      revisions: [
+        publishedQuizFixture,
+        parseQuizManifest({
+          ...publishedQuizFixture,
+          slug: 'which-chaotic-breakfast-are-you-v2-draft',
+          title: 'Which Chaotic Breakfast Are You? Draft Revision',
+          description:
+            'A newer draft revision that should stay private until explicitly published.',
+          status: 'draft',
+        }),
+      ],
+      publishedRevisionNumber: 1,
+    })
+
+    const repository = createQuizRepository(database)
+    const quiz = await repository.readPublished('which-chaotic-breakfast-are-you')
+    const draftQuiz = await repository.readPublished(
+      'which-chaotic-breakfast-are-you-v2-draft',
+    )
+
+    assert.deepEqual(quiz, toPublishedQuizFixture(publishedQuizFixture))
+    assert.equal(draftQuiz, null)
+  })
+})
+
 async function withQuizDatabase(
   run: (database: D1Database) => Promise<void>,
 ): Promise<void> {
@@ -179,27 +216,48 @@ async function withQuizDatabase(
 }
 
 async function resetQuizDatabase(database: D1Database): Promise<void> {
-  const migrationSql = await readFile(migrationFileUrl, 'utf8')
-  const migrationStatements = migrationSql
-    .split(';')
-    .map((statement) => statement.trim())
-    .filter((statement) => statement.length > 0)
-  const deleteStatements = [
-    'DELETE FROM quiz_option_weights',
-    'DELETE FROM quiz_options',
-    'DELETE FROM quiz_questions',
-    'DELETE FROM quiz_results',
-    'DELETE FROM quizzes',
-    'DELETE FROM app_settings',
+  const migrationEntries = await readdir(migrationsDirectoryUrl, {
+    withFileTypes: true,
+  })
+  const migrationFileNames = migrationEntries
+    .filter((entry) => entry.isFile() && entry.name.endsWith('.sql'))
+    .map((entry) => entry.name)
+    .sort()
+  const dropStatements = [
+    'DROP TABLE IF EXISTS quiz_revision_option_weights',
+    'DROP TABLE IF EXISTS quiz_revision_options',
+    'DROP TABLE IF EXISTS quiz_revision_questions',
+    'DROP TABLE IF EXISTS quiz_revision_results',
+    'DROP TABLE IF EXISTS published_quiz_revisions',
+    'DROP TABLE IF EXISTS quiz_revisions',
+    'DROP TABLE IF EXISTS editorial_quizzes',
+    'DROP TABLE IF EXISTS quiz_option_weights',
+    'DROP TABLE IF EXISTS quiz_options',
+    'DROP TABLE IF EXISTS quiz_questions',
+    'DROP TABLE IF EXISTS quiz_results',
+    'DROP TABLE IF EXISTS quizzes',
+    'DROP TABLE IF EXISTS app_settings',
   ]
 
-  for (const statement of migrationStatements) {
+  for (const statement of dropStatements) {
     await database.prepare(statement).run()
   }
 
-  for (const statement of deleteStatements) {
-    await database.prepare(statement).run()
+  for (const migrationFileName of migrationFileNames) {
+    const migrationSql = await readFile(
+      new URL(migrationFileName, migrationsDirectoryUrl),
+      'utf8',
+    )
+    const migrationStatements = migrationSql
+      .split(';')
+      .map((statement) => statement.trim())
+      .filter((statement) => statement.length > 0)
+
+    for (const statement of migrationStatements) {
+      await database.prepare(statement).run()
+    }
   }
+
 }
 
 async function seedQuizFixtures(
@@ -209,26 +267,45 @@ async function seedQuizFixtures(
   const statements: D1PreparedStatement[] = []
 
   for (const manifest of manifests) {
-    const quizId = quizRowId(manifest.id)
+    const editorialQuizId = editorialQuizRowId(manifest.id)
+    const revisionId = quizRevisionRowId(manifest.id, 1)
 
     statements.push(
       database
         .prepare(
           `
-            INSERT INTO quizzes (
+            INSERT INTO editorial_quizzes (
               id,
+              created_at,
+              updated_at
+            )
+            VALUES (?, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+          `,
+        )
+        .bind(editorialQuizId),
+    )
+
+    statements.push(
+      database
+        .prepare(
+          `
+            INSERT INTO quiz_revisions (
+              id,
+              editorial_quiz_id,
+              revision_number,
               slug,
               status,
               title,
               description,
-              created_at,
-              updated_at
+              created_at
             )
-            VALUES (?, ?, ?, ?, ?, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+            VALUES (?, ?, ?, ?, ?, ?, ?, CURRENT_TIMESTAMP)
           `,
         )
         .bind(
-          quizId,
+          revisionId,
+          editorialQuizId,
+          1,
           manifest.slug,
           manifest.status,
           manifest.title,
@@ -236,14 +313,32 @@ async function seedQuizFixtures(
         ),
     )
 
+    if (manifest.status === 'published') {
+      statements.push(
+        database
+          .prepare(
+            `
+              INSERT INTO published_quiz_revisions (
+                editorial_quiz_id,
+                quiz_revision_id,
+                slug,
+                published_at
+              )
+              VALUES (?, ?, ?, CURRENT_TIMESTAMP)
+            `,
+          )
+          .bind(editorialQuizId, revisionId, manifest.slug),
+      )
+    }
+
     for (const [resultIndex, result] of manifest.results.entries()) {
       statements.push(
         database
           .prepare(
             `
-              INSERT INTO quiz_results (
+              INSERT INTO quiz_revision_results (
                 id,
-                quiz_id,
+                quiz_revision_id,
                 result_key,
                 position,
                 title,
@@ -253,8 +348,8 @@ async function seedQuizFixtures(
             `,
           )
           .bind(
-            resultRowId(manifest.id, result.id),
-            quizId,
+            quizRevisionResultRowId(manifest.id, 1, result.id),
+            revisionId,
             result.id,
             resultIndex + 1,
             result.title,
@@ -264,15 +359,15 @@ async function seedQuizFixtures(
     }
 
     for (const [questionIndex, question] of manifest.questions.entries()) {
-      const questionId = questionRowId(manifest.id, question.id)
+      const questionId = quizRevisionQuestionRowId(manifest.id, 1, question.id)
 
       statements.push(
         database
           .prepare(
             `
-              INSERT INTO quiz_questions (
+              INSERT INTO quiz_revision_questions (
                 id,
-                quiz_id,
+                quiz_revision_id,
                 question_key,
                 position,
                 prompt
@@ -280,17 +375,28 @@ async function seedQuizFixtures(
               VALUES (?, ?, ?, ?, ?)
             `,
           )
-          .bind(questionId, quizId, question.id, questionIndex + 1, question.prompt),
+          .bind(
+            questionId,
+            revisionId,
+            question.id,
+            questionIndex + 1,
+            question.prompt,
+          ),
       )
 
       for (const [optionIndex, option] of question.options.entries()) {
-        const optionId = optionRowId(manifest.id, question.id, option.id)
+        const optionId = quizRevisionOptionRowId(
+          manifest.id,
+          1,
+          question.id,
+          option.id,
+        )
 
         statements.push(
           database
             .prepare(
               `
-                INSERT INTO quiz_options (
+                INSERT INTO quiz_revision_options (
                   id,
                   question_id,
                   option_key,
@@ -314,7 +420,7 @@ async function seedQuizFixtures(
             database
               .prepare(
                 `
-                  INSERT INTO quiz_option_weights (
+                  INSERT INTO quiz_revision_option_weights (
                     option_id,
                     result_id,
                     weight
@@ -322,7 +428,11 @@ async function seedQuizFixtures(
                   VALUES (?, ?, ?)
                 `,
               )
-              .bind(optionId, resultRowId(manifest.id, weight.resultId), weight.value),
+              .bind(
+                optionId,
+                quizRevisionResultRowId(manifest.id, 1, weight.resultId),
+                weight.value,
+              ),
           )
         }
       }
@@ -330,26 +440,6 @@ async function seedQuizFixtures(
   }
 
   await database.batch(statements)
-}
-
-function quizRowId(quizId: string): string {
-  return `quiz:${quizId}`
-}
-
-function resultRowId(quizId: string, resultId: string): string {
-  return `${quizRowId(quizId)}:result:${resultId}`
-}
-
-function questionRowId(quizId: string, questionId: string): string {
-  return `${quizRowId(quizId)}:question:${questionId}`
-}
-
-function optionRowId(
-  quizId: string,
-  questionId: string,
-  optionId: string,
-): string {
-  return `${questionRowId(quizId, questionId)}:option:${optionId}`
 }
 
 function toPublishedQuizFixture(manifest: QuizManifest): PublishedQuiz {
@@ -360,4 +450,208 @@ function toPublishedQuizFixture(manifest: QuizManifest): PublishedQuiz {
     results: manifest.results,
     questions: manifest.questions,
   }
+}
+
+async function seedQuizRevisionFixture(
+  database: D1Database,
+  fixture: {
+    editorialQuizId: string
+    revisions: QuizManifest[]
+    publishedRevisionNumber: number
+  },
+): Promise<void> {
+  const statements: D1PreparedStatement[] = []
+  const editorialQuizId = editorialQuizRowId(fixture.editorialQuizId)
+
+  statements.push(
+    database
+      .prepare(
+        `
+          INSERT INTO editorial_quizzes (
+            id,
+            created_at,
+            updated_at
+          )
+          VALUES (?, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+        `,
+      )
+      .bind(editorialQuizId),
+  )
+
+  for (const [index, manifest] of fixture.revisions.entries()) {
+    const revisionNumber = index + 1
+    const revisionId = quizRevisionRowId(fixture.editorialQuizId, revisionNumber)
+
+    statements.push(
+      database
+        .prepare(
+          `
+            INSERT INTO quiz_revisions (
+              id,
+              editorial_quiz_id,
+              revision_number,
+              slug,
+              status,
+              title,
+              description,
+              created_at
+            )
+            VALUES (?, ?, ?, ?, ?, ?, ?, CURRENT_TIMESTAMP)
+          `,
+        )
+        .bind(
+          revisionId,
+          editorialQuizId,
+          revisionNumber,
+          manifest.slug,
+          manifest.status,
+          manifest.title,
+          manifest.description,
+        ),
+    )
+
+    for (const [resultIndex, result] of manifest.results.entries()) {
+      statements.push(
+        database
+          .prepare(
+            `
+              INSERT INTO quiz_revision_results (
+                id,
+                quiz_revision_id,
+                result_key,
+                position,
+                title,
+                description
+              )
+              VALUES (?, ?, ?, ?, ?, ?)
+            `,
+          )
+          .bind(
+            quizRevisionResultRowId(
+              fixture.editorialQuizId,
+              revisionNumber,
+              result.id,
+            ),
+            revisionId,
+            result.id,
+            resultIndex + 1,
+            result.title,
+            result.description,
+          ),
+      )
+    }
+
+    for (const [questionIndex, question] of manifest.questions.entries()) {
+      const questionId = quizRevisionQuestionRowId(
+        fixture.editorialQuizId,
+        revisionNumber,
+        question.id,
+      )
+
+      statements.push(
+        database
+          .prepare(
+            `
+              INSERT INTO quiz_revision_questions (
+                id,
+                quiz_revision_id,
+                question_key,
+                position,
+                prompt
+              )
+              VALUES (?, ?, ?, ?, ?)
+            `,
+          )
+          .bind(
+            questionId,
+            revisionId,
+            question.id,
+            questionIndex + 1,
+            question.prompt,
+          ),
+      )
+
+      for (const [optionIndex, option] of question.options.entries()) {
+        const optionId = quizRevisionOptionRowId(
+          fixture.editorialQuizId,
+          revisionNumber,
+          question.id,
+          option.id,
+        )
+
+        statements.push(
+          database
+            .prepare(
+              `
+                INSERT INTO quiz_revision_options (
+                  id,
+                  question_id,
+                  option_key,
+                  position,
+                  label
+                )
+                VALUES (?, ?, ?, ?, ?)
+              `,
+            )
+            .bind(
+              optionId,
+              questionId,
+              option.id,
+              optionIndex + 1,
+              option.label,
+            ),
+        )
+
+        for (const weight of option.weights) {
+          statements.push(
+            database
+              .prepare(
+                `
+                  INSERT INTO quiz_revision_option_weights (
+                    option_id,
+                    result_id,
+                    weight
+                  )
+                  VALUES (?, ?, ?)
+                `,
+              )
+              .bind(
+                optionId,
+                quizRevisionResultRowId(
+                  fixture.editorialQuizId,
+                  revisionNumber,
+                  weight.resultId,
+                ),
+                weight.value,
+              ),
+          )
+        }
+      }
+    }
+  }
+
+  statements.push(
+    database
+      .prepare(
+        `
+          INSERT INTO published_quiz_revisions (
+            editorial_quiz_id,
+            quiz_revision_id,
+            slug,
+            published_at
+          )
+          VALUES (?, ?, ?, CURRENT_TIMESTAMP)
+        `,
+      )
+      .bind(
+        editorialQuizId,
+        quizRevisionRowId(
+          fixture.editorialQuizId,
+          fixture.publishedRevisionNumber,
+        ),
+        fixture.revisions[fixture.publishedRevisionNumber - 1].slug,
+      ),
+  )
+
+  await database.batch(statements)
 }
