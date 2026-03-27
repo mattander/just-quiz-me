@@ -182,12 +182,8 @@ export type QuizManifest = v.InferOutput<typeof quizManifestSchema>
 export type QuizManifestCollection = v.InferOutput<
   typeof quizManifestCollectionSchema
 >
-export type QuizManifestInput = v.InferInput<typeof quizManifestSchema>
-export type QuizManifestCollectionInput = v.InferInput<
-  typeof quizManifestCollectionSchema
->
 
-export function parseQuizManifest(input: QuizManifestInput): QuizManifest {
+export function parseQuizManifest(input: unknown): QuizManifest {
   const result = v.safeParse(quizManifestSchema, input)
 
   if (!result.success) {
@@ -198,7 +194,7 @@ export function parseQuizManifest(input: QuizManifestInput): QuizManifest {
 }
 
 export function parseQuizManifestCollection(
-  input: QuizManifestCollectionInput,
+  input: unknown,
 ): QuizManifestCollection {
   const result = v.safeParse(quizManifestCollectionSchema, input)
 
@@ -209,12 +205,12 @@ export function parseQuizManifestCollection(
   return result.output
 }
 
-export function defineQuizManifest(input: QuizManifestInput): QuizManifest {
+export function defineQuizManifest(input: unknown): QuizManifest {
   return parseQuizManifest(input)
 }
 
 export function defineQuizManifestCollection(
-  input: QuizManifestCollectionInput,
+  input: unknown,
 ): QuizManifestCollection {
   return parseQuizManifestCollection(input)
 }
