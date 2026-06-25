@@ -6,7 +6,7 @@ test('homepage to quiz to result flow stays playable', async ({ page }) => {
   await expect(
     page.getByRole('heading', {
       level: 1,
-      name: 'Strange little quizzes with immediate consequences.',
+      name: 'Quick little quizzes for unserious people with excellent taste.',
     }),
   ).toBeVisible()
 
@@ -62,6 +62,7 @@ test('homepage to quiz to result flow stays playable', async ({ page }) => {
   await expect(
     page.getByRole('heading', { level: 1, name: 'Athena' }),
   ).toBeVisible()
+  await expect(page.getByRole('button', { name: 'Share this result' })).toBeVisible()
   await expect(page.getByText('You answered 4 of 4 questions in this round.')).toBeVisible()
 })
 

@@ -358,4 +358,475 @@ export const quizManifests = defineQuizManifestCollection([
       },
     ],
   },
+  {
+    id: 'which-email-signoff-is-your-villain-origin',
+    slug: 'which-email-signoff-is-your-villain-origin',
+    status: 'published',
+    title: 'Which Email Sign-Off Is Your Villain Origin?',
+    description:
+      'A workplace etiquette quiz about tone, restraint, and the tiny phrase that would finally push your professional patience into folklore.',
+    results: [
+      {
+        id: 'regards',
+        title: 'Regards',
+        description:
+          'Your villain origin is crisp, chilly, and impossible to misread. You tried warmth, you tried context, and now the temperature has dropped three degrees at the bottom of the email.',
+      },
+      {
+        id: 'thanks-in-advance',
+        title: 'Thanks in advance',
+        description:
+          'Your villain origin is momentum disguised as manners. You are already moving the task forward, and everyone else is discovering they were invited to agree with you.',
+      },
+      {
+        id: 'best',
+        title: 'Best',
+        description:
+          'Your villain origin is elegant restraint. Nobody can prove you meant anything by it, which is exactly why the whole thread gets quiet after your reply.',
+      },
+    ],
+    questions: [
+      {
+        id: 'ignored-request',
+        prompt: 'You sent a clear request and got no response. What is your follow-up?',
+        options: [
+          {
+            id: 'short-and-dated',
+            label: 'A short note with the original deadline restated in unmistakable language.',
+            weights: [{ resultId: 'regards', value: 3 }],
+          },
+          {
+            id: 'assume-progress',
+            label: 'A cheerful check-in that assumes the work is already underway.',
+            weights: [{ resultId: 'thanks-in-advance', value: 3 }],
+          },
+          {
+            id: 'single-line',
+            label: 'One polished sentence that makes the silence feel extremely loud.',
+            weights: [{ resultId: 'best', value: 3 }],
+          },
+        ],
+      },
+      {
+        id: 'thread-derailed',
+        prompt: 'A simple email thread becomes a festival of unrelated opinions. What do you do?',
+        options: [
+          {
+            id: 'return-to-facts',
+            label: 'Summarize the decision, name the owner, and close every escape hatch.',
+            weights: [
+              { resultId: 'regards', value: 2 },
+              { resultId: 'best', value: 1 },
+            ],
+          },
+          {
+            id: 'assign-next-step',
+            label: 'Thank everyone, then assign the obvious next step before the thread can recover.',
+            weights: [{ resultId: 'thanks-in-advance', value: 3 }],
+          },
+          {
+            id: 'remove-air',
+            label: 'Reply with such clean brevity that the thread loses oxygen.',
+            weights: [{ resultId: 'best', value: 3 }],
+          },
+        ],
+      },
+      {
+        id: 'calendar-pressure',
+        prompt: 'Someone proposes a meeting for something that should be two bullets. Your move?',
+        options: [
+          {
+            id: 'decline-with-evidence',
+            label: 'Decline and attach the two bullets, because the meeting has already happened spiritually.',
+            weights: [{ resultId: 'regards', value: 3 }],
+          },
+          {
+            id: 'send-agenda-first',
+            label: 'Send a pre-read and ask people to add comments by noon.',
+            weights: [{ resultId: 'thanks-in-advance', value: 3 }],
+          },
+          {
+            id: 'accept-but-shorten',
+            label: 'Accept, quietly cut it to fifteen minutes, and make the invite title better.',
+            weights: [{ resultId: 'best', value: 3 }],
+          },
+        ],
+      },
+      {
+        id: 'final-energy',
+        prompt: 'What feeling do you want your final email of the day to leave behind?',
+        options: [
+          {
+            id: 'boundary',
+            label: 'A clear boundary with no loose handles for follow-up chaos.',
+            weights: [{ resultId: 'regards', value: 2 }],
+          },
+          {
+            id: 'movement',
+            label: 'A sense that things are moving whether anyone feels ready or not.',
+            weights: [{ resultId: 'thanks-in-advance', value: 2 }],
+          },
+          {
+            id: 'mystique',
+            label: 'A little ambiguity, a little class, and absolutely no extra words.',
+            weights: [
+              { resultId: 'best', value: 2 },
+              { resultId: 'regards', value: 1 },
+            ],
+          },
+        ],
+      },
+    ],
+  },
+  {
+    id: 'what-kind-of-group-chat-chaos-are-you',
+    slug: 'what-kind-of-group-chat-chaos-are-you',
+    status: 'published',
+    title: 'What Kind of Group Chat Chaos Are You?',
+    description:
+      'A friendship logistics quiz about notifications, timing, and the specific way you make seven people open their phones at once.',
+    results: [
+      {
+        id: 'weather-event',
+        title: 'Weather Event',
+        description:
+          'You enter the chat with a sudden pressure change. Everyone notices, someone checks in, and the forecast is emotionally complicated for the next twenty minutes.',
+      },
+      {
+        id: 'archivist',
+        title: 'Archivist',
+        description:
+          'You remember every plan, quote, screenshot, and abandoned restaurant idea. Your chaos is not loud; it is documented, searchable, and devastatingly accurate.',
+      },
+      {
+        id: 'soft-launch',
+        title: 'Soft Launch',
+        description:
+          'You reveal major life information in fragments and let the chat assemble the puzzle. It is elegant, stressful, and probably accompanied by a vague photo.',
+      },
+    ],
+    questions: [
+      {
+        id: 'entrance',
+        prompt: 'How do you usually enter an active group chat?',
+        options: [
+          {
+            id: 'burst-in',
+            label: 'Drop a big feeling with no preface and let the room adjust.',
+            weights: [{ resultId: 'weather-event', value: 3 }],
+          },
+          {
+            id: 'quote-the-past',
+            label: 'Reply to something from yesterday because the record matters.',
+            weights: [{ resultId: 'archivist', value: 3 }],
+          },
+          {
+            id: 'hint-at-news',
+            label: 'Say "so anyway" and then reveal only 40 percent of the story.',
+            weights: [{ resultId: 'soft-launch', value: 3 }],
+          },
+        ],
+      },
+      {
+        id: 'planning-dinner',
+        prompt: 'The chat is trying to pick dinner. What do you contribute?',
+        options: [
+          {
+            id: 'vibe-check',
+            label: 'An emotional read on what everyone secretly wants tonight.',
+            weights: [{ resultId: 'weather-event', value: 3 }],
+          },
+          {
+            id: 'spreadsheet-memory',
+            label: 'A reminder of who disliked which place last time, with evidence.',
+            weights: [{ resultId: 'archivist', value: 3 }],
+          },
+          {
+            id: 'mysterious-constraint',
+            label: 'A vague constraint that makes everyone ask what happened.',
+            weights: [{ resultId: 'soft-launch', value: 3 }],
+          },
+        ],
+      },
+      {
+        id: 'notification-style',
+        prompt: 'What notification pattern best represents you?',
+        options: [
+          {
+            id: 'thunderstorm',
+            label: 'Seven messages in two minutes, then total atmospheric calm.',
+            weights: [{ resultId: 'weather-event', value: 2 }],
+          },
+          {
+            id: 'single-receipt',
+            label: 'One perfectly timed screenshot that changes the case.',
+            weights: [
+              { resultId: 'archivist', value: 2 },
+              { resultId: 'weather-event', value: 1 },
+            ],
+          },
+          {
+            id: 'slow-drip',
+            label: 'A controlled drip of details that keeps everyone gently trapped.',
+            weights: [{ resultId: 'soft-launch', value: 2 }],
+          },
+        ],
+      },
+      {
+        id: 'apology',
+        prompt: 'You accidentally caused a chat spiral. How do you recover?',
+        options: [
+          {
+            id: 'own-the-vibe',
+            label: 'Admit the energy got huge and redirect everyone toward snacks.',
+            weights: [{ resultId: 'weather-event', value: 2 }],
+          },
+          {
+            id: 'summarize-cleanly',
+            label: 'Summarize what happened so nobody has to scroll back through the storm.',
+            weights: [{ resultId: 'archivist', value: 2 }],
+          },
+          {
+            id: 'promise-context',
+            label: 'Promise context later and somehow make that even more dramatic.',
+            weights: [{ resultId: 'soft-launch', value: 2 }],
+          },
+        ],
+      },
+    ],
+  },
+  {
+    id: 'which-minor-office-object-would-haunt-you',
+    slug: 'which-minor-office-object-would-haunt-you',
+    status: 'published',
+    title: 'Which Minor Office Object Would Haunt You?',
+    description:
+      'A low-stakes supernatural quiz about routines, workplace anxiety, and the tiny object most likely to become your personal ghost.',
+    results: [
+      {
+        id: 'stapler',
+        title: 'Stapler',
+        description:
+          'You are haunted by order almost working. The stapler appears when the papers are stacked, the meeting is ending, and one crooked edge threatens the whole illusion.',
+      },
+      {
+        id: 'badge-lanyard',
+        title: 'Badge Lanyard',
+        description:
+          'You are haunted by access, identity, and the fear of being one pocket away from inconvenience. The lanyard knows every door you have ever approached with false confidence.',
+      },
+      {
+        id: 'conference-room-remote',
+        title: 'Conference Room Remote',
+        description:
+          'You are haunted by tools that promise control and deliver twelve unlabeled buttons. The remote appears whenever a roomful of people starts watching you troubleshoot.',
+      },
+    ],
+    questions: [
+      {
+        id: 'office-stress',
+        prompt: 'Which tiny office stress gets under your skin fastest?',
+        options: [
+          {
+            id: 'messy-stack',
+            label: 'A stack of papers that should be simple but refuses to align.',
+            weights: [{ resultId: 'stapler', value: 3 }],
+          },
+          {
+            id: 'missing-badge',
+            label: 'The moment you pat the wrong pocket near a locked door.',
+            weights: [{ resultId: 'badge-lanyard', value: 3 }],
+          },
+          {
+            id: 'screen-wont-share',
+            label: 'A screen-share setup that turns everyone into silent witnesses.',
+            weights: [{ resultId: 'conference-room-remote', value: 3 }],
+          },
+        ],
+      },
+      {
+        id: 'haunting-location',
+        prompt: 'Where would your office ghost reveal itself?',
+        options: [
+          {
+            id: 'supply-closet',
+            label: 'The supply closet, where optimism goes to become inventory.',
+            weights: [{ resultId: 'stapler', value: 3 }],
+          },
+          {
+            id: 'elevator-bank',
+            label: 'The elevator bank, right when someone important is also waiting.',
+            weights: [{ resultId: 'badge-lanyard', value: 3 }],
+          },
+          {
+            id: 'conference-table',
+            label: 'The conference table, beside a cable nobody wants to touch.',
+            weights: [{ resultId: 'conference-room-remote', value: 3 }],
+          },
+        ],
+      },
+      {
+        id: 'coping-style',
+        prompt: 'How do you handle a small problem that becomes weirdly public?',
+        options: [
+          {
+            id: 'restore-order',
+            label: 'Fix the physical details first so your brain can come back online.',
+            weights: [{ resultId: 'stapler', value: 2 }],
+          },
+          {
+            id: 'laugh-through-it',
+            label: 'Laugh, explain too much, and keep checking your pockets.',
+            weights: [
+              { resultId: 'badge-lanyard', value: 2 },
+              { resultId: 'conference-room-remote', value: 1 },
+            ],
+          },
+          {
+            id: 'become-tech-support',
+            label: 'Take responsibility for a device you have never seen before.',
+            weights: [{ resultId: 'conference-room-remote', value: 2 }],
+          },
+        ],
+      },
+      {
+        id: 'ghost-message',
+        prompt: 'What message would the haunting be trying to send?',
+        options: [
+          {
+            id: 'finish-the-stack',
+            label: 'Small unfinished things are still taking up room in your head.',
+            weights: [{ resultId: 'stapler', value: 2 }],
+          },
+          {
+            id: 'know-your-access',
+            label: 'Belonging feels fragile when the door needs proof.',
+            weights: [{ resultId: 'badge-lanyard', value: 2 }],
+          },
+          {
+            id: 'control-is-fake',
+            label: 'Control is a myth, especially when HDMI is involved.',
+            weights: [{ resultId: 'conference-room-remote', value: 2 }],
+          },
+        ],
+      },
+    ],
+  },
+  {
+    id: 'which-parking-lot-bird-is-judging-you',
+    slug: 'which-parking-lot-bird-is-judging-you',
+    status: 'published',
+    title: 'Which Parking Lot Bird Is Judging You?',
+    description:
+      'A public errand energy quiz about snacks, confidence, and the bird most qualified to assess your choices from beside a cart return.',
+    results: [
+      {
+        id: 'seagull',
+        title: 'Seagull',
+        description:
+          'The seagull judges you loudly and without legal standing. It respects confidence, notices hesitation, and believes every snack is community property.',
+      },
+      {
+        id: 'grackle',
+        title: 'Grackle',
+        description:
+          'The grackle judges you like an auditor with feathers. It is stylish, suspicious, and absolutely aware that you parked slightly over the line.',
+      },
+      {
+        id: 'pigeon',
+        title: 'Pigeon',
+        description:
+          'The pigeon judges you with weary kindness. It has seen enough errands to know most people are doing their best, but it still has notes.',
+      },
+    ],
+    questions: [
+      {
+        id: 'cart-return',
+        prompt: 'You finish loading groceries. What happens with the cart?',
+        options: [
+          {
+            id: 'bold-return',
+            label: 'You return it with dramatic purpose and make eye contact with the weather.',
+            weights: [{ resultId: 'seagull', value: 3 }],
+          },
+          {
+            id: 'precise-return',
+            label: 'You return it perfectly and judge the cart geometry around you.',
+            weights: [{ resultId: 'grackle', value: 3 }],
+          },
+          {
+            id: 'gentle-return',
+            label: 'You return it, rescue a stray cart, and feel briefly like a community pillar.',
+            weights: [{ resultId: 'pigeon', value: 3 }],
+          },
+        ],
+      },
+      {
+        id: 'snack-threat',
+        prompt: 'A snack is visible in your hand. What is your defensive posture?',
+        options: [
+          {
+            id: 'public-challenge',
+            label: 'Hold it confidently, because fear is how they win.',
+            weights: [{ resultId: 'seagull', value: 3 }],
+          },
+          {
+            id: 'secure-perimeter',
+            label: 'Scan the perimeter and identify every interested party.',
+            weights: [{ resultId: 'grackle', value: 3 }],
+          },
+          {
+            id: 'share-a-crumb',
+            label: 'Accept that one crumb belongs to the commons.',
+            weights: [{ resultId: 'pigeon', value: 3 }],
+          },
+        ],
+      },
+      {
+        id: 'parking-style',
+        prompt: 'Which parking lot moment most reveals your character?',
+        options: [
+          {
+            id: 'commit-to-spot',
+            label: 'Committing to a spot everyone else underestimated.',
+            weights: [{ resultId: 'seagull', value: 2 }],
+          },
+          {
+            id: 'line-analysis',
+            label: 'Noticing someone crossed the line and deciding that means something.',
+            weights: [
+              { resultId: 'grackle', value: 2 },
+              { resultId: 'pigeon', value: 1 },
+            ],
+          },
+          {
+            id: 'patient-wait',
+            label: 'Waiting patiently while someone loads a trunk at geological speed.',
+            weights: [{ resultId: 'pigeon', value: 2 }],
+          },
+        ],
+      },
+      {
+        id: 'bird-verdict',
+        prompt: 'What would the bird write in its final report?',
+        options: [
+          {
+            id: 'too-visible',
+            label: 'Subject is too visible with fries and must accept consequences.',
+            weights: [{ resultId: 'seagull', value: 2 }],
+          },
+          {
+            id: 'procedural-concerns',
+            label: 'Subject shows procedural promise but inconsistent lane discipline.',
+            weights: [{ resultId: 'grackle', value: 2 }],
+          },
+          {
+            id: 'doing-best',
+            label: 'Subject is tired, trying, and probably deserves the good parking spot.',
+            weights: [{ resultId: 'pigeon', value: 2 }],
+          },
+        ],
+      },
+    ],
+  },
 ])

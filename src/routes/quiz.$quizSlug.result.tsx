@@ -1,4 +1,6 @@
 import { Link, createFileRoute, notFound } from '@tanstack/react-router'
+import { ResultShareActions } from '../components/result-share-actions.tsx'
+import { getResultEnhancement } from '../content/result-enhancements.ts'
 import { getRuntimeConfig } from '../lib/runtime-config.ts'
 import {
   buildAbsoluteUrl,
@@ -33,7 +35,9 @@ export const Route = createFileRoute('/quiz/$quizSlug/result')({
     return {
       quiz,
       result,
+      resultEnhancement: getResultEnhancement(quiz.slug, result.id),
       answeredQuestionCount: deps.answered,
+      sessionId: deps.sessionId,
       siteUrl: runtimeConfig.publicSiteUrl,
     }
   },
@@ -54,7 +58,7 @@ export const Route = createFileRoute('/quiz/$quizSlug/result')({
     return {
       meta: createPageMetadata({
         title: `${loaderData.result.title} | ${loaderData.quiz.title} | Just Quiz Me`,
-        description: loaderData.result.description,
+        description: loaderData.resultEnhancement.shareText,
         canonicalUrl,
         pageType: 'article',
         robots: 'noindex,follow',
@@ -66,7 +70,22 @@ export const Route = createFileRoute('/quiz/$quizSlug/result')({
 })
 
 function QuizResultPage() {
-  const { quiz, result, answeredQuestionCount } = Route.useLoaderData()
+  const {
+    quiz,
+    result,
+    resultEnhancement,
+    answeredQuestionCount,
+    sessionId,
+    siteUrl,
+  } = Route.useLoaderData()
+  const shareUrl = buildAbsoluteUrl(
+    siteUrl,
+    `/quiz/${quiz.slug}/result`,
+    new URLSearchParams({
+      resultId: result.id,
+      answered: String(answeredQuestionCount),
+    }),
+  )
 
   return (
     <main className="mx-auto flex min-h-screen w-full max-w-4xl px-5 py-12 sm:px-8 sm:py-16">
@@ -79,6 +98,24 @@ function QuizResultPage() {
           <p className="mt-4 text-base leading-7 text-[var(--muted)] sm:text-lg">
             {result.description}
           </p>
+
+          <div className="mt-8 border-t border-[color:var(--rule)] pt-6">
+            <p className="eyebrow">The read</p>
+            <p className="mt-3 text-base leading-8 text-[var(--ink)] sm:text-lg">
+              {resultEnhancement.detail}
+            </p>
+          </div>
+
+          <ResultShareActions
+            quizSlug={quiz.slug}
+            questionCount={quiz.questions.length}
+            resultCount={quiz.results.length}
+            resultId={result.id}
+            resultTitle={result.title}
+            shareText={resultEnhancement.shareText}
+            shareUrl={shareUrl}
+            sessionId={sessionId}
+          />
 
           <div className="mt-8 border-t border-[color:var(--rule)] pt-6">
             <p className="eyebrow">From</p>
