@@ -2,17 +2,46 @@
 
 import { Link, useNavigate } from '@tanstack/react-router'
 import type { FormEvent } from 'react'
-import { useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import type { QuizAnswerSelection } from '../lib/quiz-domain.ts'
+import { createQuizAnalyticsTracker } from '../lib/quiz-analytics.ts'
 import type { PublishedQuiz } from '../lib/quiz-repository.ts'
 import { resolveQuizSubmission } from '../lib/quiz-service.ts'
 
+function persistQuizSession(quizSlug: string, sessionId: string): void {
+  try {
+    window.sessionStorage.setItem(`justquizme-session:${quizSlug}`, sessionId)
+  } catch {
+    return
+  }
+}
+
 export function QuizPlayPage({ quiz }: { quiz: PublishedQuiz }) {
   const navigate = useNavigate()
+  const hasTrackedStartRef = useRef(false)
+  const sessionIdRef = useRef<string | null>(null)
   const [selectedOptionIds, setSelectedOptionIds] = useState<Record<string, string>>({})
   const [clientError, setClientError] = useState<string | null>(null)
   const [serverError, setServerError] = useState<string | null>(null)
   const [isSubmitting, setIsSubmitting] = useState(false)
+
+  useEffect(() => {
+    if (hasTrackedStartRef.current) {
+      return
+    }
+
+    hasTrackedStartRef.current = true
+    const tracker = createQuizAnalyticsTracker({
+      quizId: quiz.slug,
+      quizSlug: quiz.slug,
+      questionCount: quiz.questions.length,
+      resultCount: quiz.results.length,
+    })
+    const startEvent = tracker.trackStart({ source: 'direct-link' })
+
+    sessionIdRef.current = startEvent.sessionId
+    void startEvent.delivery
+  }, [quiz.questions.length, quiz.results.length, quiz.slug])
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault()
@@ -47,6 +76,22 @@ export function QuizPlayPage({ quiz }: { quiz: PublishedQuiz }) {
     setIsSubmitting(true)
 
     try {
+      const tracker = createQuizAnalyticsTracker({
+        quizId: quiz.slug,
+        quizSlug: quiz.slug,
+        questionCount: quiz.questions.length,
+        resultCount: quiz.results.length,
+      })
+      let activeSessionId = sessionIdRef.current
+
+      if (!activeSessionId) {
+        const startEvent = tracker.trackStart({ source: 'unknown' })
+
+        activeSessionId = startEvent.sessionId
+        sessionIdRef.current = activeSessionId
+        void startEvent.delivery
+      }
+
       const resolution = await resolveQuizSubmission({
         data: {
           quizSlug: quiz.slug,
@@ -55,6 +100,14 @@ export function QuizPlayPage({ quiz }: { quiz: PublishedQuiz }) {
           ),
         },
       })
+
+      await tracker.trackSubmit({
+        answerCount: resolution.answeredQuestionCount,
+        resultId: resolution.resultId,
+        sessionId: activeSessionId,
+      })
+
+      persistQuizSession(quiz.slug, activeSessionId)
 
       await navigate({
         to: '/quiz/$quizSlug/result',

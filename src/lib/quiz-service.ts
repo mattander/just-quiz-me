@@ -45,6 +45,9 @@ const quizResultSearchSchema = v.object({
     v.integer('Answered question count must be a whole number.'),
     v.minValue(1, 'Answered question count must be positive.'),
   ),
+  sessionId: v.optional(
+    v.pipe(v.string(), v.trim(), v.minLength(1, 'Session id cannot be empty.')),
+  ),
 })
 
 export type ReadPublishedQuizInput = v.InferOutput<
