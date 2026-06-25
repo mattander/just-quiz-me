@@ -6,11 +6,25 @@ type SeoPageInput = {
   canonicalUrl: string
   pageType?: SeoPageType
   robots?: string
+  imageUrl?: string
 }
 
 type SitemapEntry = {
   url: string
 }
+
+type PageMetadataEntry =
+  | {
+      title: string
+    }
+  | {
+      name: string
+      content: string
+    }
+  | {
+      property: string
+      content: string
+    }
 
 export function buildAbsoluteUrl(
   siteUrl: string,
@@ -28,7 +42,9 @@ export function buildAbsoluteUrl(
 
 export function createPageMetadata(input: SeoPageInput) {
   const pageType = input.pageType ?? 'website'
-  const metadata = [
+  const imageUrl =
+    input.imageUrl ?? new URL('/images/logo-card.png', input.canonicalUrl).toString()
+  const metadata: PageMetadataEntry[] = [
     {
       title: input.title,
     },
@@ -57,8 +73,24 @@ export function createPageMetadata(input: SeoPageInput) {
       content: 'Just Quiz Me',
     },
     {
+      property: 'og:image',
+      content: imageUrl,
+    },
+    {
+      property: 'og:image:width',
+      content: '1200',
+    },
+    {
+      property: 'og:image:height',
+      content: '630',
+    },
+    {
+      property: 'og:image:alt',
+      content: 'Just Quiz Me logo mark',
+    },
+    {
       name: 'twitter:card',
-      content: 'summary',
+      content: 'summary_large_image',
     },
     {
       name: 'twitter:title',
@@ -67,6 +99,14 @@ export function createPageMetadata(input: SeoPageInput) {
     {
       name: 'twitter:description',
       content: input.description,
+    },
+    {
+      name: 'twitter:image',
+      content: imageUrl,
+    },
+    {
+      name: 'twitter:image:alt',
+      content: 'Just Quiz Me logo mark',
     },
   ]
 

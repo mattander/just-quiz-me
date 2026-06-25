@@ -39,6 +39,24 @@ test('createPageMetadata includes canonical sharing fields and optional robots',
     ),
     true,
   )
+  assert.equal(
+    metadata.some(
+      (entry) =>
+        'property' in entry &&
+        entry.property === 'og:image' &&
+        entry.content === 'https://justquiz.me/images/logo-card.png',
+    ),
+    true,
+  )
+  assert.equal(
+    metadata.some(
+      (entry) =>
+        'name' in entry &&
+        entry.name === 'twitter:card' &&
+        entry.content === 'summary_large_image',
+    ),
+    true,
+  )
 })
 
 test('createCanonicalLinks returns a canonical link tag descriptor', () => {
