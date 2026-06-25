@@ -95,13 +95,13 @@ function QuizResultPage() {
               params={{
                 quizSlug: quiz.slug,
               }}
-              className="inline-flex items-center justify-center rounded-full bg-[color:var(--ink)] px-6 py-3 text-sm font-semibold text-[var(--page)] no-underline transition hover:opacity-90"
+              className="button-primary"
             >
               Play again
             </Link>
             <Link
               to="/"
-              className="inline-flex items-center justify-center rounded-full border border-[color:var(--rule-strong)] px-6 py-3 text-sm font-semibold text-[var(--ink)] no-underline transition hover:bg-[color:var(--surface)]"
+              className="button-secondary"
             >
               Pick another quiz
             </Link>

@@ -165,7 +165,7 @@ export function QuizPlayPage({ quiz }: { quiz: PublishedQuiz }) {
               <button
                 type="submit"
                 disabled={isSubmitting}
-                className="inline-flex items-center justify-center rounded-full bg-[color:var(--ink)] px-6 py-3 text-sm font-semibold text-[var(--page)] transition hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-60"
+                className="button-primary"
               >
                 {isSubmitting ? 'Scoring your result...' : 'See my result'}
               </button>
