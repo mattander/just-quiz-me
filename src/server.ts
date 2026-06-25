@@ -15,6 +15,9 @@ function getRuntimeBindings(workerEnv?: CloudflareEnv): RuntimeConfigInput {
   return {
     APP_ENV: workerEnv?.APP_ENV ?? process.env.APP_ENV,
     PUBLIC_SITE_URL: workerEnv?.PUBLIC_SITE_URL ?? process.env.PUBLIC_SITE_URL,
+    PUBLIC_CLOUDFLARE_WEB_ANALYTICS_TOKEN:
+      workerEnv?.PUBLIC_CLOUDFLARE_WEB_ANALYTICS_TOKEN ??
+      process.env.PUBLIC_CLOUDFLARE_WEB_ANALYTICS_TOKEN,
   }
 }
 

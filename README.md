@@ -61,6 +61,7 @@ npm run deploy
 - The homepage is intentionally simple and text-first, with the featured quiz and the rest of the published quiz pile available from the root route.
 - `workers_dev` remains disabled so the existing custom-domain deployment setup stays intact.
 - Runtime config is currently validated from two Wrangler-managed bindings: `APP_ENV` and `PUBLIC_SITE_URL`, with production defaults plus preview and local-development overrides defined in `wrangler.jsonc`.
+- Cloudflare Web Analytics is wired as the free hosted analytics provider. Set `PUBLIC_CLOUDFLARE_WEB_ANALYTICS_TOKEN` to the Web Analytics site token to emit the deferred Cloudflare beacon; leave it blank to disable analytics without code changes. The GitHub deploy workflow can inject this from the repository variable `CLOUDFLARE_WEB_ANALYTICS_TOKEN`.
 - A local-only D1 binding named `QUIZ_DB` now backs the Phase 1 schema for development and seed validation without checking placeholder remote database IDs into shared deploy config.
 - Quiz authoring manifests and default settings live in code and can be checked with `npm run content:validate`, then synced into local D1 with `npm run db:migrate:local` followed by `npm run content:sync:local`. The sync flow now imports authored manifests into the revision-aware quiz schema and refreshes the published quiz projection used by the runtime read path. The migration command targets Wrangler's `local` environment because the `QUIZ_DB` binding is intentionally scoped there.
 - Runtime settings reads now flow through a server-side repository path so the app can honor D1-backed settings when available while keeping the seeded `adsEnabled: false` default intact for environments without a database binding yet.
@@ -69,6 +70,7 @@ npm run deploy
 - Browser-level confidence for the public loop now lives in `tests/e2e/public-flow.spec.ts`, covering homepage discovery, the featured quiz submission flow, and an invalid quiz route boundary.
 - Route-level metadata now covers the homepage, quiz, and result pages, while the Worker serves `robots.txt` and `sitemap.xml` from the same runtime-configured site URL and published quiz list.
 - Analytics remains opt-in and lightweight by default: the shipped browser adapter simply dispatches a typed `justquizme:analytics` event on `window`, and richer integrations can be injected into quiz tracking call sites without introducing shared runtime state.
+- To get the Cloudflare Web Analytics token, open the Cloudflare dashboard, go to **Analytics & Logs > Web Analytics**, add `justquiz.me`, and copy the token from the generated JavaScript snippet. The standard beacon script supports History API single-page apps by default, so TanStack Router page transitions are tracked without extra client code.
 
 ## License
 

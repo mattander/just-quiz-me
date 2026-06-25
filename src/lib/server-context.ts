@@ -25,6 +25,8 @@ export function getAppRequestContext(
       runtime: {
         APP_ENV: process.env.APP_ENV,
         PUBLIC_SITE_URL: process.env.PUBLIC_SITE_URL,
+        PUBLIC_CLOUDFLARE_WEB_ANALYTICS_TOKEN:
+          process.env.PUBLIC_CLOUDFLARE_WEB_ANALYTICS_TOKEN,
       },
       executionContext: undefined,
     },

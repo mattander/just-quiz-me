@@ -3,6 +3,7 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import type { ReactNode } from 'react'
 import { useState } from 'react'
 import { ThemeToggle } from '../components/theme-toggle.tsx'
+import { getRuntimeConfig } from '../lib/runtime-config.ts'
 
 import '../tailwind.css'
 import '../styles.css'
@@ -130,7 +131,8 @@ const themeBootScript = `
 `
 
 export const Route = createRootRoute({
-  head: () => ({
+  loader: async () => getRuntimeConfig(),
+  head: ({ loaderData }) => ({
     meta: [
       {
         charSet: 'utf-8',
@@ -160,6 +162,9 @@ export const Route = createRootRoute({
         content: '#f4efe7',
       },
     ],
+    scripts: createCloudflareWebAnalyticsScripts(
+      loaderData?.cloudflareWebAnalyticsToken ?? null,
+    ),
     links: [
       {
         rel: 'icon',
@@ -192,6 +197,22 @@ export const Route = createRootRoute({
   notFoundComponent: NotFoundPage,
   shellComponent: RootDocument,
 })
+
+function createCloudflareWebAnalyticsScripts(token: string | null) {
+  if (!token) {
+    return []
+  }
+
+  return [
+    {
+      src: 'https://static.cloudflareinsights.com/beacon.min.js',
+      defer: true,
+      'data-cf-beacon': JSON.stringify({
+        token,
+      }),
+    },
+  ]
+}
 
 function RootDocument({ children }: { children: ReactNode }) {
   const [queryClient] = useState(

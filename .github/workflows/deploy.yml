@@ -38,6 +38,30 @@ jobs:
       - name: Test
         run: npm test
 
+      - name: Configure Cloudflare Web Analytics
+        if: ${{ vars.CLOUDFLARE_WEB_ANALYTICS_TOKEN != '' }}
+        run: |
+          node <<'NODE'
+          const fs = require('node:fs')
+          const token = process.env.CLOUDFLARE_WEB_ANALYTICS_TOKEN
+
+          if (!token || !/^[a-z0-9]{32}$/i.test(token)) {
+            throw new Error('CLOUDFLARE_WEB_ANALYTICS_TOKEN must be 32 alphanumeric characters.')
+          }
+
+          const configPath = 'wrangler.jsonc'
+          const config = fs.readFileSync(configPath, 'utf8')
+          fs.writeFileSync(
+            configPath,
+            config.replaceAll(
+              '"PUBLIC_CLOUDFLARE_WEB_ANALYTICS_TOKEN": ""',
+              `"PUBLIC_CLOUDFLARE_WEB_ANALYTICS_TOKEN": "${token}"`,
+            ),
+          )
+          NODE
+        env:
+          CLOUDFLARE_WEB_ANALYTICS_TOKEN: ${{ vars.CLOUDFLARE_WEB_ANALYTICS_TOKEN }}
+
       - name: Deploy
         run: npm run deploy
         env:
