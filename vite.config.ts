@@ -9,7 +9,10 @@ async function syncLocalRuntimeBindings() {
   }
 
   const { env } = await getPlatformProxy<
-    Pick<CloudflareEnv, 'APP_ENV' | 'PUBLIC_SITE_URL'>
+    Pick<
+      CloudflareEnv,
+      'APP_ENV' | 'PUBLIC_SITE_URL' | 'PUBLIC_CLOUDFLARE_WEB_ANALYTICS_TOKEN'
+    >
   >({
     environment: 'local',
   })
@@ -20,6 +23,11 @@ async function syncLocalRuntimeBindings() {
 
   if (env.PUBLIC_SITE_URL !== undefined) {
     process.env.PUBLIC_SITE_URL = env.PUBLIC_SITE_URL
+  }
+
+  if (env.PUBLIC_CLOUDFLARE_WEB_ANALYTICS_TOKEN !== undefined) {
+    process.env.PUBLIC_CLOUDFLARE_WEB_ANALYTICS_TOKEN =
+      env.PUBLIC_CLOUDFLARE_WEB_ANALYTICS_TOKEN
   }
 }
 

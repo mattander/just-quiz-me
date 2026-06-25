@@ -10,13 +10,15 @@
   "compatibility_flags": ["nodejs_compat"],
   "vars": {
     "APP_ENV": "production",
-    "PUBLIC_SITE_URL": "https://justquiz.me"
+    "PUBLIC_SITE_URL": "https://justquiz.me",
+    "PUBLIC_CLOUDFLARE_WEB_ANALYTICS_TOKEN": ""
   },
   "env": {
     "preview": {
       "vars": {
         "APP_ENV": "preview",
-        "PUBLIC_SITE_URL": "https://justquiz.me"
+        "PUBLIC_SITE_URL": "https://justquiz.me",
+        "PUBLIC_CLOUDFLARE_WEB_ANALYTICS_TOKEN": ""
       }
     },
     "local": {
@@ -30,7 +32,8 @@
       ],
       "vars": {
         "APP_ENV": "development",
-        "PUBLIC_SITE_URL": "http://localhost:3000"
+        "PUBLIC_SITE_URL": "http://localhost:3000",
+        "PUBLIC_CLOUDFLARE_WEB_ANALYTICS_TOKEN": ""
       }
     }
   },
