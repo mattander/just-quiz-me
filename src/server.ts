@@ -1,4 +1,6 @@
 import type {} from './lib/server-context'
+import * as Sentry from '@sentry/tanstackstart-react'
+import { wrapFetchWithSentry } from '@sentry/tanstackstart-react'
 import type { Register } from '@tanstack/react-router'
 import { createStartHandler, defaultStreamHandler } from '@tanstack/react-start/server'
 import { createQuizRepository } from './lib/quiz-repository.ts'
@@ -8,8 +10,24 @@ import {
   parseRuntimeConfig,
   type RuntimeConfigInput,
 } from './lib/runtime-config'
+import {
+  developmentTracesSampleRate,
+  productionTracesSampleRate,
+  sentryDsn,
+} from './sentry-config.ts'
 
 const handleRequest = createStartHandler<Register>(defaultStreamHandler)
+
+Sentry.init({
+  dsn: sentryDsn,
+  environment: process.env.APP_ENV ?? 'production',
+  sendDefaultPii: false,
+  tracesSampleRate:
+    process.env.APP_ENV === 'development'
+      ? developmentTracesSampleRate
+      : productionTracesSampleRate,
+  enableLogs: true,
+})
 
 function getRuntimeBindings(workerEnv?: CloudflareEnv): RuntimeConfigInput {
   return {
@@ -80,9 +98,15 @@ const server = {
       },
     })
 
-    return handleRequest(request, {
-      context: requestContext,
+    const sentryRequestHandler = wrapFetchWithSentry({
+      fetch(startRequest) {
+        return handleRequest(startRequest, {
+          context: requestContext,
+        })
+      },
     })
+
+    return sentryRequestHandler.fetch(request)
   },
 } satisfies ExportedHandler<CloudflareEnv>
 
