@@ -5,7 +5,7 @@ import { tanstackStart } from '@tanstack/react-start/plugin/vite'
 import { defineConfig } from 'vite'
 
 const sentryOrg = process.env.SENTRY_ORG || 'mattdev-z3'
-const sentryProject = process.env.SENTRY_PROJECT || 'javascript-tanstackstart-react'
+const sentryProject = process.env.SENTRY_PROJECT || 'just-quiz-me'
 const sentryAuthToken = process.env.SENTRY_AUTH_TOKEN
 const sentryPlugins = sentryAuthToken
   ? sentryTanstackStart({
