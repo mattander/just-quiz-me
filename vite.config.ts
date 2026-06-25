@@ -53,8 +53,8 @@ export default defineConfig(async () => {
   return {
     plugins: [
       tanstackStart(),
-      ...sentryPlugins,
       viteReact(),
+      ...sentryPlugins,
     ],
   }
 })

@@ -1,6 +1,5 @@
 import type {} from './lib/server-context'
-import * as Sentry from '@sentry/tanstackstart-react'
-import { wrapFetchWithSentry } from '@sentry/tanstackstart-react'
+import * as Sentry from '@sentry/cloudflare'
 import type { Register } from '@tanstack/react-router'
 import { createStartHandler, defaultStreamHandler } from '@tanstack/react-start/server'
 import { createQuizRepository } from './lib/quiz-repository.ts'
@@ -18,16 +17,81 @@ import {
 
 const handleRequest = createStartHandler<Register>(defaultStreamHandler)
 
-Sentry.init({
-  dsn: sentryDsn,
-  environment: process.env.APP_ENV ?? 'production',
-  sendDefaultPii: false,
-  tracesSampleRate:
-    process.env.APP_ENV === 'development'
-      ? developmentTracesSampleRate
-      : productionTracesSampleRate,
-  enableLogs: true,
-})
+function getTanStackSentrySpanDetails(request: Request) {
+  const requestUrl = new URL(request.url)
+  const method = request.method || 'GET'
+  const isServerFunctionRequest =
+    requestUrl.pathname.includes('_serverFn') ||
+    requestUrl.pathname.includes('createServerFn')
+  const op = isServerFunctionRequest
+    ? 'function.tanstackstart'
+    : 'http.server'
+  const origin = isServerFunctionRequest
+    ? 'manual.function.tanstackstart.server.cloudflare'
+    : 'manual.http.tanstackstart.server.cloudflare'
+
+  return {
+    name: `${method} ${requestUrl.pathname}`,
+    op,
+    origin,
+  }
+}
+
+async function injectSentryTraceMetaTags(
+  response: Response,
+): Promise<Response> {
+  const contentType = response.headers.get('content-type')
+
+  if (!contentType?.startsWith('text/html') || !response.body) {
+    return response
+  }
+
+  const metaTags = Sentry.getTraceMetaTags()
+
+  if (!metaTags) {
+    return response
+  }
+
+  const html = await response.text()
+
+  if (html.includes('"sentry-trace"') || html.includes("'sentry-trace'")) {
+    return new Response(html, response)
+  }
+
+  const headers = new Headers(response.headers)
+  headers.delete('content-length')
+
+  return new Response(html.replace(/<head>/i, `<head>${metaTags}`), {
+    status: response.status,
+    statusText: response.statusText,
+    headers,
+  })
+}
+
+function handleSentryStartRequest(
+  request: Request,
+  requestContext: AppRequestContext,
+) {
+  const spanDetails = getTanStackSentrySpanDetails(request)
+
+  return Sentry.startSpan(
+    {
+      name: spanDetails.name,
+      op: spanDetails.op,
+      attributes: {
+        [Sentry.SEMANTIC_ATTRIBUTE_SENTRY_ORIGIN]: spanDetails.origin,
+        [Sentry.SEMANTIC_ATTRIBUTE_SENTRY_OP]: spanDetails.op,
+      },
+    },
+    async () => {
+      const response = await handleRequest(request, {
+        context: requestContext,
+      })
+
+      return injectSentryTraceMetaTags(response)
+    },
+  )
+}
 
 function getRuntimeBindings(workerEnv?: CloudflareEnv): RuntimeConfigInput {
   return {
@@ -98,16 +162,24 @@ const server = {
       },
     })
 
-    const sentryRequestHandler = wrapFetchWithSentry({
-      fetch(startRequest) {
-        return handleRequest(startRequest, {
-          context: requestContext,
-        })
-      },
-    })
-
-    return sentryRequestHandler.fetch(request)
+    return handleSentryStartRequest(request, requestContext)
   },
 } satisfies ExportedHandler<CloudflareEnv>
 
-export default server
+export default Sentry.withSentry<CloudflareEnv>(
+  (workerEnv) => {
+    const appEnv = workerEnv?.APP_ENV ?? process.env.APP_ENV ?? 'production'
+
+    return {
+      dsn: sentryDsn,
+      environment: appEnv,
+      sendDefaultPii: false,
+      tracesSampleRate:
+        appEnv === 'development'
+          ? developmentTracesSampleRate
+          : productionTracesSampleRate,
+      enableLogs: true,
+    }
+  },
+  server,
+)
