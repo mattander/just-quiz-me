@@ -7,56 +7,56 @@ export const quizManifests = defineQuizManifestCollection([
     status: 'published',
     title: 'Which Greek God Would Block You on Slack?',
     description:
-      'A workplace mythology quiz about tone, boundaries, and the exact moment a teammate decides you are no longer their problem.',
+      'A workplace personality quiz about communication style, conflict habits, and which Olympian would quietly decide your Slack privileges are over.',
     results: [
       {
         id: 'athena',
         title: 'Athena',
         description:
-          'You are correct, organized, and a little too calm while everyone else is improvising a disaster around you.',
+          'You are the person who turns panic into a plan. Athena blocks you only after you send the fourth clarifying question, because she respects your structure but refuses to join another planning thread.',
       },
       {
         id: 'dionysus',
         title: 'Dionysus',
         description:
-          'You keep morale alive through charm, menace, and the suggestion that no policy document can truly contain you.',
+          'You bring energy, jokes, and emotional momentum into rooms that were previously dying under a shared agenda. Dionysus blocks you when the bit becomes stronger than the meeting, but he checks back later because morale improved.',
       },
       {
         id: 'hades',
         title: 'Hades',
         description:
-          'You are reserved, observant, and somehow always the person with the final say when things get weird.',
+          'You keep your circle small, your receipts organized, and your boundaries beautifully immovable. Hades blocks you because you both know the conversation ended three messages ago and silence is the cleanest project management tool.',
       },
     ],
     questions: [
       {
         id: 'status-update',
-        prompt: 'Your team asks for a quick status update. You reply with...',
+        prompt: 'Your team asks for a quick status update. What do you send?',
         options: [
           {
             id: 'bullet-list',
-            label: 'Three tidy bullets, one risk, and a next step.',
+            label: 'Three clear bullets: what changed, what is blocked, and what happens next.',
             weights: [{ resultId: 'athena', value: 3 }],
           },
           {
             id: 'voice-note',
-            label: 'A voice note with energy, context, and one avoidable tangent.',
+            label: 'A lively voice note that gives context and somehow makes everyone less tense.',
             weights: [{ resultId: 'dionysus', value: 3 }],
           },
           {
             id: 'single-sentence',
-            label: 'One sentence so dense it counts as a minor spell.',
+            label: 'One careful sentence that answers the question and quietly closes the loop.',
             weights: [{ resultId: 'hades', value: 3 }],
           },
         ],
       },
       {
         id: 'meeting-vibe',
-        prompt: 'In a bad meeting, your survival strategy is...',
+        prompt: 'A meeting starts drifting off the rails. What do you do first?',
         options: [
           {
             id: 'diagram-it',
-            label: 'Draw the hidden structure and make the room face it.',
+            label: 'Name the decision, map the tradeoffs, and get everyone back to the point.',
             weights: [
               { resultId: 'athena', value: 2 },
               { resultId: 'hades', value: 1 },
@@ -64,49 +64,49 @@ export const quizManifests = defineQuizManifestCollection([
           },
           {
             id: 'turn-it-into-a-bit',
-            label: 'Turn it into a bit and see who deserves to keep up.',
+            label: 'Use a well-timed joke to reset the room before everyone loses the will to live.',
             weights: [{ resultId: 'dionysus', value: 3 }],
           },
           {
             id: 'haunt-the-chat',
-            label: 'Say very little now and become unforgettable later in the thread.',
+            label: 'Stay quiet in the room, then drop the exact right summary in the follow-up thread.',
             weights: [{ resultId: 'hades', value: 3 }],
           },
         ],
       },
       {
         id: 'calendar-crime',
-        prompt: 'A coworker books a Friday 4:30 p.m. meeting. Your first instinct is...',
+        prompt: 'A coworker books a Friday 4:30 p.m. meeting. What is your move?',
         options: [
           {
             id: 'decline-with-context',
-            label: 'Decline with a polite explanation and a better alternative.',
+            label: 'Decline politely, suggest a better time, and explain what can be decided async.',
             weights: [{ resultId: 'athena', value: 3 }],
           },
           {
             id: 'arrive-with-snacks',
-            label: 'Attend purely for the spectacle and maybe bring snacks.',
+            label: 'Show up with charm, keep the mood alive, and make the best of a strange choice.',
             weights: [{ resultId: 'dionysus', value: 3 }],
           },
           {
             id: 'remember-forever',
-            label: 'Say nothing, but the ledger is updated internally.',
+            label: 'Accept it, say very little, and mentally update your trust model forever.',
             weights: [{ resultId: 'hades', value: 3 }],
           },
         ],
       },
       {
         id: 'desk-object',
-        prompt: 'Pick the desk object that feels spiritually correct.',
+        prompt: 'Which desk object best represents your work personality?',
         options: [
           {
             id: 'annotated-notebook',
-            label: 'A notebook full of plans, arrows, and judgment.',
+            label: 'A notebook full of priorities, diagrams, and backup plans.',
             weights: [{ resultId: 'athena', value: 2 }],
           },
           {
             id: 'suspicious-mug',
-            label: 'A suspicious mug with a surprisingly strong point of view.',
+            label: 'A mug that starts conversations and makes the desk feel less bleak.',
             weights: [
               { resultId: 'dionysus', value: 2 },
               { resultId: 'athena', value: 1 },
@@ -114,7 +114,7 @@ export const quizManifests = defineQuizManifestCollection([
           },
           {
             id: 'very-good-pen',
-            label: 'A very good pen you do not lend to just anyone.',
+            label: 'A very good pen that you do not lend out because trust has limits.',
             weights: [{ resultId: 'hades', value: 2 }],
           },
         ],
@@ -127,56 +127,56 @@ export const quizManifests = defineQuizManifestCollection([
     status: 'published',
     title: 'Which Kitchen Appliance Would Betray You in the Civil War?',
     description:
-      'A deeply unserious historical personality quiz about trust, pressure, and the household object most likely to sell you out dramatically.',
+      'A household loyalty quiz about pressure, grudges, and which appliance would absolutely pick a side if your kitchen turned political.',
     results: [
       {
         id: 'stand-mixer',
         title: 'Stand Mixer',
         description:
-          'Powerful, theatrical, and absolutely prepared to switch sides if the vibes improve by even fifteen percent.',
+          'You are capable, impressive, and a little too aware of your own stage presence. The stand mixer betrays you because it loves competence, but it loves being central to the operation even more.',
       },
       {
         id: 'toaster',
         title: 'Toaster',
         description:
-          'Compact, efficient, and weirdly eager to create a small disaster the second nobody is looking.',
+          'You are direct, fast, and occasionally powered by spite. The toaster betrays you in a small, decisive way: one lever, one spark, one perfectly timed denial that it was ever involved.',
       },
       {
         id: 'slow-cooker',
         title: 'Slow Cooker',
         description:
-          'Patient, charming, and fully willing to ruin you over the course of several extremely polite hours.',
+          'You are patient enough to look harmless while the whole situation quietly becomes yours. The slow cooker betrays you gradually, with warmth, plausible deniability, and a plan nobody notices until dinner.',
       },
     ],
     questions: [
       {
         id: 'marching-energy',
-        prompt: 'When a group project gets tense, you become...',
+        prompt: 'A group project starts turning into two rival camps. What role do you take?',
         options: [
           {
             id: 'loudly-capable',
-            label: 'Loudly capable and a little too pleased with your own logistics.',
+            label: 'Take charge of logistics and make sure everyone knows the plan is now serious.',
             weights: [{ resultId: 'stand-mixer', value: 3 }],
           },
           {
             id: 'small-and-sparking',
-            label: 'Small, intense, and one bad comment away from sparks.',
+            label: 'Cut through the nonsense quickly, even if a few feelings get singed.',
             weights: [{ resultId: 'toaster', value: 3 }],
           },
           {
             id: 'steady-and-worrying',
-            label: 'Steady, soothing, and somehow the most worrying person present.',
+            label: 'Stay calm, keep people talking, and slowly become the person holding the room together.',
             weights: [{ resultId: 'slow-cooker', value: 3 }],
           },
         ],
       },
       {
         id: 'suspicion-threshold',
-        prompt: 'How do you handle a suspiciously kind rival?',
+        prompt: 'Someone on the other side is suddenly being very nice. How do you handle it?',
         options: [
           {
             id: 'document-everything',
-            label: 'Document everything and prepare three outcomes in advance.',
+            label: 'Keep records, compare motives, and prepare for the obvious twist.',
             weights: [
               { resultId: 'stand-mixer', value: 2 },
               { resultId: 'slow-cooker', value: 1 },
@@ -184,49 +184,49 @@ export const quizManifests = defineQuizManifestCollection([
           },
           {
             id: 'smile-back',
-            label: 'Smile back. If treachery comes, let it be interesting.',
+            label: 'Smile back, stay loose, and wait for the exact moment to call it out.',
             weights: [{ resultId: 'toaster', value: 3 }],
           },
           {
             id: 'wait-them-out',
-            label: 'Wait them out with terrifying patience.',
+            label: 'Let them talk until they reveal what they actually want.',
             weights: [{ resultId: 'slow-cooker', value: 3 }],
           },
         ],
       },
       {
         id: 'fatal-flaw',
-        prompt: 'Your fatal flaw in a melodrama is...',
+        prompt: 'What flaw would make you vulnerable to betrayal?',
         options: [
           {
             id: 'overconfidence',
-            label: 'Overconfidence with excellent posture.',
+            label: 'Assuming that being useful means people will stay loyal.',
             weights: [{ resultId: 'stand-mixer', value: 3 }],
           },
           {
             id: 'pettiness',
-            label: 'A pettiness so efficient it almost counts as elegance.',
+            label: 'Reacting fast when a slower response would have saved you trouble.',
             weights: [{ resultId: 'toaster', value: 3 }],
           },
           {
             id: 'long-memory',
-            label: 'A long memory and the ability to weaponize silence.',
+            label: 'Holding onto every detail until the grudge has furniture.',
             weights: [{ resultId: 'slow-cooker', value: 3 }],
           },
         ],
       },
       {
         id: 'final-sign',
-        prompt: 'What sign should have told you betrayal was coming?',
+        prompt: 'What warning sign should have told you betrayal was coming?',
         options: [
           {
             id: 'too-helpful',
-            label: 'They were just a little too helpful, a little too early.',
+            label: 'They offered to organize everything before anyone asked them to.',
             weights: [{ resultId: 'stand-mixer', value: 2 }],
           },
           {
             id: 'burnt-smell',
-            label: 'There was a faint burnt smell around the whole enterprise.',
+            label: 'Small avoidable problems kept appearing near the same person.',
             weights: [
               { resultId: 'toaster', value: 2 },
               { resultId: 'stand-mixer', value: 1 },
@@ -234,7 +234,7 @@ export const quizManifests = defineQuizManifestCollection([
           },
           {
             id: 'unnatural-calm',
-            label: 'Everything was far too calm for far too long.',
+            label: 'The calm lasted too long, like someone was waiting for a timer.',
             weights: [{ resultId: 'slow-cooker', value: 2 }],
           },
         ],
@@ -247,82 +247,82 @@ export const quizManifests = defineQuizManifestCollection([
     status: 'published',
     title: 'What Kind of Town Legend Would You Accidentally Become?',
     description:
-      'A quiz about aura management, unfortunate symbolism, and the exact folklore niche you were born to occupy by mistake.',
+      'A small-town folklore quiz about how your habits, timing, and social energy would accidentally turn into a story people repeat for years.',
     results: [
       {
         id: 'bridge-figure',
         title: 'The Figure on the Bridge',
         description:
-          'You did one mysterious thing at dusk and now the local teens have made you everybody’s problem forever.',
+          'You do not try to be mysterious; you just have strong timing and a habit of appearing where the lighting is dramatic. The town turns you into a bridge story because people need an explanation for your calm, distant energy.',
       },
       {
         id: 'polite-witch',
         title: 'The Polite Witch at the Edge of Town',
         description:
-          'You are helpful, unsettling, and somehow always holding exactly the herb bundle the moment requires.',
+          'You are kind, observant, and slightly too accurate when people ask for advice. The town decides you are magical because admitting you are simply paying attention would make everyone else feel underprepared.',
       },
       {
         id: 'bell-tower-voice',
         title: 'The Voice in the Bell Tower',
         description:
-          'You are dramatic, intermittent, and capable of changing the emotional weather of a whole neighborhood.',
+          'You do not need to be seen to change the mood of a place. One comment, one song, or one perfectly timed announcement is enough for the town to build a legend around your voice.',
       },
     ],
     questions: [
       {
         id: 'first-rumor',
-        prompt: 'What starts the rumor about you?',
+        prompt: 'What harmless habit accidentally starts the rumor about you?',
         options: [
           {
             id: 'seen-at-dusk',
-            label: 'Someone saw you standing somewhere cinematic at dusk.',
+            label: 'You take the same quiet walk at dusk and accidentally look symbolic.',
             weights: [{ resultId: 'bridge-figure', value: 3 }],
           },
           {
             id: 'too-accurate-advice',
-            label: 'Your advice worked a little too well a little too often.',
+            label: 'You give practical advice that keeps being annoyingly correct.',
             weights: [{ resultId: 'polite-witch', value: 3 }],
           },
           {
             id: 'voice-carried',
-            label: 'Your voice carried once, and now everyone is making it medieval.',
+            label: 'You were overheard saying something memorable at exactly the wrong moment.',
             weights: [{ resultId: 'bell-tower-voice', value: 3 }],
           },
         ],
       },
       {
         id: 'signature-energy',
-        prompt: 'Pick your preferred unsettling energy.',
+        prompt: 'What kind of attention do people tend to give you?',
         options: [
           {
             id: 'silent-silhouette',
-            label: 'Silent silhouette with excellent posture.',
+            label: 'They notice where you are standing before they know what you are thinking.',
             weights: [{ resultId: 'bridge-figure', value: 3 }],
           },
           {
             id: 'kind-but-ominous',
-            label: 'Kind but ominous, like a recipe card with secrets.',
+            label: 'They ask for help, then tell everyone your advice felt strangely specific.',
             weights: [{ resultId: 'polite-witch', value: 3 }],
           },
           {
             id: 'beautiful-echo',
-            label: 'Beautiful echo that raises more questions than it answers.',
+            label: 'They remember the exact thing you said and repeat it with extra drama.',
             weights: [{ resultId: 'bell-tower-voice', value: 3 }],
           },
         ],
       },
       {
         id: 'town-reaction',
-        prompt: 'How does the town react to you over time?',
+        prompt: 'How does the story grow once people start repeating it?',
         options: [
           {
             id: 'invents-backstory',
-            label: 'They invent a backstory so specific it becomes civic infrastructure.',
+            label: 'They add a tragic backstory even though you were probably just waiting for a ride.',
             weights: [{ resultId: 'bridge-figure', value: 2 }],
           },
           {
             id: 'brings-gifts',
-            label: 'They bring gifts, gossip, and tomatoes from troubled gardens.',
+            label: 'They start bringing you problems, small gifts, and rumors they want explained.',
             weights: [
               { resultId: 'polite-witch', value: 2 },
               { resultId: 'bridge-figure', value: 1 },
@@ -330,28 +330,28 @@ export const quizManifests = defineQuizManifestCollection([
           },
           {
             id: 'looks-up-when-windy',
-            label: 'They start looking up whenever the wind changes.',
+            label: 'They repeat your words whenever the weather gets dramatic.',
             weights: [{ resultId: 'bell-tower-voice', value: 2 }],
           },
         ],
       },
       {
         id: 'true-motive',
-        prompt: 'What are you actually trying to do this whole time?',
+        prompt: 'What are you actually trying to do while the legend forms?',
         options: [
           {
             id: 'mind-my-business',
-            label: 'Mind your business, but with excellent silhouette work.',
+            label: 'Mind your business and enjoy a route with a nice view.',
             weights: [{ resultId: 'bridge-figure', value: 2 }],
           },
           {
             id: 'be-helpful',
-            label: 'Be helpful while preserving a reasonable amount of mystique.',
+            label: 'Help people solve normal problems without making it a whole thing.',
             weights: [{ resultId: 'polite-witch', value: 2 }],
           },
           {
             id: 'set-the-tone',
-            label: 'Set the tone and then leave people to process it.',
+            label: 'Say what needs saying, then leave before anyone asks follow-up questions.',
             weights: [{ resultId: 'bell-tower-voice', value: 2 }],
           },
         ],
