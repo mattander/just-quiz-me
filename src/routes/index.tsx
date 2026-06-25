@@ -64,7 +64,14 @@ function HomePage() {
               alt=""
               width="48"
               height="48"
-              className="h-12 w-12"
+              className="theme-logo-mark theme-logo-mark--light h-12 w-12"
+            />
+            <img
+              src="/logo-dark.svg"
+              alt=""
+              width="48"
+              height="48"
+              className="theme-logo-mark theme-logo-mark--dark h-12 w-12"
             />
             <span className="display-type text-2xl font-semibold tracking-[-0.04em] text-[var(--ink)]">
               Just Quiz Me

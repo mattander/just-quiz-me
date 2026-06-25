@@ -35,6 +35,18 @@ const themeBootScript = `
     }
   }
 
+  function updateThemeIcons(theme) {
+    document.querySelectorAll('[data-theme-icon-link]').forEach((iconLink) => {
+      const nextHref = theme === 'dark'
+        ? iconLink.getAttribute('data-dark-href')
+        : iconLink.getAttribute('data-light-href');
+
+      if (nextHref) {
+        iconLink.setAttribute('href', nextHref);
+      }
+    });
+  }
+
   function applyThemeOverride(theme) {
     if (theme === null) {
       document.documentElement.removeAttribute('data-theme');
@@ -44,7 +56,9 @@ const themeBootScript = `
       window.localStorage.setItem(storageKey, theme);
     }
 
-    updateThemeColor(getActiveTheme());
+    const activeTheme = getActiveTheme();
+    updateThemeColor(activeTheme);
+    updateThemeIcons(activeTheme);
     syncThemeToggles();
   }
 
@@ -100,6 +114,7 @@ const themeBootScript = `
 
     document.documentElement.removeAttribute('data-theme');
     updateThemeColor(getSystemTheme());
+    updateThemeIcons(getSystemTheme());
     syncThemeToggles();
   });
 
@@ -110,6 +125,7 @@ const themeBootScript = `
   }
 
   updateThemeColor(getActiveTheme());
+  updateThemeIcons(getActiveTheme());
 })();
 `
 
@@ -149,6 +165,27 @@ export const Route = createRootRoute({
         rel: 'icon',
         href: '/favicon.svg',
         type: 'image/svg+xml',
+        'data-theme-icon-link': '',
+        'data-light-href': '/favicon.svg',
+        'data-dark-href': '/favicon-dark.svg',
+      },
+      {
+        rel: 'icon',
+        href: '/icons/favicon-32x32.png',
+        type: 'image/png',
+        sizes: '32x32',
+        'data-theme-icon-link': '',
+        'data-light-href': '/icons/favicon-32x32.png',
+        'data-dark-href': '/icons/favicon-32x32-dark.png',
+      },
+      {
+        rel: 'apple-touch-icon',
+        href: '/apple-touch-icon.png',
+        sizes: '180x180',
+      },
+      {
+        rel: 'manifest',
+        href: '/site.webmanifest',
       },
     ],
   }),
