@@ -326,24 +326,24 @@ if (!publishedQuiz) {
 test('scoreQuizAnswers ranks results from the selected options', () => {
   const outcome = scoreQuizAnswers(publishedQuiz, [
     {
-      questionId: 'alarm-style',
-      optionId: 'one-alarm-and-up',
+      questionId: 'status-update',
+      optionId: 'bullet-list',
     },
     {
-      questionId: 'kitchen-energy',
-      optionId: 'calm-and-capable',
+      questionId: 'meeting-vibe',
+      optionId: 'diagram-it',
     },
     {
-      questionId: 'social-bite',
-      optionId: 'nod-and-continue',
+      questionId: 'calendar-crime',
+      optionId: 'decline-with-context',
     },
     {
-      questionId: 'comfort-object',
-      optionId: 'good-knife',
+      questionId: 'desk-object',
+      optionId: 'annotated-notebook',
     },
   ])
 
-  assert.equal(outcome.winningResult.resultId, 'buttered-toast')
+  assert.equal(outcome.winningResult.resultId, 'athena')
   assert.equal(outcome.answeredQuestionCount, 4)
   assert.equal(outcome.results[0]?.score, 10)
 })
@@ -353,8 +353,8 @@ test('resolveCompletedQuizAnswers rejects incomplete submissions', () => {
     () =>
       resolveCompletedQuizAnswers(publishedQuiz, [
         {
-          questionId: 'alarm-style',
-          optionId: 'one-alarm-and-up',
+          questionId: 'status-update',
+          optionId: 'bullet-list',
         },
       ]),
     /exactly one option for every question/,

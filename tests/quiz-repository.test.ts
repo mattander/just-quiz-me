@@ -2,6 +2,7 @@ import assert from 'node:assert/strict'
 import { readFile, readdir } from 'node:fs/promises'
 import test from 'node:test'
 import { getPlatformProxy } from 'wrangler'
+import { quizManifests } from '../src/content/quizzes/index.ts'
 import {
   createQuizRepository,
   type PublishedQuiz,
@@ -96,14 +97,16 @@ test('seeded repository lists the authored published quizzes without a database'
   const repository = createQuizRepository(undefined)
   const quizzes = await repository.listPublished()
 
-  assert.deepEqual(quizzes, [
-    {
-      slug: 'which-chaotic-breakfast-are-you',
-      title: 'Which Chaotic Breakfast Are You?',
-      description:
-        'A politely unhinged breakfast quiz about coping styles, social energy, and how much structure your morning can survive.',
-    },
-  ])
+  assert.deepEqual(
+    quizzes,
+    quizManifests
+      .filter((manifest) => manifest.status === 'published')
+      .map((manifest) => ({
+        slug: manifest.slug,
+        title: manifest.title,
+        description: manifest.description,
+      })),
+  )
 })
 
 test('repository reads only published D1 quizzes and hydrates their nested content', async () => {

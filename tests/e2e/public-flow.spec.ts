@@ -6,7 +6,7 @@ test('homepage to quiz to result flow stays playable', async ({ page }) => {
   await expect(
     page.getByRole('heading', {
       level: 1,
-      name: 'One absurd quiz. No signup. Immediate result.',
+      name: 'Strange little quizzes with immediate consequences.',
     }),
   ).toBeVisible()
 
@@ -16,37 +16,37 @@ test('homepage to quiz to result flow stays playable', async ({ page }) => {
   await expect(
     page.getByRole('heading', {
       level: 1,
-      name: 'Which Chaotic Breakfast Are You?',
+      name: 'Which Greek God Would Block You on Slack?',
     }),
   ).toBeVisible()
 
-  await page.getByText('One alarm, one stretch, immediate competence.').click()
+  await page.getByText('Three tidy bullets, one risk, and a next step.').click()
   await expect(
-    page.locator('input[name="alarm-style"][value="one-alarm-and-up"]'),
+    page.locator('input[name="status-update"][value="bullet-list"]'),
   ).toBeChecked()
 
-  await page.getByText('Calm, capable, and quietly getting it done.').click()
+  await page.getByText('Draw the hidden structure and make the room face it.').click()
   await expect(
-    page.locator('input[name="kitchen-energy"][value="calm-and-capable"]'),
+    page.locator('input[name="meeting-vibe"][value="diagram-it"]'),
   ).toBeChecked()
 
-  await page.getByText('Nod kindly and continue being correct in private.').click()
+  await page.getByText('Decline with a polite explanation and a better alternative.').click()
   await expect(
-    page.locator('input[name="social-bite"][value="nod-and-continue"]'),
+    page.locator('input[name="calendar-crime"][value="decline-with-context"]'),
   ).toBeChecked()
 
-  await page.getByText('A very good knife that solves problems cleanly.').click()
+  await page.getByText('A notebook full of plans, arrows, and judgment.').click()
   await expect(
-    page.locator('input[name="comfort-object"][value="good-knife"]'),
+    page.locator('input[name="desk-object"][value="annotated-notebook"]'),
   ).toBeChecked()
 
   await page.getByRole('button', { name: 'See my result' }).click()
 
   await expect(page).toHaveURL(
-    /\/quiz\/which-chaotic-breakfast-are-you\/result\?resultId=buttered-toast&answered=4$/,
+    /\/quiz\/which-greek-god-would-block-you-on-slack\/result\?resultId=athena&answered=4$/,
   )
   await expect(
-    page.getByRole('heading', { level: 1, name: 'Buttered Toast' }),
+    page.getByRole('heading', { level: 1, name: 'Athena' }),
   ).toBeVisible()
   await expect(page.getByText('You answered 4 of 4 questions in this round.')).toBeVisible()
 })
@@ -57,7 +57,7 @@ test('invalid quiz routes fall into the not-found boundary', async ({ page }) =>
   await expect(
     page.getByRole('heading', {
       level: 1,
-      name: 'This route has not been built yet.',
+      name: 'That quiz wandered off.',
     }),
   ).toBeVisible()
   await expect(page.getByText('Not found')).toBeVisible()

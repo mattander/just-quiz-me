@@ -22,7 +22,7 @@ export const Route = createRootRoute({
       {
         name: 'description',
         content:
-          'Play weirdly polished personality quizzes and get immediate results.',
+          'Play quick absurd quizzes, get an immediate result, and send it to someone you trust far too much.',
       },
       {
         property: 'og:site_name',
@@ -34,7 +34,7 @@ export const Route = createRootRoute({
       },
       {
         name: 'theme-color',
-        content: '#f6f1e9',
+        content: '#f4efe7',
       },
     ],
     links: [
@@ -77,16 +77,22 @@ function RootDocument({ children }: { children: ReactNode }) {
 
 function NotFoundPage() {
   return (
-    <main className="mx-auto flex min-h-screen w-full max-w-3xl items-center justify-center px-4 py-16 text-center sm:px-6">
-      <div className="w-full border-t border-[color:var(--line)] px-2 pt-6">
+    <main className="mx-auto flex min-h-screen w-full max-w-3xl items-center px-5 py-16 sm:px-8">
+      <div className="w-full border-t border-[color:var(--rule)] pt-8 text-center">
         <p className="eyebrow mb-3">Not found</p>
         <h1 className="display-type text-3xl text-[var(--ink)] sm:text-4xl">
-          This route has not been built yet.
+          That quiz wandered off.
         </h1>
-        <p className="mt-4 max-w-xl text-sm leading-6 text-[var(--muted)] sm:text-base">
-          The Phase 1 shell is live, but this path is still waiting for its
-          quiz-shaped future.
+        <p className="mx-auto mt-4 max-w-xl text-sm leading-6 text-[var(--muted)] sm:text-base">
+          The page you wanted is missing, unpublished, or was never real in the
+          first place.
         </p>
+        <a
+          href="/"
+          className="mt-6 inline-flex items-center justify-center rounded-full border border-[color:var(--rule-strong)] px-5 py-2.5 text-sm font-medium no-underline transition hover:bg-[color:var(--surface)]"
+        >
+          Back to the quiz pile
+        </a>
       </div>
     </main>
   )

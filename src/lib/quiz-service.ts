@@ -54,6 +54,9 @@ export type ResolveQuizSubmissionInput = v.InferOutput<
   typeof resolveQuizSubmissionInputSchema
 >
 export type QuizResultSearch = v.InferOutput<typeof quizResultSearchSchema>
+export type PublishedQuizSummary = Awaited<
+  ReturnType<ReturnType<typeof createQuizRepository>['listPublished']>
+>[number]
 
 function parseReadPublishedQuizInput(input: unknown): ReadPublishedQuizInput {
   return v.parse(readPublishedQuizInputSchema, input)
@@ -79,6 +82,17 @@ export const readPublishedQuiz = createServerFn({ method: 'GET' })
 
     return repository.readPublished(data.quizSlug)
   })
+
+export const listPublishedQuizzes = createServerFn({ method: 'GET' }).handler(
+  async ({ context }) => {
+    const requestContext = getAppRequestContext(context)
+    const repository = createQuizRepository(
+      requestContext.cloudflare.bindings.QUIZ_DB,
+    )
+
+    return repository.listPublished()
+  },
+)
 
 export const resolveQuizSubmission = createServerFn({ method: 'POST' })
   .inputValidator(parseResolveQuizSubmissionInput)
