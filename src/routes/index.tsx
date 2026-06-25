@@ -58,7 +58,18 @@ function HomePage() {
     <main className="mx-auto flex min-h-screen w-full max-w-5xl px-5 py-10 sm:px-8 sm:py-14">
       <div className="w-full">
         <section className="max-w-3xl">
-          <p className="eyebrow">Just Quiz Me</p>
+          <div className="inline-flex items-center gap-3" aria-label="Just Quiz Me">
+            <img
+              src="/logo.svg"
+              alt=""
+              width="48"
+              height="48"
+              className="h-12 w-12"
+            />
+            <span className="display-type text-2xl font-semibold tracking-[-0.04em] text-[var(--ink)]">
+              Just Quiz Me
+            </span>
+          </div>
           <h1 className="display-type mt-4 text-5xl leading-[0.94] tracking-[-0.04em] text-[var(--ink)] sm:text-6xl lg:text-7xl">
             Quick little quizzes for unserious people with excellent taste.
           </h1>
