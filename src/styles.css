@@ -74,6 +74,10 @@ a {
   color: color-mix(in srgb, var(--accent) 78%, var(--ink));
 }
 
+.theme-logo-mark--dark {
+  display: none;
+}
+
 .glass-panel {
   border: 1px solid var(--rule);
   background: color-mix(in srgb, var(--surface) 100%, transparent);
@@ -209,6 +213,14 @@ a {
       var(--page-accent)
     );
   }
+
+  :root:not([data-theme="light"]) .theme-logo-mark--light {
+    display: none;
+  }
+
+  :root:not([data-theme="light"]) .theme-logo-mark--dark {
+    display: block;
+  }
 }
 
 html[data-theme="light"] {
@@ -229,6 +241,14 @@ html[data-theme="light"] {
   --moon: #4f46e5;
 }
 
+html[data-theme="light"] .theme-logo-mark--light {
+  display: block;
+}
+
+html[data-theme="light"] .theme-logo-mark--dark {
+  display: none;
+}
+
 html[data-theme="dark"] {
   color-scheme: dark;
   --page: #121212;
@@ -245,4 +265,12 @@ html[data-theme="dark"] {
   --warning-rule: rgba(255, 163, 117, 0.24);
   --sun: #fbbf24;
   --moon: #a5b4fc;
+}
+
+html[data-theme="dark"] .theme-logo-mark--light {
+  display: none;
+}
+
+html[data-theme="dark"] .theme-logo-mark--dark {
+  display: block;
 }
