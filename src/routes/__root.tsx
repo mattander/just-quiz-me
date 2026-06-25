@@ -2,9 +2,116 @@ import { HeadContent, Scripts, createRootRoute } from '@tanstack/react-router'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import type { ReactNode } from 'react'
 import { useState } from 'react'
+import { ThemeToggle } from '../components/theme-toggle.tsx'
 
 import '../tailwind.css'
 import '../styles.css'
+
+const themeBootScript = `
+(() => {
+  const storageKey = 'justquizme-theme';
+  const lightThemeColor = '#f4efe7';
+  const darkThemeColor = '#121212';
+  const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
+
+  function getStoredTheme() {
+    const storedTheme = window.localStorage.getItem(storageKey);
+    return storedTheme === 'light' || storedTheme === 'dark' ? storedTheme : null;
+  }
+
+  function getSystemTheme() {
+    return mediaQuery.matches ? 'dark' : 'light';
+  }
+
+  function getActiveTheme() {
+    return getStoredTheme() ?? getSystemTheme();
+  }
+
+  function updateThemeColor(theme) {
+    const themeColorMeta = document.querySelector('meta[name="theme-color"]');
+
+    if (themeColorMeta) {
+      themeColorMeta.setAttribute('content', theme === 'dark' ? darkThemeColor : lightThemeColor);
+    }
+  }
+
+  function applyThemeOverride(theme) {
+    if (theme === null) {
+      document.documentElement.removeAttribute('data-theme');
+      window.localStorage.removeItem(storageKey);
+    } else {
+      document.documentElement.dataset.theme = theme;
+      window.localStorage.setItem(storageKey, theme);
+    }
+
+    updateThemeColor(getActiveTheme());
+    syncThemeToggles();
+  }
+
+  function syncThemeToggles() {
+    const activeTheme = getActiveTheme();
+
+    document.querySelectorAll('[data-theme-toggle]').forEach((toggle) => {
+      const isDark = activeTheme === 'dark';
+      toggle.setAttribute('aria-pressed', String(isDark));
+      toggle.setAttribute(
+        'aria-label',
+        isDark ? 'Switch to light theme' : 'Switch to dark theme',
+      );
+
+      toggle.querySelectorAll('[data-theme-icon]').forEach((icon) => {
+        const iconTheme = icon.getAttribute('data-theme-icon');
+        const isActive =
+          (iconTheme === 'light' && activeTheme === 'light') ||
+          (iconTheme === 'dark' && activeTheme === 'dark');
+
+        icon.setAttribute('data-active', String(isActive));
+      });
+    });
+  }
+
+  document.addEventListener('click', (event) => {
+    const target = event.target;
+
+    if (!(target instanceof Element)) {
+      return;
+    }
+
+    const toggle = target.closest('[data-theme-toggle]');
+
+    if (!toggle) {
+      return;
+    }
+
+    const nextTheme = getActiveTheme() === 'dark' ? 'light' : 'dark';
+    applyThemeOverride(nextTheme);
+  });
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', syncThemeToggles, { once: true });
+  } else {
+    syncThemeToggles();
+  }
+
+  mediaQuery.addEventListener('change', () => {
+    if (getStoredTheme() !== null) {
+      return;
+    }
+
+    document.documentElement.removeAttribute('data-theme');
+    updateThemeColor(getSystemTheme());
+    syncThemeToggles();
+  });
+
+  const initialTheme = getStoredTheme();
+
+  if (initialTheme) {
+    document.documentElement.dataset.theme = initialTheme;
+  }
+
+  updateThemeColor(getActiveTheme());
+})();
+`
 
 export const Route = createRootRoute({
   head: () => ({
@@ -66,9 +173,19 @@ function RootDocument({ children }: { children: ReactNode }) {
     <html lang="en">
       <head>
         <HeadContent />
+        <script dangerouslySetInnerHTML={{ __html: themeBootScript }} />
       </head>
       <body className="antialiased">
-        <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
+        <QueryClientProvider client={queryClient}>
+          <div className="site-shell">
+            <div className="site-toolbar">
+              <div className="site-toolbar__inner">
+                <ThemeToggle />
+              </div>
+            </div>
+            {children}
+          </div>
+        </QueryClientProvider>
         <Scripts />
       </body>
     </html>
@@ -89,7 +206,7 @@ function NotFoundPage() {
         </p>
         <a
           href="/"
-          className="mt-6 inline-flex items-center justify-center rounded-full border border-[color:var(--rule-strong)] px-5 py-2.5 text-sm font-medium no-underline transition hover:bg-[color:var(--surface)]"
+          className="button-secondary mt-6"
         >
           Back to the quiz pile
         </a>

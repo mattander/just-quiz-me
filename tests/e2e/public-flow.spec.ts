@@ -51,6 +51,40 @@ test('homepage to quiz to result flow stays playable', async ({ page }) => {
   await expect(page.getByText('You answered 4 of 4 questions in this round.')).toBeVisible()
 })
 
+test('theme toggle defaults to system theme and supports a persisted override', async ({
+  page,
+}) => {
+  await page.addInitScript(() => {
+    window.localStorage.clear()
+  })
+  await page.emulateMedia({ colorScheme: 'dark' })
+  await page.goto('/')
+
+  await expect(page.locator('html')).not.toHaveAttribute('data-theme', /.+/)
+  expect(
+    await page.evaluate(() => window.localStorage.getItem('justquizme-theme')),
+  ).toBeNull()
+
+  const themeToggle = page.getByRole('button', {
+    name: /Switch to (light|dark) theme/,
+  })
+  await expect(themeToggle).toBeVisible()
+
+  const initialButtonLabel = await themeToggle.getAttribute('aria-label')
+  const overrideTheme =
+    initialButtonLabel === 'Switch to light theme' ? 'light' : 'dark'
+  const overrideButtonLabel =
+    overrideTheme === 'dark' ? 'Switch to light theme' : 'Switch to dark theme'
+
+  await themeToggle.click()
+
+  await expect(page.locator('html')).toHaveAttribute('data-theme', overrideTheme)
+  await expect(page.getByRole('button', { name: overrideButtonLabel })).toBeVisible()
+  expect(
+    await page.evaluate(() => window.localStorage.getItem('justquizme-theme')),
+  ).toBe(overrideTheme)
+})
+
 test('invalid quiz routes fall into the not-found boundary', async ({ page }) => {
   await page.goto('/quiz/not-a-real-quiz')
 

@@ -90,7 +90,7 @@ function HomePage() {
                 params={{
                   quizSlug: featuredQuiz.slug,
                 }}
-                className="inline-flex items-center justify-center rounded-full bg-[color:var(--ink)] px-6 py-3 text-sm font-semibold text-[var(--page)] no-underline transition hover:opacity-88"
+                className="button-primary"
               >
                 Play the featured quiz
               </Link>
