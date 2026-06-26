@@ -1,6 +1,7 @@
 import * as Sentry from '@sentry/tanstackstart-react'
 import { createRouter } from '@tanstack/react-router'
 import { routeTree } from './routeTree.gen'
+import { getHostedSentryDsn } from './sentry-config.ts'
 
 export function getRouter() {
   const router = createRouter({
@@ -9,7 +10,7 @@ export function getRouter() {
     scrollRestoration: true,
   })
 
-  if (!router.isServer) {
+  if (!router.isServer && getHostedSentryDsn(import.meta.env.MODE)) {
     Sentry.addIntegration(Sentry.tanstackRouterBrowserTracingIntegration(router))
   }
 
