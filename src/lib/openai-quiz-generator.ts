@@ -40,7 +40,22 @@ export type OpenAiQuizGeneratorConfig = {
 
 const openAiQuizResponseSchema = v.object({
   id: v.pipe(v.string(), v.trim(), v.minLength(1)),
-  output_text: v.pipe(v.string(), v.trim(), v.minLength(1)),
+  output_text: v.optional(v.pipe(v.string(), v.trim(), v.minLength(1))),
+  output: v.optional(
+    v.array(
+      v.object({
+        type: v.pipe(v.string(), v.trim(), v.minLength(1)),
+        content: v.optional(
+          v.array(
+            v.object({
+              type: v.pipe(v.string(), v.trim(), v.minLength(1)),
+              text: v.optional(v.pipe(v.string(), v.trim(), v.minLength(1))),
+            }),
+          ),
+        ),
+      }),
+    ),
+  ),
 })
 
 export function buildQuizGenerationPrompt(request: QuizGenerationRequest): string {
@@ -119,7 +134,7 @@ export async function generateQuizDraftWithOpenAi(
 
   const responseBody: unknown = await response.json()
   const parsedResponse = parseOpenAiQuizResponse(responseBody)
-  const parsedOutput: unknown = JSON.parse(parsedResponse.output_text)
+  const parsedOutput: unknown = JSON.parse(parsedResponse.outputText)
   const manifest = parseQuizManifest(parsedOutput)
 
   return parseGeneratedQuizDraftInput({
@@ -140,14 +155,32 @@ export async function generateQuizDraftWithOpenAi(
 
 function parseOpenAiQuizResponse(
   input: unknown,
-): v.InferOutput<typeof openAiQuizResponseSchema> {
+): { id: string; outputText: string } {
   const result = v.safeParse(openAiQuizResponseSchema, input)
 
   if (!result.success) {
     throw new Error(`Invalid OpenAI quiz generation response.\n${v.summarize(result.issues)}`)
   }
 
-  return result.output
+  if (result.output.output_text) {
+    return {
+      id: result.output.id,
+      outputText: result.output.output_text,
+    }
+  }
+
+  const outputText = result.output.output
+    ?.flatMap((item) => item.content ?? [])
+    .find((content) => content.type === 'output_text' && content.text)?.text
+
+  if (!outputText) {
+    throw new Error('OpenAI quiz generation response did not include output text.')
+  }
+
+  return {
+    id: result.output.id,
+    outputText,
+  }
 }
 
 const identifierSchema: JsonObject = {

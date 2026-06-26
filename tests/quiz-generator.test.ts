@@ -153,7 +153,17 @@ test('OpenAI generator validates model output into a generated draft payload', a
         new Response(
           JSON.stringify({
             id: 'resp_test',
-            output_text: JSON.stringify(validGeneratedManifest),
+            output: [
+              {
+                type: 'message',
+                content: [
+                  {
+                    type: 'output_text',
+                    text: JSON.stringify(validGeneratedManifest),
+                  },
+                ],
+              },
+            ],
           }),
           {
             status: 200,
@@ -188,10 +198,20 @@ test('OpenAI generator rejects invalid structured output', async () => {
           new Response(
             JSON.stringify({
               id: 'resp_test',
-              output_text: JSON.stringify({
-                ...validGeneratedManifest,
-                status: 'published',
-              }),
+              output: [
+                {
+                  type: 'message',
+                  content: [
+                    {
+                      type: 'output_text',
+                      text: JSON.stringify({
+                        ...validGeneratedManifest,
+                        status: 'published',
+                      }),
+                    },
+                  ],
+                },
+              ],
             }),
             {
               status: 200,
