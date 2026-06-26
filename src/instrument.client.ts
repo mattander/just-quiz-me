@@ -1,17 +1,18 @@
 import * as Sentry from '@sentry/tanstackstart-react'
 import {
-  developmentTracesSampleRate,
-  productionTracesSampleRate,
-  sentryDsn,
+  getHostedSentryDsn,
+  getSentryTracesSampleRate,
 } from './sentry-config.ts'
 
-Sentry.init({
-  dsn: sentryDsn,
-  environment: import.meta.env.MODE,
-  sendDefaultPii: false,
-  tracesSampleRate: import.meta.env.DEV
-    ? developmentTracesSampleRate
-    : productionTracesSampleRate,
-  enableLogs: true,
-})
+const sentryEnvironment = import.meta.env.MODE
+const hostedSentryDsn = getHostedSentryDsn(sentryEnvironment)
 
+if (hostedSentryDsn) {
+  Sentry.init({
+    dsn: hostedSentryDsn,
+    environment: sentryEnvironment,
+    sendDefaultPii: false,
+    tracesSampleRate: getSentryTracesSampleRate(sentryEnvironment),
+    enableLogs: true,
+  })
+}

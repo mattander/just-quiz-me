@@ -1,7 +1,7 @@
 import { HeadContent, Scripts, createRootRoute } from '@tanstack/react-router'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import type { ReactNode } from 'react'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { ThemeToggle } from '../components/theme-toggle.tsx'
 import { getRuntimeConfig } from '../lib/runtime-config.ts'
 
@@ -226,6 +226,14 @@ function RootDocument({ children }: { children: ReactNode }) {
         },
       }),
   )
+
+  useEffect(() => {
+    document.documentElement.dataset.appHydrated = 'true'
+
+    return () => {
+      delete document.documentElement.dataset.appHydrated
+    }
+  }, [])
 
   return (
     <html lang="en">

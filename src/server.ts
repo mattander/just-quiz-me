@@ -10,9 +10,8 @@ import {
   type RuntimeConfigInput,
 } from './lib/runtime-config'
 import {
-  developmentTracesSampleRate,
-  productionTracesSampleRate,
-  sentryDsn,
+  getHostedSentryDsn,
+  getSentryTracesSampleRate,
 } from './sentry-config.ts'
 
 const handleRequest = createStartHandler<Register>(defaultStreamHandler)
@@ -39,7 +38,12 @@ function getTanStackSentrySpanDetails(request: Request) {
 
 async function injectSentryTraceMetaTags(
   response: Response,
+  hostedSentryEnabled: boolean,
 ): Promise<Response> {
+  if (!hostedSentryEnabled) {
+    return response
+  }
+
   const contentType = response.headers.get('content-type')
 
   if (!contentType?.startsWith('text/html') || !response.body) {
@@ -71,8 +75,10 @@ async function injectSentryTraceMetaTags(
 function handleSentryStartRequest(
   request: Request,
   requestContext: AppRequestContext,
+  appEnv: string,
 ) {
   const spanDetails = getTanStackSentrySpanDetails(request)
+  const hostedSentryEnabled = Boolean(getHostedSentryDsn(appEnv))
 
   return Sentry.startSpan(
     {
@@ -88,7 +94,7 @@ function handleSentryStartRequest(
         context: requestContext,
       })
 
-      return injectSentryTraceMetaTags(response)
+      return injectSentryTraceMetaTags(response, hostedSentryEnabled)
     },
   )
 }
@@ -152,32 +158,33 @@ const server = {
       return metadataResponse
     }
 
+    const runtimeBindings = getRuntimeBindings(workerEnv)
+    const appEnv = runtimeBindings.APP_ENV ?? 'production'
+
     const requestContext: AppRequestContext = getAppRequestContext({
       cloudflare: {
         bindings: {
           QUIZ_DB: workerEnv?.QUIZ_DB,
         },
-        runtime: getRuntimeBindings(workerEnv),
+        runtime: runtimeBindings,
         executionContext,
       },
     })
 
-    return handleSentryStartRequest(request, requestContext)
+    return handleSentryStartRequest(request, requestContext, appEnv)
   },
 } satisfies ExportedHandler<CloudflareEnv>
 
 export default Sentry.withSentry<CloudflareEnv>(
   (workerEnv) => {
     const appEnv = workerEnv?.APP_ENV ?? process.env.APP_ENV ?? 'production'
+    const hostedSentryDsn = getHostedSentryDsn(appEnv)
 
     return {
-      dsn: sentryDsn,
+      dsn: hostedSentryDsn,
       environment: appEnv,
       sendDefaultPii: false,
-      tracesSampleRate:
-        appEnv === 'development'
-          ? developmentTracesSampleRate
-          : productionTracesSampleRate,
+      tracesSampleRate: getSentryTracesSampleRate(appEnv),
       enableLogs: true,
     }
   },

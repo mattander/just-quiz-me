@@ -1,7 +1,12 @@
-import { expect, test } from '@playwright/test'
+import { expect, test, type Page } from '@playwright/test'
+
+async function waitForAppHydration(page: Page): Promise<void> {
+  await expect(page.locator('html')).toHaveAttribute('data-app-hydrated', 'true')
+}
 
 test('homepage to quiz to result flow stays playable', async ({ page }) => {
   await page.goto('/')
+  await waitForAppHydration(page)
 
   await expect(
     page.getByRole('heading', {
@@ -21,35 +26,29 @@ test('homepage to quiz to result flow stays playable', async ({ page }) => {
   ).toBeVisible()
 
   await page
-    .getByText(
-      'Three clear bullets: what changed, what is blocked, and what happens next.',
-    )
-    .click()
+    .locator('input[name="status-update"][value="bullet-list"]')
+    .check()
   await expect(
     page.locator('input[name="status-update"][value="bullet-list"]'),
   ).toBeChecked()
 
   await page
-    .getByText(
-      'Name the decision, map the tradeoffs, and get everyone back to the point.',
-    )
-    .click()
+    .locator('input[name="meeting-vibe"][value="diagram-it"]')
+    .check()
   await expect(
     page.locator('input[name="meeting-vibe"][value="diagram-it"]'),
   ).toBeChecked()
 
   await page
-    .getByText(
-      'Decline politely, suggest a better time, and explain what can be decided async.',
-    )
-    .click()
+    .locator('input[name="calendar-crime"][value="decline-with-context"]')
+    .check()
   await expect(
     page.locator('input[name="calendar-crime"][value="decline-with-context"]'),
   ).toBeChecked()
 
   await page
-    .getByText('A notebook full of priorities, diagrams, and backup plans.')
-    .click()
+    .locator('input[name="desk-object"][value="annotated-notebook"]')
+    .check()
   await expect(
     page.locator('input[name="desk-object"][value="annotated-notebook"]'),
   ).toBeChecked()
@@ -74,6 +73,7 @@ test('theme toggle defaults to system theme and supports a persisted override', 
   })
   await page.emulateMedia({ colorScheme: 'dark' })
   await page.goto('/')
+  await waitForAppHydration(page)
 
   await expect(page.locator('html')).not.toHaveAttribute('data-theme', /.+/)
   expect(
