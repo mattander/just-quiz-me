@@ -11,7 +11,7 @@ test('homepage to quiz to result flow stays playable', async ({ page }) => {
   ).toBeVisible()
 
   await page.getByRole('link', { name: 'Play the featured quiz' }).click()
-  await page.waitForLoadState('networkidle')
+  await expect(page).toHaveURL('/quiz/which-greek-god-would-block-you-on-slack')
 
   await expect(
     page.getByRole('heading', {
