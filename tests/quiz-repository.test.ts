@@ -341,6 +341,73 @@ test('repository preserves the current publication when ingesting a generated dr
   })
 })
 
+test('repository publishes only approved draft revisions through the public projection', async () => {
+  await withQuizDatabase(async (database) => {
+    await seedQuizFixtures(database, [publishedQuizFixture])
+
+    const repository = createQuizRepository(database)
+    const draft = await repository.ingestGeneratedDraft({
+      manifest: generatedRevisionForPublishedQuizFixture,
+      source: {
+        identifier: 'github-actions:run-789:breakfast-publish',
+        model: 'gpt-5.4-mini',
+      },
+    })
+
+    await assert.rejects(
+      repository.publishApprovedDraft(draft.id),
+      /must be approved before publication/,
+    )
+
+    const inspectedDraft = await repository.readDraftRevision(draft.id)
+
+    assert.equal(inspectedDraft?.manifest.status, 'draft')
+    assert.equal(inspectedDraft?.sourceIdentifier, 'github-actions:run-789:breakfast-publish')
+
+    const approvedDraft = await repository.updateDraftReviewStatus(
+      draft.id,
+      'approved',
+    )
+    const publishedSummary = await repository.publishApprovedDraft(draft.id)
+    const publishedQuiz = await repository.readPublished(
+      'which-chaotic-breakfast-are-you',
+    )
+
+    assert.equal(approvedDraft.reviewStatus, 'approved')
+    assert.deepEqual(publishedSummary, {
+      slug: 'which-chaotic-breakfast-are-you',
+      title: 'Which Chaotic Breakfast Are You? Draft Revision',
+      description:
+        'A draft revision for an already published breakfast quiz that should not replace public content until review.',
+    })
+    assert.equal(publishedQuiz?.title, 'Which Chaotic Breakfast Are You? Draft Revision')
+  })
+})
+
+test('repository rejects a draft revision without making it publishable', async () => {
+  await withQuizDatabase(async (database) => {
+    const repository = createQuizRepository(database)
+    const draft = await repository.ingestGeneratedDraft({
+      manifest: generatedDraftFixture,
+      source: {
+        identifier: 'github-actions:run-999:reject-office-plant',
+        model: 'gpt-5.4-mini',
+      },
+    })
+
+    const rejectedDraft = await repository.updateDraftReviewStatus(
+      draft.id,
+      'rejected',
+    )
+
+    assert.equal(rejectedDraft.reviewStatus, 'rejected')
+    await assert.rejects(
+      repository.publishApprovedDraft(draft.id),
+      /must be approved before publication/,
+    )
+  })
+})
+
 test('repository rejects generated drafts that try to start published', async () => {
   await withQuizDatabase(async (database) => {
     const repository = createQuizRepository(database)
