@@ -134,6 +134,47 @@ const generatedDraftFixture = parseQuizManifest({
   ],
 })
 
+const generatedRevisionForPublishedQuizFixture = parseQuizManifest({
+  id: 'which-chaotic-breakfast-are-you',
+  slug: 'which-chaotic-breakfast-are-you',
+  status: 'draft',
+  title: 'Which Chaotic Breakfast Are You? Draft Revision',
+  description:
+    'A draft revision for an already published breakfast quiz that should not replace public content until review.',
+  results: [
+    {
+      id: 'very-focused-oatmeal',
+      title: 'Very Focused Oatmeal',
+      description:
+        'You are calm, structured, and somehow making everyone else feel like they forgot a meeting.',
+    },
+    {
+      id: 'espresso-in-a-bowl',
+      title: 'Espresso in a Bowl',
+      description:
+        'You are technically breakfast, spiritually a small emergency, and probably correct about the timeline.',
+    },
+  ],
+  questions: [
+    {
+      id: 'morning-risk',
+      prompt: 'Your morning plan collapses immediately. What happens next?',
+      options: [
+        {
+          id: 'stabilize-the-room',
+          label: 'Stabilize the room with quiet competence and a clean spoon.',
+          weights: [{ resultId: 'very-focused-oatmeal', value: 3 }],
+        },
+        {
+          id: 'accelerate-the-plot',
+          label: 'Accelerate the plot and become legally breakfast-adjacent.',
+          weights: [{ resultId: 'espresso-in-a-bowl', value: 3 }],
+        },
+      ],
+    },
+  ],
+})
+
 test('seeded repository lists the authored published quizzes without a database', async () => {
   const repository = createQuizRepository(undefined)
   const quizzes = await repository.listPublished()
@@ -268,6 +309,35 @@ test('repository ingests AI generated drafts with review metadata without publis
       source_metadata_json: '{"workflow":"quiz-draft-generation","runId":"123"}',
       review_status: 'generated',
     })
+  })
+})
+
+test('repository preserves the current publication when ingesting a generated draft revision', async () => {
+  await withQuizDatabase(async (database) => {
+    await seedQuizFixtures(database, [publishedQuizFixture])
+
+    const repository = createQuizRepository(database)
+    const summary = await repository.ingestGeneratedDraft({
+      manifest: generatedRevisionForPublishedQuizFixture,
+      source: {
+        identifier: 'github-actions:run-456:breakfast-revision',
+        model: 'gpt-5.4-mini',
+      },
+    })
+
+    assert.equal(summary.revisionNumber, 2)
+    assert.deepEqual(
+      await repository.readPublished('which-chaotic-breakfast-are-you'),
+      toPublishedQuizFixture(publishedQuizFixture),
+    )
+    assert.deepEqual(await repository.listPublished(), [
+      {
+        slug: 'which-chaotic-breakfast-are-you',
+        title: 'Which Chaotic Breakfast Are You?',
+        description:
+          'A politely unhinged breakfast quiz about coping styles, social energy, and how much structure your morning can survive.',
+      },
+    ])
   })
 })
 

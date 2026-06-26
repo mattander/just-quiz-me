@@ -244,8 +244,6 @@ async function ingestGeneratedDraft(
         draft.manifest.description,
         manifestJson,
       ),
-    database.prepare('DELETE FROM published_quizzes WHERE quiz_id = ?').bind(quizId),
-    database.prepare('DELETE FROM quiz_publications WHERE quiz_id = ?').bind(quizId),
   ])
 
   return {
