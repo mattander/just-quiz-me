@@ -66,7 +66,7 @@ jobs:
       - name: Generate draft
         run: |
           mkdir -p generated-drafts
-          npm run content:generate -- \
+          node --experimental-strip-types ./scripts/generate-quiz-draft.ts \
             --title "$QUIZ_TITLE" \
             --premise "$QUIZ_PREMISE" \
             --slug "$QUIZ_SLUG" \
