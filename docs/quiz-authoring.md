@@ -47,6 +47,21 @@ Emit the generated draft payload as JSON without writing to D1:
 npm run content:generate -- --title "Which Office Plant Knows Too Much?" --premise "A quiz about office plants silently collecting workplace secrets." --print-only
 ```
 
+Review generated drafts:
+
+```sh
+npm run content:review -- list
+npm run content:review -- inspect --revision quiz:which-office-plant-knows-too-much:revision:1
+npm run content:review -- approve --revision quiz:which-office-plant-knows-too-much:revision:1
+npm run content:review -- publish --revision quiz:which-office-plant-knows-too-much:revision:1
+```
+
+Use `reject` instead of `approve` when a draft should remain out of the publish path:
+
+```sh
+npm run content:review -- reject --revision quiz:which-office-plant-knows-too-much:revision:1
+```
+
 ## Editorial Rules
 
 - Every question should describe a situation a person can actually imagine.

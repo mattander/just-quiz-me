@@ -7,6 +7,7 @@
     "cf:typegen": "wrangler types --env-interface CloudflareEnv && node ./scripts/sanitize-worker-types.mjs",
     "content:draft": "node --experimental-strip-types ./scripts/create-quiz-draft.ts",
     "content:generate": "node --experimental-strip-types ./scripts/generate-quiz-draft.ts",
+    "content:review": "node --experimental-strip-types ./scripts/review-quiz-drafts.ts",
     "content:validate": "node --experimental-strip-types ./scripts/validate-content.ts",
     "db:migrate:local": "wrangler d1 migrations apply QUIZ_DB --local --env local",
     "content:sync:local": "node --experimental-strip-types ./scripts/sync-content.ts",

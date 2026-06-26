@@ -44,6 +44,21 @@ const storedDraftReviewRowSchema = v.object({
   description: v.pipe(v.string(), v.trim(), v.minLength(1)),
 })
 
+const storedDraftRevisionRowSchema = v.object({
+  id: quizIdentifierSchema,
+  quiz_id: quizIdentifierSchema,
+  revision_number: v.pipe(v.number(), v.integer(), v.minValue(1)),
+  source_kind: v.picklist(['ai_generated', 'manual_import', 'seed_manifest']),
+  source_identifier: v.pipe(v.string(), v.trim(), v.minLength(1)),
+  source_model: v.nullable(v.pipe(v.string(), v.trim(), v.minLength(1))),
+  source_prompt: v.nullable(v.pipe(v.string(), v.trim(), v.minLength(1))),
+  source_metadata_json: v.nullable(v.pipe(v.string(), v.trim(), v.minLength(1))),
+  review_status: draftReviewStatusSchema,
+  title: v.pipe(v.string(), v.trim(), v.minLength(1)),
+  description: v.pipe(v.string(), v.trim(), v.minLength(1)),
+  manifest_json: v.pipe(v.string(), v.trim(), v.minLength(1)),
+})
+
 const nextRevisionRowSchema = v.object({
   next_revision_number: v.pipe(v.number(), v.integer(), v.minValue(1)),
 })
@@ -66,12 +81,18 @@ export type DraftReviewSummary = {
   title: string
   description: string
 }
+export type DraftRevisionDetails = DraftReviewSummary & {
+  sourcePrompt: string | null
+  sourceMetadataJson: string | null
+  manifest: QuizManifest
+}
 
 type StoredPublishedQuizSummaryRow = v.InferOutput<
   typeof storedPublishedQuizSummaryRowSchema
 >
 type StoredPublishedQuizRow = v.InferOutput<typeof storedPublishedQuizRowSchema>
 type StoredDraftReviewRow = v.InferOutput<typeof storedDraftReviewRowSchema>
+type StoredDraftRevisionRow = v.InferOutput<typeof storedDraftRevisionRowSchema>
 type NextRevisionRow = v.InferOutput<typeof nextRevisionRowSchema>
 
 export type QuizRepository = {
@@ -82,6 +103,12 @@ export type QuizRepository = {
     resultId: string,
   ): Promise<PublishedQuizResult | null>
   listDraftReviews(): Promise<DraftReviewSummary[]>
+  readDraftRevision(revisionId: string): Promise<DraftRevisionDetails | null>
+  updateDraftReviewStatus(
+    revisionId: string,
+    reviewStatus: DraftReviewStatus,
+  ): Promise<DraftReviewSummary>
+  publishApprovedDraft(revisionId: string): Promise<PublishedQuizSummary>
   ingestGeneratedDraft(input: unknown): Promise<DraftReviewSummary>
 }
 
@@ -118,6 +145,15 @@ function createSeededQuizRepository(): QuizRepository {
     },
     async listDraftReviews() {
       return []
+    },
+    async readDraftRevision() {
+      return null
+    },
+    async updateDraftReviewStatus() {
+      throw new Error('Draft review updates require a D1 database binding.')
+    },
+    async publishApprovedDraft() {
+      throw new Error('Draft publication requires a D1 database binding.')
     },
     async ingestGeneratedDraft() {
       throw new Error('Generated draft ingestion requires a D1 database binding.')
@@ -176,10 +212,178 @@ function createD1QuizRepository(database: D1Database): QuizRepository {
 
       return rowResult.results.map(parseStoredDraftReviewRow)
     },
+    async readDraftRevision(revisionId) {
+      return readDraftRevision(database, revisionId)
+    },
+    async updateDraftReviewStatus(revisionId, reviewStatus) {
+      return updateDraftReviewStatus(database, revisionId, reviewStatus)
+    },
+    async publishApprovedDraft(revisionId) {
+      return publishApprovedDraft(database, revisionId)
+    },
     async ingestGeneratedDraft(input) {
       return ingestGeneratedDraft(database, input)
     },
   }
+}
+
+async function readDraftRevision(
+  database: D1Database,
+  revisionId: string,
+): Promise<DraftRevisionDetails | null> {
+  const row = await database
+    .prepare(
+      `
+        SELECT
+          id,
+          quiz_id,
+          revision_number,
+          source_kind,
+          source_identifier,
+          source_model,
+          source_prompt,
+          source_metadata_json,
+          review_status,
+          title,
+          description,
+          manifest_json
+        FROM quiz_revisions
+        WHERE id = ?
+          AND status = 'draft'
+        LIMIT 1
+      `,
+    )
+    .bind(revisionId)
+    .first<StoredDraftRevisionRow>()
+
+  if (!row) {
+    return null
+  }
+
+  return parseStoredDraftRevisionRow(row)
+}
+
+async function updateDraftReviewStatus(
+  database: D1Database,
+  revisionId: string,
+  reviewStatus: DraftReviewStatus,
+): Promise<DraftReviewSummary> {
+  const existingDraft = await readDraftRevision(database, revisionId)
+
+  if (!existingDraft) {
+    throw new Error(`Draft revision "${revisionId}" was not found.`)
+  }
+
+  await database
+    .prepare(
+      `
+        UPDATE quiz_revisions
+        SET review_status = ?, updated_at = CURRENT_TIMESTAMP
+        WHERE id = ?
+          AND status = 'draft'
+      `,
+    )
+    .bind(reviewStatus, revisionId)
+    .run()
+
+  return {
+    ...existingDraft,
+    reviewStatus,
+  }
+}
+
+async function publishApprovedDraft(
+  database: D1Database,
+  revisionId: string,
+): Promise<PublishedQuizSummary> {
+  const draft = await readDraftRevision(database, revisionId)
+
+  if (!draft) {
+    throw new Error(`Draft revision "${revisionId}" was not found.`)
+  }
+
+  if (draft.reviewStatus !== 'approved') {
+    throw new Error(
+      `Draft revision "${revisionId}" must be approved before publication.`,
+    )
+  }
+
+  const publishedManifest = parseQuizManifest({
+    ...draft.manifest,
+    status: 'published',
+  })
+  const manifestJson = JSON.stringify(publishedManifest)
+
+  await database.batch([
+    database
+      .prepare(
+        `
+          UPDATE quiz_revisions
+          SET
+            status = 'published',
+            review_status = 'approved',
+            title = ?,
+            description = ?,
+            manifest_json = ?,
+            updated_at = CURRENT_TIMESTAMP
+          WHERE id = ?
+        `,
+      )
+      .bind(
+        publishedManifest.title,
+        publishedManifest.description,
+        manifestJson,
+        revisionId,
+      ),
+    database
+      .prepare(
+        `
+          INSERT INTO quiz_publications (
+            quiz_id,
+            revision_id,
+            published_at,
+            updated_at
+          )
+          VALUES (?, ?, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+          ON CONFLICT(quiz_id) DO UPDATE SET
+            revision_id = excluded.revision_id,
+            updated_at = CURRENT_TIMESTAMP
+        `,
+      )
+      .bind(draft.quizId, revisionId),
+    database
+      .prepare(
+        `
+          INSERT INTO published_quizzes (
+            quiz_id,
+            revision_id,
+            slug,
+            title,
+            description,
+            manifest_json,
+            updated_at
+          )
+          VALUES (?, ?, ?, ?, ?, ?, CURRENT_TIMESTAMP)
+          ON CONFLICT(quiz_id) DO UPDATE SET
+            revision_id = excluded.revision_id,
+            slug = excluded.slug,
+            title = excluded.title,
+            description = excluded.description,
+            manifest_json = excluded.manifest_json,
+            updated_at = CURRENT_TIMESTAMP
+        `,
+      )
+      .bind(
+        draft.quizId,
+        revisionId,
+        publishedManifest.slug,
+        publishedManifest.title,
+        publishedManifest.description,
+        manifestJson,
+      ),
+  ])
+
+  return toPublishedQuizSummary(publishedManifest)
 }
 
 async function ingestGeneratedDraft(
@@ -385,5 +589,33 @@ function parseStoredDraftReviewRow(input: StoredDraftReviewRow): DraftReviewSumm
     reviewStatus: result.output.review_status,
     title: result.output.title,
     description: result.output.description,
+  }
+}
+
+function parseStoredDraftRevisionRow(
+  input: StoredDraftRevisionRow,
+): DraftRevisionDetails {
+  const result = v.safeParse(storedDraftRevisionRowSchema, input)
+
+  if (!result.success) {
+    throw new Error(`Invalid draft revision row.\n${v.summarize(result.issues)}`)
+  }
+
+  const parsedManifest: unknown = JSON.parse(result.output.manifest_json)
+  const manifest = parseQuizManifest(parsedManifest)
+
+  return {
+    id: result.output.id,
+    quizId: result.output.quiz_id,
+    revisionNumber: result.output.revision_number,
+    sourceKind: result.output.source_kind,
+    sourceIdentifier: result.output.source_identifier,
+    sourceModel: result.output.source_model,
+    sourcePrompt: result.output.source_prompt,
+    sourceMetadataJson: result.output.source_metadata_json,
+    reviewStatus: result.output.review_status,
+    title: result.output.title,
+    description: result.output.description,
+    manifest,
   }
 }

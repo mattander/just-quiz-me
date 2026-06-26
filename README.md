@@ -32,6 +32,7 @@ Just Quiz Me is a TanStack Start app on Cloudflare Workers for fast, absurd, hig
 npm install
 npm run cf:typegen
 npm run content:generate -- --title "Which Office Plant Knows Too Much?" --premise "A quiz about office plants silently collecting workplace secrets." --print-only
+npm run content:review -- list
 npm run content:validate
 npm run db:migrate:local
 npm run content:sync:local
@@ -68,6 +69,7 @@ npm run deploy
 - Quiz authoring manifests and default settings live in code and can be checked with `npm run content:validate`, then synced into local D1 with `npm run db:migrate:local` followed by `npm run content:sync:local`. The sync flow now imports authored manifests into the revision-aware quiz schema and refreshes the published quiz projection used by the runtime read path. The migration command targets Wrangler's `local` environment because the `QUIZ_DB` binding is intentionally scoped there.
 - Generated quiz drafts can now be ingested as reviewable D1 revisions with source provenance and review status; they do not appear in public reads until a later explicit publish workflow updates the publication pointer/projection.
 - AI-assisted draft generation uses the OpenAI Responses API with `gpt-5.4-mini` by default. The generator reads `OPENAI_API_KEY` from the environment; use `--print-only` for GitHub Actions or review workflows that should emit JSON without writing to local D1.
+- Editorial review commands live under `npm run content:review -- <list|inspect|approve|reject|publish>`. Publishing is blocked until a draft revision is explicitly approved.
 - Runtime settings reads now flow through a server-side repository path so the app can honor D1-backed settings when available while keeping the seeded `adsEnabled: false` default intact for environments without a database binding yet.
 - Public quiz reads now load from the published projection in D1 instead of reconstructing quiz payloads from the Phase 1 normalized tables, which keeps loaders, scoring, and sitemap generation stable while editorial storage evolves behind that boundary.
 - The public quiz flow runs at `/quiz/:quizSlug`, validates a full answer set on submission, and redirects into `/quiz/:quizSlug/result` using URL state instead of persisted attempts.
