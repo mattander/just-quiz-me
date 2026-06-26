@@ -1,7 +1,12 @@
-import { expect, test } from '@playwright/test'
+import { expect, test, type Page } from '@playwright/test'
+
+async function waitForAppHydration(page: Page): Promise<void> {
+  await expect(page.locator('html')).toHaveAttribute('data-app-hydrated', 'true')
+}
 
 test('homepage to quiz to result flow stays playable', async ({ page }) => {
   await page.goto('/')
+  await waitForAppHydration(page)
 
   await expect(
     page.getByRole('heading', {
@@ -12,7 +17,6 @@ test('homepage to quiz to result flow stays playable', async ({ page }) => {
 
   await page.getByRole('link', { name: 'Play the featured quiz' }).click()
   await expect(page).toHaveURL('/quiz/which-greek-god-would-block-you-on-slack')
-  await page.waitForLoadState('networkidle')
 
   await expect(
     page.getByRole('heading', {
@@ -69,6 +73,7 @@ test('theme toggle defaults to system theme and supports a persisted override', 
   })
   await page.emulateMedia({ colorScheme: 'dark' })
   await page.goto('/')
+  await waitForAppHydration(page)
 
   await expect(page.locator('html')).not.toHaveAttribute('data-theme', /.+/)
   expect(
