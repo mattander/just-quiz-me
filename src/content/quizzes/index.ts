@@ -829,4 +829,355 @@ export const quizManifests = defineQuizManifestCollection([
       },
     ],
   },
+  {
+    id: 'which-haunted-spreadsheet-tab-are-you',
+    slug: 'which-haunted-spreadsheet-tab-are-you',
+    status: 'published',
+    title: 'Which Haunted Spreadsheet Tab Are You?',
+    description:
+      'A productivity horror quiz about formulas, hidden columns, and the specific way your planning instincts become a ghost story.',
+    results: [
+      {
+        id: 'budget-tab',
+        title: 'Budget Tab',
+        description:
+          'You are haunted by math that is technically correct and emotionally expensive. The budget tab rattles its cells whenever optimism gets ahead of the numbers.',
+      },
+      {
+        id: 'hidden-assumptions',
+        title: 'Hidden Assumptions',
+        description:
+          'You are haunted by context nobody wrote down. The hidden assumptions tab waits quietly until someone says the plan is simple, then opens by itself.',
+      },
+      {
+        id: 'old-pivot-table',
+        title: 'Old Pivot Table',
+        description:
+          'You are haunted by legacy knowledge. The old pivot table still works, mostly, but nobody alive can explain why the totals feel judgmental.',
+      },
+    ],
+    questions: [
+      {
+        id: 'first-warning',
+        prompt: 'A shared spreadsheet starts acting cursed. What is the first warning sign?',
+        options: [
+          {
+            id: 'totals-shift',
+            label: 'The totals change after one tiny edit and everyone gets quiet.',
+            weights: [{ resultId: 'budget-tab', value: 3 }],
+          },
+          {
+            id: 'blank-column',
+            label: 'A blank column clearly contains a decision nobody wants to name.',
+            weights: [{ resultId: 'hidden-assumptions', value: 3 }],
+          },
+          {
+            id: 'ancient-filter',
+            label: 'A filter from 2021 is still active and somehow running the meeting.',
+            weights: [{ resultId: 'old-pivot-table', value: 3 }],
+          },
+        ],
+      },
+      {
+        id: 'planning-style',
+        prompt: 'How do you usually make a messy plan feel manageable?',
+        options: [
+          {
+            id: 'price-it-out',
+            label: 'Put numbers beside the idea until the fantasy has rent to pay.',
+            weights: [{ resultId: 'budget-tab', value: 3 }],
+          },
+          {
+            id: 'ask-the-question',
+            label: 'Ask the obvious question that reveals three unspoken dependencies.',
+            weights: [{ resultId: 'hidden-assumptions', value: 3 }],
+          },
+          {
+            id: 'rebuild-from-history',
+            label: 'Find the old file, reverse-engineer it, and pretend this is normal.',
+            weights: [{ resultId: 'old-pivot-table', value: 3 }],
+          },
+        ],
+      },
+      {
+        id: 'sheet-conflict',
+        prompt: 'Someone says, "Can we just make this quick?" What happens inside you?',
+        options: [
+          {
+            id: 'cost-awareness',
+            label: 'You immediately hear the invoice forming in another room.',
+            weights: [{ resultId: 'budget-tab', value: 2 }],
+          },
+          {
+            id: 'scope-sense',
+            label: 'You sense the sentence is standing on a trapdoor labeled scope.',
+            weights: [
+              { resultId: 'hidden-assumptions', value: 2 },
+              { resultId: 'budget-tab', value: 1 },
+            ],
+          },
+          {
+            id: 'version-memory',
+            label: 'You remember the last time quick became a folder called final-final-2.',
+            weights: [{ resultId: 'old-pivot-table', value: 2 }],
+          },
+        ],
+      },
+      {
+        id: 'final-haunting',
+        prompt: 'What does your spreadsheet ghost want people to understand?',
+        options: [
+          {
+            id: 'resources-are-real',
+            label: 'Resources are real, even when the vibes are immaculate.',
+            weights: [{ resultId: 'budget-tab', value: 2 }],
+          },
+          {
+            id: 'write-it-down',
+            label: 'If everyone knows it, someone still has to write it down.',
+            weights: [{ resultId: 'hidden-assumptions', value: 2 }],
+          },
+          {
+            id: 'history-matters',
+            label: 'The old system may be ugly, but it survived for reasons.',
+            weights: [{ resultId: 'old-pivot-table', value: 2 }],
+          },
+        ],
+      },
+    ],
+  },
+  {
+    id: 'which-soup-are-you-in-a-crisis',
+    slug: 'which-soup-are-you-in-a-crisis',
+    status: 'published',
+    title: 'Which Soup Are You in a Crisis?',
+    description:
+      'A comfort-food personality quiz about pressure, caretaking, and what kind of warm bowl you become when the day starts throwing chairs.',
+    results: [
+      {
+        id: 'tomato-soup',
+        title: 'Tomato Soup',
+        description:
+          'You are direct comfort with a clean edge. Tomato soup shows up fast, keeps the message simple, and pairs beautifully with a boundary.',
+      },
+      {
+        id: 'chicken-noodle',
+        title: 'Chicken Noodle',
+        description:
+          'You are practical care in motion. Chicken noodle does not make a speech; it finds the blanket, names the next step, and checks the stove.',
+      },
+      {
+        id: 'miso-soup',
+        title: 'Miso Soup',
+        description:
+          'You are quiet restoration. Miso soup lowers the volume, brings everyone back to themselves, and refuses to turn healing into a committee.',
+      },
+    ],
+    questions: [
+      {
+        id: 'crisis-entry',
+        prompt: 'A normal day suddenly becomes a situation. How do you enter the room?',
+        options: [
+          {
+            id: 'clear-and-warm',
+            label: 'With one clear sentence and a warmth nobody has to decode.',
+            weights: [{ resultId: 'tomato-soup', value: 3 }],
+          },
+          {
+            id: 'hands-full',
+            label: 'Already carrying water, tissues, chargers, and a plan.',
+            weights: [{ resultId: 'chicken-noodle', value: 3 }],
+          },
+          {
+            id: 'lower-the-volume',
+            label: 'By making the room calmer before anyone notices you did it.',
+            weights: [{ resultId: 'miso-soup', value: 3 }],
+          },
+        ],
+      },
+      {
+        id: 'comfort-method',
+        prompt: 'What kind of support do you trust most?',
+        options: [
+          {
+            id: 'simple-truth',
+            label: 'A simple truth said kindly, without decorating the problem.',
+            weights: [{ resultId: 'tomato-soup', value: 3 }],
+          },
+          {
+            id: 'useful-action',
+            label: 'Useful action that makes the next ten minutes less awful.',
+            weights: [{ resultId: 'chicken-noodle', value: 3 }],
+          },
+          {
+            id: 'gentle-presence',
+            label: 'Gentle presence that lets people recover without performing gratitude.',
+            weights: [{ resultId: 'miso-soup', value: 3 }],
+          },
+        ],
+      },
+      {
+        id: 'stress-flaw',
+        prompt: 'What is your least helpful crisis habit?',
+        options: [
+          {
+            id: 'too-blunt',
+            label: 'Being so clear that someone briefly misses the tenderness underneath.',
+            weights: [{ resultId: 'tomato-soup', value: 2 }],
+          },
+          {
+            id: 'over-functioning',
+            label: 'Doing six useful things before admitting you also need help.',
+            weights: [{ resultId: 'chicken-noodle', value: 2 }],
+          },
+          {
+            id: 'disappearing-act',
+            label: 'Becoming so low-impact that people forget to check on you.',
+            weights: [
+              { resultId: 'miso-soup', value: 2 },
+              { resultId: 'chicken-noodle', value: 1 },
+            ],
+          },
+        ],
+      },
+      {
+        id: 'aftercare',
+        prompt: 'When the worst part passes, what do you want everyone to do?',
+        options: [
+          {
+            id: 'say-the-thing',
+            label: 'Say what happened plainly so nobody has to guess.',
+            weights: [{ resultId: 'tomato-soup', value: 2 }],
+          },
+          {
+            id: 'eat-and-reset',
+            label: 'Eat something, reset the room, and make a realistic list.',
+            weights: [{ resultId: 'chicken-noodle', value: 2 }],
+          },
+          {
+            id: 'be-quiet-together',
+            label: 'Sit quietly until everyone remembers they have a body.',
+            weights: [{ resultId: 'miso-soup', value: 2 }],
+          },
+        ],
+      },
+    ],
+  },
+  {
+    id: 'which-cryptid-would-borrow-your-hoodie',
+    slug: 'which-cryptid-would-borrow-your-hoodie',
+    status: 'published',
+    title: 'Which Cryptid Would Borrow Your Hoodie?',
+    description:
+      'A friendship-boundaries quiz about trust, weird roommates, and the creature most likely to return your favorite hoodie smelling like pine needles.',
+    results: [
+      {
+        id: 'mothman',
+        title: 'Mothman',
+        description:
+          'Mothman borrows your hoodie because you both understand dramatic timing. It comes back clean, folded badly, and carrying a warning you did not ask for.',
+      },
+      {
+        id: 'bigfoot',
+        title: 'Bigfoot',
+        description:
+          'Bigfoot borrows your hoodie because you are safe to be quiet around. It returns the hoodie late, warm, and somehow improved by forest air.',
+      },
+      {
+        id: 'lake-monster',
+        title: 'Lake Monster',
+        description:
+          'The lake monster borrows your hoodie because it likes your softness and ignores your laundry instructions. The hoodie returns damp, iconic, and emotionally changed.',
+      },
+    ],
+    questions: [
+      {
+        id: 'loan-policy',
+        prompt: 'A friend asks to borrow your favorite hoodie. What is your policy?',
+        options: [
+          {
+            id: 'dramatic-exception',
+            label: 'You allow it if the reason is specific, urgent, and slightly theatrical.',
+            weights: [{ resultId: 'mothman', value: 3 }],
+          },
+          {
+            id: 'trusted-silence',
+            label: 'You hand it over because trust is sometimes quiet and practical.',
+            weights: [{ resultId: 'bigfoot', value: 3 }],
+          },
+          {
+            id: 'soft-hearted-risk',
+            label: 'You say yes while already imagining the fabric returning different.',
+            weights: [{ resultId: 'lake-monster', value: 3 }],
+          },
+        ],
+      },
+      {
+        id: 'borrower-red-flag',
+        prompt: 'What borrower behavior makes you most nervous?',
+        options: [
+          {
+            id: 'ominous-vague',
+            label: 'They say they need it "for tonight" and refuse to explain the sky.',
+            weights: [{ resultId: 'mothman', value: 3 }],
+          },
+          {
+            id: 'vanishing',
+            label: 'They are reliable, but nobody has technically seen them since Tuesday.',
+            weights: [{ resultId: 'bigfoot', value: 3 }],
+          },
+          {
+            id: 'near-water',
+            label: 'They keep standing near water with the confidence of a lawsuit.',
+            weights: [{ resultId: 'lake-monster', value: 3 }],
+          },
+        ],
+      },
+      {
+        id: 'friendship-style',
+        prompt: 'What kind of friendship makes you feel safest?',
+        options: [
+          {
+            id: 'truth-with-flair',
+            label: 'Someone who tells the truth, even when they make an entrance doing it.',
+            weights: [{ resultId: 'mothman', value: 2 }],
+          },
+          {
+            id: 'steady-room',
+            label: 'Someone who does not require performance to prove closeness.',
+            weights: [{ resultId: 'bigfoot', value: 2 }],
+          },
+          {
+            id: 'deep-feeling',
+            label: 'Someone emotionally deep enough to be inconvenient but sincere.',
+            weights: [
+              { resultId: 'lake-monster', value: 2 },
+              { resultId: 'mothman', value: 1 },
+            ],
+          },
+        ],
+      },
+      {
+        id: 'return-condition',
+        prompt: 'The hoodie comes back. What condition tells you everything?',
+        options: [
+          {
+            id: 'creased-note',
+            label: 'There is a creased note in the pocket that only says "bridge".',
+            weights: [{ resultId: 'mothman', value: 2 }],
+          },
+          {
+            id: 'pine-clean',
+            label: 'It smells like cedar, campfire, and someone doing their best.',
+            weights: [{ resultId: 'bigfoot', value: 2 }],
+          },
+          {
+            id: 'damp-legend',
+            label: 'It is damp in a way that feels historic, not careless.',
+            weights: [{ resultId: 'lake-monster', value: 2 }],
+          },
+        ],
+      },
+    ],
+  },
 ])
