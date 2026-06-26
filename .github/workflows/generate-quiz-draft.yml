@@ -1,0 +1,130 @@
+name: Generate Quiz Draft
+
+on:
+  workflow_dispatch:
+    inputs:
+      title:
+        description: Quiz title
+        required: true
+        type: string
+      premise:
+        description: Quiz premise and comedic/editorial direction
+        required: true
+        type: string
+      slug:
+        description: Lowercase kebab-case quiz slug
+        required: true
+        type: string
+      model:
+        description: OpenAI model
+        required: true
+        default: gpt-5.4-mini
+        type: string
+  # Schedule stays intentionally disabled until the manual generation path feels good.
+  # schedule:
+  #   - cron: "17 14 * * 1"
+
+permissions:
+  contents: write
+  pull-requests: write
+
+concurrency:
+  group: quiz-draft-generation
+  cancel-in-progress: false
+
+jobs:
+  generate:
+    name: Generate reviewable quiz draft
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v6
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v5
+        with:
+          node-version: 24
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Validate slug input
+        run: |
+          node <<'NODE'
+          const slug = process.env.QUIZ_SLUG
+
+          if (!slug || !/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(slug)) {
+            throw new Error('Slug must be lowercase kebab-case.')
+          }
+          NODE
+        env:
+          QUIZ_SLUG: ${{ inputs.slug }}
+
+      - name: Generate draft
+        run: |
+          mkdir -p generated-drafts
+          node --experimental-strip-types ./scripts/generate-quiz-draft.ts \
+            --title "$QUIZ_TITLE" \
+            --premise "$QUIZ_PREMISE" \
+            --slug "$QUIZ_SLUG" \
+            --model "$QUIZ_MODEL" \
+            --print-only > "generated-drafts/$QUIZ_SLUG.json"
+        env:
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          QUIZ_TITLE: ${{ inputs.title }}
+          QUIZ_PREMISE: ${{ inputs.premise }}
+          QUIZ_SLUG: ${{ inputs.slug }}
+          QUIZ_MODEL: ${{ inputs.model }}
+
+      - name: Validate generated draft JSON
+        run: |
+          node <<'NODE'
+          const fs = require('node:fs')
+          const path = `generated-drafts/${process.env.QUIZ_SLUG}.json`
+          const draft = JSON.parse(fs.readFileSync(path, 'utf8'))
+
+          if (draft.manifest?.status !== 'draft') {
+            throw new Error('Generated draft must remain draft-only.')
+          }
+
+          if (draft.source?.model !== process.env.QUIZ_MODEL) {
+            throw new Error('Generated draft source model did not match the requested model.')
+          }
+          NODE
+        env:
+          QUIZ_SLUG: ${{ inputs.slug }}
+          QUIZ_MODEL: ${{ inputs.model }}
+
+      - name: Upload generated draft artifact
+        uses: actions/upload-artifact@v6
+        with:
+          name: quiz-draft-${{ inputs.slug }}
+          path: generated-drafts/${{ inputs.slug }}.json
+          if-no-files-found: error
+
+      - name: Open draft review pull request
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+          branch="quiz-drafts/${QUIZ_SLUG}-${GITHUB_RUN_ID}"
+          git switch -c "$branch"
+          git add "generated-drafts/${QUIZ_SLUG}.json"
+          git commit -m "Add generated quiz draft for ${QUIZ_SLUG}"
+          git push --set-upstream origin "$branch"
+
+          gh pr create \
+            --base main \
+            --head "$branch" \
+            --title "Review generated quiz draft: ${QUIZ_TITLE}" \
+            --body "Generated a review-only quiz draft for \`${QUIZ_SLUG}\` using \`${QUIZ_MODEL}\`.
+
+          This PR does not publish content. Review the JSON payload, then use the editorial commands locally or in a later workflow to approve/publish intentionally."
+        env:
+          GH_TOKEN: ${{ github.token }}
+          QUIZ_TITLE: ${{ inputs.title }}
+          QUIZ_SLUG: ${{ inputs.slug }}
+          QUIZ_MODEL: ${{ inputs.model }}

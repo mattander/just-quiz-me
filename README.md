@@ -47,6 +47,13 @@ npm run cf:whoami
 npm run deploy
 ```
 
+Generate a cloud draft from GitHub Actions:
+
+1. Open **Actions > Generate Quiz Draft**.
+2. Run the workflow manually with a title, premise, lowercase kebab-case slug, and model.
+3. Review the generated pull request under `generated-drafts/`.
+4. Do not publish generated content until it has passed editorial review.
+
 ## Workflow
 
 - Keep implementation work on a dedicated branch or worktree.
@@ -69,6 +76,7 @@ npm run deploy
 - Quiz authoring manifests and default settings live in code and can be checked with `npm run content:validate`, then synced into local D1 with `npm run db:migrate:local` followed by `npm run content:sync:local`. The sync flow now imports authored manifests into the revision-aware quiz schema and refreshes the published quiz projection used by the runtime read path. The migration command targets Wrangler's `local` environment because the `QUIZ_DB` binding is intentionally scoped there.
 - Generated quiz drafts can now be ingested as reviewable D1 revisions with source provenance and review status; they do not appear in public reads until a later explicit publish workflow updates the publication pointer/projection.
 - AI-assisted draft generation uses the OpenAI Responses API with `gpt-5.4-mini` by default. The generator reads `OPENAI_API_KEY` from the environment; use `--print-only` for GitHub Actions or review workflows that should emit JSON without writing to local D1.
+- The `Generate Quiz Draft` GitHub Actions workflow uses the repository secret `OPENAI_API_KEY`, calls the draft generator directly so the output file stays valid JSON, emits a generated draft artifact, and opens a review pull request. It is manual-only for now; the cron schedule is intentionally commented out until the manual path is proven.
 - Editorial review commands live under `npm run content:review -- <list|inspect|approve|reject|publish>`. Publishing is blocked until a draft revision is explicitly approved.
 - Runtime settings reads now flow through a server-side repository path so the app can honor D1-backed settings when available while keeping the seeded `adsEnabled: false` default intact for environments without a database binding yet.
 - Public quiz reads now load from the published projection in D1 instead of reconstructing quiz payloads from the Phase 1 normalized tables, which keeps loaders, scoring, and sitemap generation stable while editorial storage evolves behind that boundary.

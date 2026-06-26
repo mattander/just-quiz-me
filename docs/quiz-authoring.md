@@ -47,6 +47,16 @@ Emit the generated draft payload as JSON without writing to D1:
 npm run content:generate -- --title "Which Office Plant Knows Too Much?" --premise "A quiz about office plants silently collecting workplace secrets." --print-only
 ```
 
+Generate a draft in GitHub Actions:
+
+1. Open **Actions > Generate Quiz Draft** in GitHub.
+2. Provide the title, premise, lowercase kebab-case slug, and model.
+3. The workflow uses the `OPENAI_API_KEY` repository secret.
+4. The workflow opens a pull request containing `generated-drafts/<slug>.json`.
+5. Review the generated JSON before using editorial commands to approve or publish.
+
+The workflow is intentionally manual-only while we prove the content quality bar. The cron schedule is present as a commented reminder, not an active trigger.
+
 Review generated drafts:
 
 ```sh
