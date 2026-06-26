@@ -35,6 +35,18 @@ Phase 2 AI-assisted generation uses the same quiz manifest contract, but generat
 - Public reads continue to use the `published_quizzes` projection, so generated drafts stay invisible until an explicit review/publish command promotes them.
 - The default generation target is OpenAI Responses API with `gpt-5.4-mini`, read from `OPENAI_API_KEY` in admin automation.
 
+Generate and ingest a local D1 draft:
+
+```sh
+npm run content:generate -- --title "Which Office Plant Knows Too Much?" --premise "A quiz about office plants silently collecting workplace secrets."
+```
+
+Emit the generated draft payload as JSON without writing to D1:
+
+```sh
+npm run content:generate -- --title "Which Office Plant Knows Too Much?" --premise "A quiz about office plants silently collecting workplace secrets." --print-only
+```
+
 ## Editorial Rules
 
 - Every question should describe a situation a person can actually imagine.
