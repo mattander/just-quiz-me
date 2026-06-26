@@ -2,7 +2,7 @@ import * as v from 'valibot'
 
 const editorialIdPattern = /^[a-z0-9]+(?:-[a-z0-9]+)*$/
 
-const manifestIdentifierSchema = v.pipe(
+export const manifestIdentifierSchema = v.pipe(
   v.string(),
   v.trim(),
   v.regex(
@@ -178,9 +178,64 @@ export const quizManifestCollectionSchema = v.pipe(
   ),
 )
 
+const sourceIdentifierSchema = v.pipe(
+  v.string(),
+  v.trim(),
+  v.minLength(1, 'Generated draft source identifiers cannot be empty.'),
+  v.maxLength(160, 'Generated draft source identifiers should stay log-friendly.'),
+)
+
+const sourceModelSchema = v.pipe(
+  v.string(),
+  v.trim(),
+  v.minLength(1, 'Generated draft source models cannot be empty.'),
+  v.maxLength(120, 'Generated draft source models should stay compact.'),
+)
+
+const sourcePromptSchema = v.pipe(
+  v.string(),
+  v.trim(),
+  v.minLength(1, 'Generated draft source prompts cannot be empty.'),
+  v.maxLength(4000, 'Generated draft source prompts should stay reviewable.'),
+)
+
+const sourceMetadataJsonSchema = v.pipe(
+  v.string(),
+  v.trim(),
+  v.minLength(2, 'Generated draft source metadata must be valid JSON text.'),
+  v.maxLength(8000, 'Generated draft source metadata should stay compact.'),
+  v.check((value) => {
+    try {
+      JSON.parse(value)
+      return true
+    } catch {
+      return false
+    }
+  }, 'Generated draft source metadata must be valid JSON text.'),
+)
+
+export const generatedQuizDraftInputSchema = v.pipe(
+  v.object({
+    manifest: quizManifestSchema,
+    source: v.object({
+      identifier: sourceIdentifierSchema,
+      model: sourceModelSchema,
+      prompt: v.optional(sourcePromptSchema),
+      metadataJson: v.optional(sourceMetadataJsonSchema),
+    }),
+  }),
+  v.check(
+    (draft) => draft.manifest.status === 'draft',
+    'Generated quiz drafts must use draft status until explicitly reviewed and published.',
+  ),
+)
+
 export type QuizManifest = v.InferOutput<typeof quizManifestSchema>
 export type QuizManifestCollection = v.InferOutput<
   typeof quizManifestCollectionSchema
+>
+export type GeneratedQuizDraftInput = v.InferOutput<
+  typeof generatedQuizDraftInputSchema
 >
 
 export function parseQuizManifest(input: unknown): QuizManifest {
@@ -200,6 +255,18 @@ export function parseQuizManifestCollection(
 
   if (!result.success) {
     throw new Error(`Invalid quiz manifest collection.\n${v.summarize(result.issues)}`)
+  }
+
+  return result.output
+}
+
+export function parseGeneratedQuizDraftInput(
+  input: unknown,
+): GeneratedQuizDraftInput {
+  const result = v.safeParse(generatedQuizDraftInputSchema, input)
+
+  if (!result.success) {
+    throw new Error(`Invalid generated quiz draft.\n${v.summarize(result.issues)}`)
   }
 
   return result.output
