@@ -6,11 +6,12 @@
   "scripts": {
     "cf:typegen": "wrangler types --env-interface CloudflareEnv && node ./scripts/sanitize-worker-types.mjs",
     "content:draft": "node --experimental-strip-types ./scripts/create-quiz-draft.ts",
+    "content:generate": "node --experimental-strip-types ./scripts/generate-quiz-draft.ts",
     "content:validate": "node --experimental-strip-types ./scripts/validate-content.ts",
     "db:migrate:local": "wrangler d1 migrations apply QUIZ_DB --local --env local",
     "content:sync:local": "node --experimental-strip-types ./scripts/sync-content.ts",
     "generate:routes": "node ./scripts/generate-routes.mjs",
-    "test": "node --experimental-strip-types --test --test-concurrency=1 ./tests/app-settings.test.ts ./tests/content-validation.test.ts ./tests/quiz-domain.test.ts ./tests/runtime-config.test.ts",
+    "test": "node --experimental-strip-types --test --test-concurrency=1 ./tests/app-settings.test.ts ./tests/content-validation.test.ts ./tests/quiz-domain.test.ts ./tests/quiz-generator.test.ts ./tests/runtime-config.test.ts",
     "test:repository": "node --experimental-strip-types --test --test-concurrency=1 ./tests/quiz-repository.test.ts",
     "test:e2e": "playwright test",
     "build:css": "tailwindcss -i ./src/tailwind.source.css -o ./src/tailwind.css",
