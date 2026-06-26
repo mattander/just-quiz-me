@@ -115,6 +115,51 @@ const resultEnhancementsByKey: Record<string, ResultEnhancement> = {
       'The pigeon judges you gently, but it judges you with numbers. It knows the sidewalk, the crumbs, and the patterns you pretend are choices. Its verdict is mostly that you are doing your best, but also that you dropped the bagel inefficiently.',
     shareText: 'A parking lot pigeon is judging me. Honestly, fair.',
   },
+  'which-haunted-spreadsheet-tab-are-you:budget-tab': {
+    detail:
+      'You are haunted by the budget tab because you can feel reality entering the room before anyone else hears the door. The numbers are not trying to ruin the idea; they are trying to save it from becoming a group text with invoices. Your gift is making optimism survivable. Your curse is that everyone learns this only after asking why you look concerned.',
+    shareText: 'I am the haunted budget tab. The vibes have costs and I can see them.',
+  },
+  'which-haunted-spreadsheet-tab-are-you:hidden-assumptions': {
+    detail:
+      'You are haunted by hidden assumptions because you notice the sentence underneath the sentence. Someone says "easy," and you can already see the missing owner, the mystery deadline, and the silent dependency wearing a little hat. You are not being difficult. You are hearing the floorboards creak before the plan falls through them.',
+    shareText: 'I am the hidden assumptions tab. Please write down the thing everyone knows.',
+  },
+  'which-haunted-spreadsheet-tab-are-you:old-pivot-table': {
+    detail:
+      'You are haunted by the old pivot table because you respect ugly systems that stayed alive for a reason. People want a clean rebuild. You want to know why column F has been load-bearing since 2021. Your result is not glamorous, but it is deeply useful: you understand that institutional memory often arrives wearing bad formatting.',
+    shareText: 'I am the old pivot table. It still works and that should scare everyone.',
+  },
+  'which-soup-are-you-in-a-crisis:tomato-soup': {
+    detail:
+      'You become tomato soup in a crisis: warm, direct, and refreshingly uncomplicated. You do not need twelve emotional side quests before saying what is true. People come to you when they need comfort that still has a spine. The trick is remembering that your clarity is strongest when the kindness stays visible.',
+    shareText: 'In a crisis, I am tomato soup. Comfort with boundaries.',
+  },
+  'which-soup-are-you-in-a-crisis:chicken-noodle': {
+    detail:
+      'You become chicken noodle in a crisis: practical care with sleeves rolled up. You notice who has eaten, whose phone is dying, and which next step would make the next ten minutes bearable. This is real tenderness, not performance. Just be careful not to become the entire emergency response system while everyone else applauds your competence.',
+    shareText: 'In a crisis, I am chicken noodle soup. Useful, warm, slightly overextended.',
+  },
+  'which-soup-are-you-in-a-crisis:miso-soup': {
+    detail:
+      'You become miso soup in a crisis: quiet restoration, low lighting, no forced speeches. You help people return to themselves without turning recovery into a meeting. Your calm is not emptiness; it is structure at a gentler volume. The only danger is disappearing so gracefully that nobody realizes you could use care too.',
+    shareText: 'In a crisis, I am miso soup. Gentle, restorative, hard to schedule.',
+  },
+  'which-cryptid-would-borrow-your-hoodie:mothman': {
+    detail:
+      'Mothman would borrow your hoodie because your friendship style has excellent dramatic tension. You believe in warnings, timing, and showing up when the lighting is unforgivable. The hoodie comes back folded in a way that suggests effort but no training. There is probably a note in the pocket. You should read it outside.',
+    shareText: 'Mothman would borrow my hoodie. I accept the omen but want it back clean.',
+  },
+  'which-cryptid-would-borrow-your-hoodie:bigfoot': {
+    detail:
+      'Bigfoot would borrow your hoodie because you make quiet feel safe instead of awkward. You do not chase people through the emotional woods with a flashlight. You let trust be slow, practical, and a little covered in pine needles. The hoodie comes back late, but warmer than before, which is annoying because now you cannot stay mad.',
+    shareText: 'Bigfoot would borrow my hoodie. Honestly, he seems respectful.',
+  },
+  'which-cryptid-would-borrow-your-hoodie:lake-monster': {
+    detail:
+      'The lake monster would borrow your hoodie because you are soft-hearted around sincere disasters. You knew there would be moisture. You knew the laundry instructions would become folklore. Still, some friendships are worth the dampness. The hoodie returns changed, but so do most things that spend time with creatures who feel deeply underwater.',
+    shareText: 'The lake monster would borrow my hoodie. Damp, iconic, emotionally complicated.',
+  },
 }
 
 export function getResultEnhancement(
