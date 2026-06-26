@@ -55,50 +55,65 @@ function HomePage() {
   const { featuredQuiz, moreQuizzes } = feed
 
   return (
-    <main className="mx-auto flex min-h-screen w-full max-w-5xl px-5 py-10 sm:px-8 sm:py-14">
+    <main className="mx-auto flex min-h-screen w-full max-w-6xl px-5 pb-16 pt-8 sm:px-8 sm:pb-20 sm:pt-12">
       <div className="w-full">
-        <section className="max-w-3xl">
-          <div className="inline-flex items-center gap-3" aria-label="Just Quiz Me">
-            <img
-              src="/logo.svg"
-              alt=""
-              width="48"
-              height="48"
-              className="theme-logo-mark theme-logo-mark--light h-12 w-12"
-            />
-            <img
-              src="/logo-dark.svg"
-              alt=""
-              width="48"
-              height="48"
-              className="theme-logo-mark theme-logo-mark--dark h-12 w-12"
-            />
-            <span className="display-type text-2xl font-semibold tracking-[-0.04em] text-[var(--ink)]">
-              Just Quiz Me
-            </span>
+        <section className="grid gap-10 border-y border-[color:var(--rule)] py-8 sm:py-10 lg:grid-cols-[minmax(0,1fr)_18rem] lg:items-start">
+          <div>
+            <div className="inline-flex items-center gap-3" aria-label="Just Quiz Me">
+              <img
+                src="/logo.svg"
+                alt=""
+                width="48"
+                height="48"
+                className="theme-logo-mark theme-logo-mark--light h-12 w-12"
+              />
+              <img
+                src="/logo-dark.svg"
+                alt=""
+                width="48"
+                height="48"
+                className="theme-logo-mark theme-logo-mark--dark h-12 w-12"
+              />
+              <span className="display-type text-2xl font-semibold tracking-[-0.04em] text-[var(--ink)]">
+                Just Quiz Me
+              </span>
+            </div>
+            <h1 className="display-type mt-5 max-w-4xl text-5xl leading-[0.92] tracking-[-0.055em] text-[var(--ink)] sm:text-6xl lg:text-7xl">
+              Small, strange quizzes for people avoiding the group chat correctly.
+            </h1>
+            <p className="mt-6 max-w-2xl text-lg leading-8 text-[var(--muted)]">
+              Pick a short quiz, answer four suspiciously specific questions,
+              and get a result that feels rude enough to send but harmless enough
+              to survive the reply thread.
+            </p>
           </div>
-          <h1 className="display-type mt-4 text-5xl leading-[0.94] tracking-[-0.04em] text-[var(--ink)] sm:text-6xl lg:text-7xl">
-            Quick little quizzes for unserious people with excellent taste.
-          </h1>
-          <p className="mt-6 max-w-2xl text-lg leading-8 text-[var(--muted)]">
-            Pick a short quiz, answer a handful of questions, and get a result
-            specific enough to feel rude but harmless enough to send immediately.
-          </p>
-          <p className="mt-4 max-w-2xl text-base leading-7 text-[var(--muted)]">
-            {feed.quizCount} quizzes are live right now. No accounts, no saved
-            attempts, no suspiciously long onboarding flow.
-          </p>
+
+          <aside className="quiz-register lg:mt-2">
+            <p className="eyebrow">Current shelf</p>
+            <p className="display-type mt-3 text-5xl leading-none tracking-[-0.05em] text-[var(--ink)]">
+              {feed.quizCount}
+            </p>
+            <p className="mt-3 text-sm leading-6 text-[var(--muted)]">
+              Live quizzes. No accounts, no saved attempts, no suspiciously long
+              onboarding flow.
+            </p>
+          </aside>
         </section>
 
         {featuredQuiz ? (
-          <section className="mt-12 border-t border-[color:var(--rule)] pt-8 sm:mt-14 sm:pt-10">
-            <p className="eyebrow">Start here</p>
-            <div className="mt-4 grid gap-5 sm:grid-cols-[minmax(0,1fr)_auto] sm:items-end">
-              <div className="max-w-2xl">
-                <h2 className="display-type text-3xl leading-tight text-[var(--ink)] sm:text-4xl">
+          <section className="mt-10 sm:mt-14">
+            <div className="featured-quiz grid gap-7 border-y border-[color:var(--rule)] py-7 lg:grid-cols-[8rem_minmax(0,1fr)_auto] lg:items-center">
+              <div>
+                <p className="eyebrow">Start here</p>
+                <p className="mt-3 text-sm leading-6 text-[var(--muted)]">
+                  Lead quiz from the shelf.
+                </p>
+              </div>
+              <div className="max-w-3xl">
+                <h2 className="display-type text-4xl leading-[0.98] tracking-[-0.04em] text-[var(--ink)] sm:text-5xl">
                   {featuredQuiz.title}
                 </h2>
-                <p className="mt-3 text-base leading-7 text-[var(--muted)]">
+                <p className="mt-4 max-w-2xl text-base leading-7 text-[var(--muted)]">
                   {featuredQuiz.description}
                 </p>
               </div>
@@ -110,28 +125,28 @@ function HomePage() {
                 }}
                 className="button-primary"
               >
-                Play the featured quiz
+                Play this quiz
               </Link>
             </div>
           </section>
         ) : null}
 
         {moreQuizzes.length > 0 ? (
-          <section className="mt-12 border-t border-[color:var(--rule)] pt-8 sm:mt-14 sm:pt-10">
-            <div className="flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
+          <section className="mt-12 sm:mt-16">
+            <div className="grid gap-5 border-b border-[color:var(--rule)] pb-5 sm:grid-cols-[minmax(0,1fr)_minmax(16rem,28rem)] sm:items-end">
               <div>
                 <p className="eyebrow">Quiz shelf</p>
-                <h2 className="display-type mt-3 text-3xl text-[var(--ink)] sm:text-4xl">
-                  Choose your next small crisis.
+                <h2 className="display-type mt-3 text-4xl leading-none tracking-[-0.04em] text-[var(--ink)] sm:text-5xl">
+                  Choose the next tiny problem.
                 </h2>
               </div>
-              <p className="max-w-xl text-sm leading-6 text-[var(--muted)] sm:text-right">
-                Built for five spare minutes, one friend who needs to see it,
-                and a group chat that deserves better bait.
+              <p className="text-sm leading-6 text-[var(--muted)] sm:text-right">
+                A numbered shelf for five spare minutes, one friend who needs to
+                see it, and a group chat that deserves better bait.
               </p>
             </div>
 
-            <ol className="mt-8 divide-y divide-[color:var(--rule)] border-y border-[color:var(--rule)]">
+            <ol className="quiz-ledger" start={2}>
               {moreQuizzes.map((quiz, index) => (
                 <li key={quiz.slug}>
                   <Link
@@ -139,21 +154,21 @@ function HomePage() {
                     params={{
                       quizSlug: quiz.slug,
                     }}
-                    className="group grid gap-4 py-5 no-underline sm:grid-cols-[3rem_minmax(0,1fr)_auto] sm:items-start sm:py-6"
+                    className="quiz-ledger__item group no-underline"
                   >
-                    <span className="eyebrow text-[0.68rem]">
+                    <span className="quiz-ledger__number">
                       {String(index + 2).padStart(2, '0')}
                     </span>
-                    <div className="max-w-2xl">
-                      <h3 className="text-2xl font-semibold leading-tight text-[var(--ink)] transition group-hover:opacity-75">
+                    <div className="max-w-3xl">
+                      <h3 className="display-type text-3xl leading-[1.02] tracking-[-0.035em] text-[var(--ink)] transition group-hover:opacity-75">
                         {quiz.title}
                       </h3>
                       <p className="mt-2 text-base leading-7 text-[var(--muted)]">
                         {quiz.description}
                       </p>
                     </div>
-                    <span className="text-sm font-medium text-[var(--ink)] transition group-hover:translate-x-0.5">
-                      Play quiz →
+                    <span className="quiz-ledger__action">
+                      Open
                     </span>
                   </Link>
                 </li>

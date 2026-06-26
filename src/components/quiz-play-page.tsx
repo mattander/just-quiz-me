@@ -132,7 +132,7 @@ export function QuizPlayPage({ quiz }: { quiz: PublishedQuiz }) {
   }
 
   return (
-    <main className="mx-auto flex min-h-screen w-full max-w-4xl px-5 py-12 sm:px-8 sm:py-16">
+    <main className="mx-auto flex min-h-screen w-full max-w-5xl px-5 py-12 sm:px-8 sm:py-16">
       <section className="w-full">
         <div className="mx-auto max-w-3xl">
           <Link
@@ -143,9 +143,14 @@ export function QuizPlayPage({ quiz }: { quiz: PublishedQuiz }) {
             <span>Back home</span>
           </Link>
 
-          <header className="mt-6">
-            <p className="eyebrow">Quiz</p>
-            <h1 className="display-type mt-3 text-4xl leading-[0.96] tracking-[-0.04em] text-[var(--ink)] sm:text-5xl">
+          <header className="mt-7 border-y border-[color:var(--rule)] py-7">
+            <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+              <p className="eyebrow">Quiz</p>
+              <p className="text-sm leading-6 text-[var(--muted)]">
+                {quiz.questions.length} questions, {quiz.results.length} possible results.
+              </p>
+            </div>
+            <h1 className="display-type mt-4 text-4xl leading-[0.96] tracking-[-0.045em] text-[var(--ink)] sm:text-5xl">
               {quiz.title}
             </h1>
             <p className="mt-4 max-w-2xl text-base leading-7 text-[var(--muted)] sm:text-lg">
@@ -153,46 +158,53 @@ export function QuizPlayPage({ quiz }: { quiz: PublishedQuiz }) {
             </p>
           </header>
 
-          <form className="mt-10 space-y-6" method="get" onSubmit={handleSubmit}>
+          <form className="mt-9 space-y-8" method="get" onSubmit={handleSubmit}>
             {quiz.questions.map((question, questionIndex) => (
               <fieldset
                 key={question.id}
-                className="border-t border-[color:var(--rule)] pt-6 first:border-t-0 first:pt-0"
+                className="grid gap-4 border-t border-[color:var(--rule)] pt-6 first:border-t-0 first:pt-0 sm:grid-cols-[5rem_minmax(0,1fr)]"
               >
                 <legend className="sr-only">{question.prompt}</legend>
-                <p className="eyebrow">Question {questionIndex + 1}</p>
-                <h2 className="mt-2 text-xl font-semibold leading-7 text-[var(--ink)] sm:text-2xl">
-                  {question.prompt}
-                </h2>
+                <p className="eyebrow pt-1">Q{String(questionIndex + 1).padStart(2, '0')}</p>
 
-                <div className="mt-5 space-y-3">
-                  {question.options.map((option) => {
-                    const isSelected = selectedOptionIds[question.id] === option.id
+                <div>
+                  <h2 className="text-xl font-semibold leading-7 text-[var(--ink)] sm:text-2xl">
+                    {question.prompt}
+                  </h2>
 
-                    return (
-                      <label
-                        key={option.id}
-                        className="flex cursor-pointer items-start gap-3 rounded-2xl border border-[color:var(--rule)] bg-[color:var(--surface)] p-4 transition hover:border-[color:var(--rule-strong)] hover:bg-[color:var(--surface-strong)]"
-                      >
-                        <input
-                          type="radio"
-                          name={question.id}
-                          value={option.id}
-                          checked={isSelected}
-                          onChange={() => {
-                            setSelectedOptionIds((current) => ({
-                              ...current,
-                              [question.id]: option.id,
-                            }))
-                          }}
-                          className="mt-1 h-5 w-5 shrink-0 cursor-pointer accent-[color:var(--accent)]"
-                        />
-                        <span className="text-base leading-7 text-[var(--ink)]">
-                          {option.label}
-                        </span>
-                      </label>
-                    )
-                  })}
+                  <div className="mt-4">
+                    {question.options.map((option) => {
+                      const isSelected = selectedOptionIds[question.id] === option.id
+
+                      return (
+                        <label
+                          key={option.id}
+                          className={
+                            isSelected
+                              ? 'answer-choice answer-choice--selected'
+                              : 'answer-choice'
+                          }
+                        >
+                          <input
+                            type="radio"
+                            name={question.id}
+                            value={option.id}
+                            checked={isSelected}
+                            onChange={() => {
+                              setSelectedOptionIds((current) => ({
+                                ...current,
+                                [question.id]: option.id,
+                              }))
+                            }}
+                            className="h-5 w-5 shrink-0 cursor-pointer accent-[color:var(--accent)]"
+                          />
+                          <span className="text-base leading-7 text-[var(--ink)]">
+                            {option.label}
+                          </span>
+                        </label>
+                      )
+                    })}
+                  </div>
                 </div>
               </fieldset>
             ))}
