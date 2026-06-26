@@ -6,8 +6,15 @@ export function ThemeToggle() {
       data-theme-toggle=""
       aria-label="Switch to dark theme"
       aria-pressed="false"
+      suppressHydrationWarning
     >
-      <span className="theme-toggle__option" data-theme-icon="light" data-active="true" aria-hidden="true">
+      <span
+        className="theme-toggle__option"
+        data-theme-icon="light"
+        data-active="true"
+        aria-hidden="true"
+        suppressHydrationWarning
+      >
         <svg viewBox="0 0 24 24" focusable="false">
           <circle cx="12" cy="12" r="4" fill="currentColor" />
           <path
@@ -19,7 +26,13 @@ export function ThemeToggle() {
           />
         </svg>
       </span>
-      <span className="theme-toggle__option" data-theme-icon="dark" data-active="false" aria-hidden="true">
+      <span
+        className="theme-toggle__option"
+        data-theme-icon="dark"
+        data-active="false"
+        aria-hidden="true"
+        suppressHydrationWarning
+      >
         <svg viewBox="0 0 24 24" focusable="false">
           <path
             d="M15.5 2.8a8.95 8.95 0 1 0 5.7 12.9 9.7 9.7 0 0 1-3.83.78A9.68 9.68 0 0 1 7.7 6.83a9.7 9.7 0 0 1 .78-3.83 8.93 8.93 0 0 0 7.02-.2Z"

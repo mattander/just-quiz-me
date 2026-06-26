@@ -88,18 +88,20 @@ function QuizResultPage() {
   )
 
   return (
-    <main className="mx-auto flex min-h-screen w-full max-w-4xl px-5 py-12 sm:px-8 sm:py-16">
+    <main className="mx-auto flex min-h-screen w-full max-w-5xl px-5 py-12 sm:px-8 sm:py-16">
       <section className="w-full">
         <div className="mx-auto max-w-3xl">
-          <p className="eyebrow">Your result</p>
-          <h1 className="display-type mt-3 text-4xl leading-[0.96] tracking-[-0.04em] text-[var(--ink)] sm:text-5xl">
-            {result.title}
-          </h1>
-          <p className="mt-4 text-base leading-7 text-[var(--muted)] sm:text-lg">
-            {result.description}
-          </p>
+          <header className="border-y border-[color:var(--rule)] py-7">
+            <p className="eyebrow">Your result</p>
+            <h1 className="display-type mt-4 text-5xl leading-[0.94] tracking-[-0.055em] text-[var(--ink)] sm:text-6xl">
+              {result.title}
+            </h1>
+            <p className="mt-5 text-base leading-7 text-[var(--muted)] sm:text-lg">
+              {result.description}
+            </p>
+          </header>
 
-          <div className="mt-8 border-t border-[color:var(--rule)] pt-6">
+          <div className="result-panel mt-8">
             <p className="eyebrow">The read</p>
             <p className="mt-3 text-base leading-8 text-[var(--ink)] sm:text-lg">
               {resultEnhancement.detail}

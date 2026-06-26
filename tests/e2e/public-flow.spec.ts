@@ -11,11 +11,11 @@ test('homepage to quiz to result flow stays playable', async ({ page }) => {
   await expect(
     page.getByRole('heading', {
       level: 1,
-      name: 'Quick little quizzes for unserious people with excellent taste.',
+      name: 'Small, strange quizzes for people avoiding the group chat correctly.',
     }),
   ).toBeVisible()
 
-  await page.getByRole('link', { name: 'Play the featured quiz' }).click()
+  await page.getByRole('link', { name: 'Play this quiz' }).click()
   await expect(page).toHaveURL('/quiz/which-greek-god-would-block-you-on-slack')
 
   await expect(
