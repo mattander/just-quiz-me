@@ -25,6 +25,16 @@ Just Quiz Me quizzes should be absurd, but they should not feel random. A good q
 
 6. Publish by changing the manifest status to `published`, then sync content into D1 when deployment operations are ready.
 
+## Generated Drafts
+
+Phase 2 AI-assisted generation uses the same quiz manifest contract, but generated output enters storage as an unreviewed draft revision instead of public content.
+
+- Generated drafts must keep `status: 'draft'`.
+- Draft ingestion records source provenance, including provider/model, source identifier, optional prompt, and optional JSON metadata.
+- New generated revisions start with review status `generated`.
+- Public reads continue to use the `published_quizzes` projection, so generated drafts stay invisible until an explicit review/publish command promotes them.
+- The default generation target is OpenAI Responses API with `gpt-5.4-mini`, read from `OPENAI_API_KEY` in admin automation.
+
 ## Editorial Rules
 
 - Every question should describe a situation a person can actually imagine.

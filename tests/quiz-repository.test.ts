@@ -93,6 +93,88 @@ const draftQuizFixture = parseQuizManifest({
   ],
 })
 
+const generatedDraftFixture = parseQuizManifest({
+  id: 'which-office-plant-knows-too-much',
+  slug: 'which-office-plant-knows-too-much',
+  status: 'draft',
+  title: 'Which Office Plant Knows Too Much?',
+  description:
+    'A suspiciously leafy quiz about workplace secrets, ambient listening, and photosynthesis with an agenda.',
+  results: [
+    {
+      id: 'peace-lily-in-legal',
+      title: 'Peace Lily in Legal',
+      description:
+        'You absorb conflict through the air and somehow always know which meeting should have been an email.',
+    },
+    {
+      id: 'snake-plant-by-printer',
+      title: 'Snake Plant by the Printer',
+      description:
+        'You are low maintenance, impossible to impress, and present for every confidential toner incident.',
+    },
+  ],
+  questions: [
+    {
+      id: 'confidential-vibe',
+      prompt: 'A coworker whispers near your leaves. What do you do?',
+      options: [
+        {
+          id: 'document-everything',
+          label: 'Remain still, collect context, and develop a private timeline.',
+          weights: [{ resultId: 'peace-lily-in-legal', value: 3 }],
+        },
+        {
+          id: 'jam-printer',
+          label: 'Cause a printer jam at exactly the funniest possible moment.',
+          weights: [{ resultId: 'snake-plant-by-printer', value: 3 }],
+        },
+      ],
+    },
+  ],
+})
+
+const generatedRevisionForPublishedQuizFixture = parseQuizManifest({
+  id: 'which-chaotic-breakfast-are-you',
+  slug: 'which-chaotic-breakfast-are-you',
+  status: 'draft',
+  title: 'Which Chaotic Breakfast Are You? Draft Revision',
+  description:
+    'A draft revision for an already published breakfast quiz that should not replace public content until review.',
+  results: [
+    {
+      id: 'very-focused-oatmeal',
+      title: 'Very Focused Oatmeal',
+      description:
+        'You are calm, structured, and somehow making everyone else feel like they forgot a meeting.',
+    },
+    {
+      id: 'espresso-in-a-bowl',
+      title: 'Espresso in a Bowl',
+      description:
+        'You are technically breakfast, spiritually a small emergency, and probably correct about the timeline.',
+    },
+  ],
+  questions: [
+    {
+      id: 'morning-risk',
+      prompt: 'Your morning plan collapses immediately. What happens next?',
+      options: [
+        {
+          id: 'stabilize-the-room',
+          label: 'Stabilize the room with quiet competence and a clean spoon.',
+          weights: [{ resultId: 'very-focused-oatmeal', value: 3 }],
+        },
+        {
+          id: 'accelerate-the-plot',
+          label: 'Accelerate the plot and become legally breakfast-adjacent.',
+          weights: [{ resultId: 'espresso-in-a-bowl', value: 3 }],
+        },
+      ],
+    },
+  ],
+})
+
 test('seeded repository lists the authored published quizzes without a database', async () => {
   const repository = createQuizRepository(undefined)
   const quizzes = await repository.listPublished()
@@ -160,6 +242,121 @@ test('repository result lookup returns published results and hides draft results
     })
     assert.equal(draftResult, null)
     assert.equal(missingResult, null)
+  })
+})
+
+test('repository ingests AI generated drafts with review metadata without publishing them', async () => {
+  await withQuizDatabase(async (database) => {
+    await seedQuizFixtures(database, [publishedQuizFixture])
+
+    const repository = createQuizRepository(database)
+    const summary = await repository.ingestGeneratedDraft({
+      manifest: generatedDraftFixture,
+      source: {
+        identifier: 'github-actions:run-123:office-plant',
+        model: 'gpt-5.4-mini',
+        prompt: 'Generate a coherent quiz about an office plant that knows too much.',
+        metadataJson: JSON.stringify({
+          workflow: 'quiz-draft-generation',
+          runId: '123',
+        }),
+      },
+    })
+    const draftReviews = await repository.listDraftReviews()
+
+    assert.deepEqual(summary, {
+      id: 'quiz:which-office-plant-knows-too-much:revision:1',
+      quizId: 'quiz:which-office-plant-knows-too-much',
+      revisionNumber: 1,
+      sourceKind: 'ai_generated',
+      sourceIdentifier: 'github-actions:run-123:office-plant',
+      sourceModel: 'gpt-5.4-mini',
+      reviewStatus: 'generated',
+      title: 'Which Office Plant Knows Too Much?',
+      description:
+        'A suspiciously leafy quiz about workplace secrets, ambient listening, and photosynthesis with an agenda.',
+    })
+    assert.deepEqual(draftReviews, [summary])
+    assert.equal(
+      await repository.readPublished('which-office-plant-knows-too-much'),
+      null,
+    )
+
+    const provenanceRow = await database
+      .prepare(
+        `
+          SELECT source_kind, source_identifier, source_model, source_prompt, source_metadata_json, review_status
+          FROM quiz_revisions
+          WHERE id = ?
+          LIMIT 1
+        `,
+      )
+      .bind(summary.id)
+      .first<{
+        source_kind: string
+        source_identifier: string
+        source_model: string
+        source_prompt: string
+        source_metadata_json: string
+        review_status: string
+      }>()
+
+    assert.deepEqual(provenanceRow, {
+      source_kind: 'ai_generated',
+      source_identifier: 'github-actions:run-123:office-plant',
+      source_model: 'gpt-5.4-mini',
+      source_prompt: 'Generate a coherent quiz about an office plant that knows too much.',
+      source_metadata_json: '{"workflow":"quiz-draft-generation","runId":"123"}',
+      review_status: 'generated',
+    })
+  })
+})
+
+test('repository preserves the current publication when ingesting a generated draft revision', async () => {
+  await withQuizDatabase(async (database) => {
+    await seedQuizFixtures(database, [publishedQuizFixture])
+
+    const repository = createQuizRepository(database)
+    const summary = await repository.ingestGeneratedDraft({
+      manifest: generatedRevisionForPublishedQuizFixture,
+      source: {
+        identifier: 'github-actions:run-456:breakfast-revision',
+        model: 'gpt-5.4-mini',
+      },
+    })
+
+    assert.equal(summary.revisionNumber, 2)
+    assert.deepEqual(
+      await repository.readPublished('which-chaotic-breakfast-are-you'),
+      toPublishedQuizFixture(publishedQuizFixture),
+    )
+    assert.deepEqual(await repository.listPublished(), [
+      {
+        slug: 'which-chaotic-breakfast-are-you',
+        title: 'Which Chaotic Breakfast Are You?',
+        description:
+          'A politely unhinged breakfast quiz about coping styles, social energy, and how much structure your morning can survive.',
+      },
+    ])
+  })
+})
+
+test('repository rejects generated drafts that try to start published', async () => {
+  await withQuizDatabase(async (database) => {
+    const repository = createQuizRepository(database)
+
+    await assert.rejects(
+      repository.ingestGeneratedDraft({
+        manifest: publishedQuizFixture,
+        source: {
+          identifier: 'github-actions:run-123:published',
+          model: 'gpt-5.4-mini',
+        },
+      }),
+      /Generated quiz drafts must use draft status/,
+    )
+
+    assert.deepEqual(await repository.listDraftReviews(), [])
   })
 })
 
@@ -243,13 +440,14 @@ async function seedQuizFixtures(
               source_kind,
               source_identifier,
               status,
+              review_status,
               title,
               description,
               manifest_json,
               created_at,
               updated_at
             )
-            VALUES (?, ?, 1, 'seed_manifest', ?, ?, ?, ?, ?, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+            VALUES (?, ?, 1, 'seed_manifest', ?, ?, 'approved', ?, ?, ?, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
           `,
         )
         .bind(

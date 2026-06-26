@@ -156,15 +156,17 @@ async function main() {
               source_kind,
               source_identifier,
               status,
+              review_status,
               title,
               description,
               manifest_json,
               created_at,
               updated_at
             )
-            VALUES (?, ?, 1, 'seed_manifest', ?, ?, ?, ?, ?, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+            VALUES (?, ?, 1, 'seed_manifest', ?, ?, 'approved', ?, ?, ?, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
             ON CONFLICT(id) DO UPDATE SET
               status = excluded.status,
+              review_status = excluded.review_status,
               title = excluded.title,
               description = excluded.description,
               manifest_json = excluded.manifest_json,
