@@ -146,7 +146,7 @@ function HomePage() {
               </p>
             </div>
 
-            <ol className="quiz-ledger">
+            <ol className="quiz-ledger" start={2}>
               {moreQuizzes.map((quiz, index) => (
                 <li key={quiz.slug}>
                   <Link
