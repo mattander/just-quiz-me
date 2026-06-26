@@ -85,6 +85,8 @@ const themeBootScript = `
     });
   }
 
+  window.__justQuizMeSyncTheme = syncThemeToggles;
+
   document.addEventListener('click', (event) => {
     const target = event.target;
 
@@ -129,6 +131,12 @@ const themeBootScript = `
   updateThemeIcons(getActiveTheme());
 })();
 `
+
+declare global {
+  interface Window {
+    __justQuizMeSyncTheme?: () => void
+  }
+}
 
 export const Route = createRootRoute({
   loader: async () => getRuntimeConfig(),
@@ -229,6 +237,7 @@ function RootDocument({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     document.documentElement.dataset.appHydrated = 'true'
+    window.__justQuizMeSyncTheme?.()
 
     return () => {
       delete document.documentElement.dataset.appHydrated

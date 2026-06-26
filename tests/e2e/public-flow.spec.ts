@@ -84,6 +84,14 @@ test('theme toggle defaults to system theme and supports a persisted override', 
     name: /Switch to (light|dark) theme/,
   })
   await expect(themeToggle).toBeVisible()
+  await expect(themeToggle).toHaveAttribute('aria-label', 'Switch to light theme')
+  await expect(themeToggle).toHaveAttribute('aria-pressed', 'true')
+  await expect(
+    themeToggle.locator('[data-theme-icon="dark"]'),
+  ).toHaveAttribute('data-active', 'true')
+  await expect(
+    themeToggle.locator('[data-theme-icon="light"]'),
+  ).toHaveAttribute('data-active', 'false')
 
   const initialButtonLabel = await themeToggle.getAttribute('aria-label')
   const overrideTheme =
