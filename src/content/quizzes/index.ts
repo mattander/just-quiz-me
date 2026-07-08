@@ -35,17 +35,17 @@ export const quizManifests = defineQuizManifestCollection([
         options: [
           {
             id: 'bullet-list',
-            label: 'Three clear bullets: what changed, what is blocked, and what happens next.',
+            label: 'Three bullets: what changed, what is blocked, and what happens next.',
             weights: [{ resultId: 'athena', value: 3 }],
           },
           {
             id: 'voice-note',
-            label: 'A lively voice note that gives context and somehow makes everyone less tense.',
+            label: 'A short voice note with context, tone, and one useful joke.',
             weights: [{ resultId: 'dionysus', value: 3 }],
           },
           {
             id: 'single-sentence',
-            label: 'One careful sentence that answers the question and quietly closes the loop.',
+            label: 'One careful sentence that answers the question and closes the loop.',
             weights: [{ resultId: 'hades', value: 3 }],
           },
         ],
@@ -64,12 +64,12 @@ export const quizManifests = defineQuizManifestCollection([
           },
           {
             id: 'turn-it-into-a-bit',
-            label: 'Use a well-timed joke to reset the room before everyone loses the will to live.',
+            label: 'Make one well-timed joke, then use the laugh to reset the room.',
             weights: [{ resultId: 'dionysus', value: 3 }],
           },
           {
             id: 'haunt-the-chat',
-            label: 'Stay quiet in the room, then drop the exact right summary in the follow-up thread.',
+            label: 'Listen quietly, then send the useful summary after the meeting.',
             weights: [{ resultId: 'hades', value: 3 }],
           },
         ],
@@ -85,12 +85,12 @@ export const quizManifests = defineQuizManifestCollection([
           },
           {
             id: 'arrive-with-snacks',
-            label: 'Show up with charm, keep the mood alive, and make the best of a strange choice.',
+            label: 'Show up, keep the mood decent, and try to make the time useful.',
             weights: [{ resultId: 'dionysus', value: 3 }],
           },
           {
             id: 'remember-forever',
-            label: 'Accept it, say very little, and mentally update your trust model forever.',
+            label: 'Accept it, say very little, and remember who did this.',
             weights: [{ resultId: 'hades', value: 3 }],
           },
         ],
@@ -106,7 +106,7 @@ export const quizManifests = defineQuizManifestCollection([
           },
           {
             id: 'suspicious-mug',
-            label: 'A mug that starts conversations and makes the desk feel less bleak.',
+            label: 'A mug that starts conversations and makes the desk feel friendlier.',
             weights: [
               { resultId: 'dionysus', value: 2 },
               { resultId: 'athena', value: 1 },
@@ -155,17 +155,17 @@ export const quizManifests = defineQuizManifestCollection([
         options: [
           {
             id: 'loudly-capable',
-            label: 'Take charge of logistics and make sure everyone knows the plan is now serious.',
+            label: 'Take charge of logistics and turn the argument into a plan.',
             weights: [{ resultId: 'stand-mixer', value: 3 }],
           },
           {
             id: 'small-and-sparking',
-            label: 'Cut through the nonsense quickly, even if a few feelings get singed.',
+            label: 'Say the direct thing everyone is avoiding, even if it lands sharply.',
             weights: [{ resultId: 'toaster', value: 3 }],
           },
           {
             id: 'steady-and-worrying',
-            label: 'Stay calm, keep people talking, and slowly become the person holding the room together.',
+            label: 'Stay calm, keep people talking, and quietly become the mediator.',
             weights: [{ resultId: 'slow-cooker', value: 3 }],
           },
         ],
@@ -184,7 +184,7 @@ export const quizManifests = defineQuizManifestCollection([
           },
           {
             id: 'smile-back',
-            label: 'Smile back, stay loose, and wait for the exact moment to call it out.',
+            label: 'Smile back, keep it light, and call out the tactic when it matters.',
             weights: [{ resultId: 'toaster', value: 3 }],
           },
           {
@@ -210,7 +210,7 @@ export const quizManifests = defineQuizManifestCollection([
           },
           {
             id: 'long-memory',
-            label: 'Holding onto every detail until the grudge has furniture.',
+            label: 'Remembering every detail long after the original problem is over.',
             weights: [{ resultId: 'slow-cooker', value: 3 }],
           },
         ],
@@ -226,7 +226,7 @@ export const quizManifests = defineQuizManifestCollection([
           },
           {
             id: 'burnt-smell',
-            label: 'Small avoidable problems kept appearing near the same person.',
+            label: 'Small avoidable problems kept showing up around the same person.',
             weights: [
               { resultId: 'toaster', value: 2 },
               { resultId: 'stand-mixer', value: 1 },
@@ -234,7 +234,7 @@ export const quizManifests = defineQuizManifestCollection([
           },
           {
             id: 'unnatural-calm',
-            label: 'The calm lasted too long, like someone was waiting for a timer.',
+            label: 'They stayed calm for so long that it started to feel planned.',
             weights: [{ resultId: 'slow-cooker', value: 2 }],
           },
         ],
@@ -275,17 +275,17 @@ export const quizManifests = defineQuizManifestCollection([
         options: [
           {
             id: 'seen-at-dusk',
-            label: 'You take the same quiet walk at dusk and accidentally look symbolic.',
+            label: 'You take the same quiet walk every evening and people start noticing.',
             weights: [{ resultId: 'bridge-figure', value: 3 }],
           },
           {
             id: 'too-accurate-advice',
-            label: 'You give practical advice that keeps being annoyingly correct.',
+            label: 'You give practical advice that keeps turning out to be correct.',
             weights: [{ resultId: 'polite-witch', value: 3 }],
           },
           {
             id: 'voice-carried',
-            label: 'You were overheard saying something memorable at exactly the wrong moment.',
+            label: 'You say something memorable where half the town can hear it.',
             weights: [{ resultId: 'bell-tower-voice', value: 3 }],
           },
         ],
@@ -296,17 +296,17 @@ export const quizManifests = defineQuizManifestCollection([
         options: [
           {
             id: 'silent-silhouette',
-            label: 'They notice where you are standing before they know what you are thinking.',
+            label: 'They notice where you are standing before they know why you are there.',
             weights: [{ resultId: 'bridge-figure', value: 3 }],
           },
           {
             id: 'kind-but-ominous',
-            label: 'They ask for help, then tell everyone your advice felt strangely specific.',
+            label: 'They ask for help, then tell everyone your advice was too accurate.',
             weights: [{ resultId: 'polite-witch', value: 3 }],
           },
           {
             id: 'beautiful-echo',
-            label: 'They remember the exact thing you said and repeat it with extra drama.',
+            label: 'They remember the exact thing you said and repeat it for effect.',
             weights: [{ resultId: 'bell-tower-voice', value: 3 }],
           },
         ],
@@ -317,7 +317,7 @@ export const quizManifests = defineQuizManifestCollection([
         options: [
           {
             id: 'invents-backstory',
-            label: 'They add a tragic backstory even though you were probably just waiting for a ride.',
+            label: 'They add a tragic backstory even though you were waiting for a ride.',
             weights: [{ resultId: 'bridge-figure', value: 2 }],
           },
           {
@@ -330,7 +330,7 @@ export const quizManifests = defineQuizManifestCollection([
           },
           {
             id: 'looks-up-when-windy',
-            label: 'They repeat your words whenever the weather gets dramatic.',
+            label: 'They quote you whenever the weather makes the story feel bigger.',
             weights: [{ resultId: 'bell-tower-voice', value: 2 }],
           },
         ],
@@ -341,7 +341,7 @@ export const quizManifests = defineQuizManifestCollection([
         options: [
           {
             id: 'mind-my-business',
-            label: 'Mind your business and enjoy a route with a nice view.',
+            label: 'Mind your business and take the route with the best view.',
             weights: [{ resultId: 'bridge-figure', value: 2 }],
           },
           {
@@ -351,7 +351,7 @@ export const quizManifests = defineQuizManifestCollection([
           },
           {
             id: 'set-the-tone',
-            label: 'Say what needs saying, then leave before anyone asks follow-up questions.',
+            label: 'Say what needs saying, then leave before it becomes a discussion.',
             weights: [{ resultId: 'bell-tower-voice', value: 2 }],
           },
         ],
@@ -402,7 +402,7 @@ export const quizManifests = defineQuizManifestCollection([
           },
           {
             id: 'single-line',
-            label: 'One polished sentence that makes the silence feel extremely loud.',
+            label: 'One polished sentence that makes the missed deadline obvious.',
             weights: [{ resultId: 'best', value: 3 }],
           },
         ],
@@ -413,7 +413,7 @@ export const quizManifests = defineQuizManifestCollection([
         options: [
           {
             id: 'return-to-facts',
-            label: 'Summarize the decision, name the owner, and close every escape hatch.',
+            label: 'Summarize the decision, name the owner, and remove the ambiguity.',
             weights: [
               { resultId: 'regards', value: 2 },
               { resultId: 'best', value: 1 },
@@ -426,7 +426,7 @@ export const quizManifests = defineQuizManifestCollection([
           },
           {
             id: 'remove-air',
-            label: 'Reply with such clean brevity that the thread loses oxygen.',
+            label: 'Reply with one clean sentence that ends the extra commentary.',
             weights: [{ resultId: 'best', value: 3 }],
           },
         ],
@@ -437,7 +437,7 @@ export const quizManifests = defineQuizManifestCollection([
         options: [
           {
             id: 'decline-with-evidence',
-            label: 'Decline and attach the two bullets, because the meeting has already happened spiritually.',
+            label: 'Decline and attach the two bullets that answer the question.',
             weights: [{ resultId: 'regards', value: 3 }],
           },
           {
@@ -463,12 +463,12 @@ export const quizManifests = defineQuizManifestCollection([
           },
           {
             id: 'movement',
-            label: 'A sense that things are moving whether anyone feels ready or not.',
+            label: 'A sense that the next step is already moving.',
             weights: [{ resultId: 'thanks-in-advance', value: 2 }],
           },
           {
             id: 'mystique',
-            label: 'A little ambiguity, a little class, and absolutely no extra words.',
+            label: 'A little restraint and absolutely no extra words.',
             weights: [
               { resultId: 'best', value: 2 },
               { resultId: 'regards', value: 1 },
@@ -512,7 +512,7 @@ export const quizManifests = defineQuizManifestCollection([
         options: [
           {
             id: 'burst-in',
-            label: 'Drop a big feeling with no preface and let the room adjust.',
+            label: 'Drop a big feeling with no preface and let everyone catch up.',
             weights: [{ resultId: 'weather-event', value: 3 }],
           },
           {
@@ -522,7 +522,7 @@ export const quizManifests = defineQuizManifestCollection([
           },
           {
             id: 'hint-at-news',
-            label: 'Say "so anyway" and then reveal only 40 percent of the story.',
+            label: 'Mention big news casually, then reveal only part of the story.',
             weights: [{ resultId: 'soft-launch', value: 3 }],
           },
         ],
@@ -533,7 +533,7 @@ export const quizManifests = defineQuizManifestCollection([
         options: [
           {
             id: 'vibe-check',
-            label: 'An emotional read on what everyone secretly wants tonight.',
+            label: 'You name what everyone seems to want but has not said clearly.',
             weights: [{ resultId: 'weather-event', value: 3 }],
           },
           {
@@ -543,7 +543,7 @@ export const quizManifests = defineQuizManifestCollection([
           },
           {
             id: 'mysterious-constraint',
-            label: 'A vague constraint that makes everyone ask what happened.',
+            label: 'A vague constraint that forces everyone to ask for context.',
             weights: [{ resultId: 'soft-launch', value: 3 }],
           },
         ],
@@ -554,7 +554,7 @@ export const quizManifests = defineQuizManifestCollection([
         options: [
           {
             id: 'thunderstorm',
-            label: 'Seven messages in two minutes, then total atmospheric calm.',
+            label: 'Seven messages in two minutes, then a long quiet stretch.',
             weights: [{ resultId: 'weather-event', value: 2 }],
           },
           {
@@ -567,7 +567,7 @@ export const quizManifests = defineQuizManifestCollection([
           },
           {
             id: 'slow-drip',
-            label: 'A controlled drip of details that keeps everyone gently trapped.',
+            label: 'One detail at a time, just enough to keep people asking.',
             weights: [{ resultId: 'soft-launch', value: 2 }],
           },
         ],
@@ -578,7 +578,7 @@ export const quizManifests = defineQuizManifestCollection([
         options: [
           {
             id: 'own-the-vibe',
-            label: 'Admit the energy got huge and redirect everyone toward snacks.',
+            label: 'Admit the energy got too big and redirect everyone toward snacks.',
             weights: [{ resultId: 'weather-event', value: 2 }],
           },
           {
@@ -588,7 +588,7 @@ export const quizManifests = defineQuizManifestCollection([
           },
           {
             id: 'promise-context',
-            label: 'Promise context later and somehow make that even more dramatic.',
+            label: 'Promise context later, which makes everyone more curious.',
             weights: [{ resultId: 'soft-launch', value: 2 }],
           },
         ],
@@ -650,7 +650,7 @@ export const quizManifests = defineQuizManifestCollection([
         options: [
           {
             id: 'supply-closet',
-            label: 'The supply closet, where optimism goes to become inventory.',
+            label: 'The supply closet, where one missing item becomes everyone’s problem.',
             weights: [{ resultId: 'stapler', value: 3 }],
           },
           {
@@ -705,7 +705,7 @@ export const quizManifests = defineQuizManifestCollection([
           },
           {
             id: 'control-is-fake',
-            label: 'Control is a myth, especially when HDMI is involved.',
+            label: 'Some problems do not care how prepared you are.',
             weights: [{ resultId: 'conference-room-remote', value: 2 }],
           },
         ],
@@ -746,17 +746,17 @@ export const quizManifests = defineQuizManifestCollection([
         options: [
           {
             id: 'bold-return',
-            label: 'You return it with dramatic purpose and make eye contact with the weather.',
+            label: 'You return it fast and confidently, even from the far side of the lot.',
             weights: [{ resultId: 'seagull', value: 3 }],
           },
           {
             id: 'precise-return',
-            label: 'You return it perfectly and judge the cart geometry around you.',
+            label: 'You return it neatly and notice every cart that is out of place.',
             weights: [{ resultId: 'grackle', value: 3 }],
           },
           {
             id: 'gentle-return',
-            label: 'You return it, rescue a stray cart, and feel briefly like a community pillar.',
+            label: 'You return it, grab a stray cart too, and feel useful for one minute.',
             weights: [{ resultId: 'pigeon', value: 3 }],
           },
         ],
@@ -767,17 +767,17 @@ export const quizManifests = defineQuizManifestCollection([
         options: [
           {
             id: 'public-challenge',
-            label: 'Hold it confidently, because fear is how they win.',
+            label: 'Hold it confidently and keep walking like you are not worried.',
             weights: [{ resultId: 'seagull', value: 3 }],
           },
           {
             id: 'secure-perimeter',
-            label: 'Scan the perimeter and identify every interested party.',
+            label: 'Scan the area and identify every bird within snack distance.',
             weights: [{ resultId: 'grackle', value: 3 }],
           },
           {
             id: 'share-a-crumb',
-            label: 'Accept that one crumb belongs to the commons.',
+            label: 'Accept that one crumb will probably become public property.',
             weights: [{ resultId: 'pigeon', value: 3 }],
           },
         ],
@@ -788,12 +788,12 @@ export const quizManifests = defineQuizManifestCollection([
         options: [
           {
             id: 'commit-to-spot',
-            label: 'Committing to a spot everyone else underestimated.',
+            label: 'Committing to a spot everyone else seems afraid to try.',
             weights: [{ resultId: 'seagull', value: 2 }],
           },
           {
             id: 'line-analysis',
-            label: 'Noticing someone crossed the line and deciding that means something.',
+            label: 'Noticing someone parked over the line and forming an opinion.',
             weights: [
               { resultId: 'grackle', value: 2 },
               { resultId: 'pigeon', value: 1 },
@@ -801,7 +801,7 @@ export const quizManifests = defineQuizManifestCollection([
           },
           {
             id: 'patient-wait',
-            label: 'Waiting patiently while someone loads a trunk at geological speed.',
+            label: 'Waiting patiently while someone loads a trunk very, very slowly.',
             weights: [{ resultId: 'pigeon', value: 2 }],
           },
         ],
@@ -812,12 +812,12 @@ export const quizManifests = defineQuizManifestCollection([
         options: [
           {
             id: 'too-visible',
-            label: 'Subject is too visible with fries and must accept consequences.',
+            label: 'Subject carried fries in public and underestimated the audience.',
             weights: [{ resultId: 'seagull', value: 2 }],
           },
           {
             id: 'procedural-concerns',
-            label: 'Subject shows procedural promise but inconsistent lane discipline.',
+            label: 'Subject means well but shows inconsistent lane discipline.',
             weights: [{ resultId: 'grackle', value: 2 }],
           },
           {
@@ -868,12 +868,12 @@ export const quizManifests = defineQuizManifestCollection([
           },
           {
             id: 'blank-column',
-            label: 'A blank column clearly contains a decision nobody wants to name.',
+            label: 'A blank column is being used for a decision nobody has named.',
             weights: [{ resultId: 'hidden-assumptions', value: 3 }],
           },
           {
             id: 'ancient-filter',
-            label: 'A filter from 2021 is still active and somehow running the meeting.',
+            label: 'A filter from 2021 is still active and changing what everyone sees.',
             weights: [{ resultId: 'old-pivot-table', value: 3 }],
           },
         ],
@@ -884,12 +884,12 @@ export const quizManifests = defineQuizManifestCollection([
         options: [
           {
             id: 'price-it-out',
-            label: 'Put numbers beside the idea until the fantasy has rent to pay.',
+            label: 'Put numbers beside the idea so people can see the tradeoffs.',
             weights: [{ resultId: 'budget-tab', value: 3 }],
           },
           {
             id: 'ask-the-question',
-            label: 'Ask the obvious question that reveals three unspoken dependencies.',
+            label: 'Ask the obvious question that reveals three missing decisions.',
             weights: [{ resultId: 'hidden-assumptions', value: 3 }],
           },
           {
@@ -905,12 +905,12 @@ export const quizManifests = defineQuizManifestCollection([
         options: [
           {
             id: 'cost-awareness',
-            label: 'You immediately hear the invoice forming in another room.',
+            label: 'You immediately wonder what the shortcut will cost later.',
             weights: [{ resultId: 'budget-tab', value: 2 }],
           },
           {
             id: 'scope-sense',
-            label: 'You sense the sentence is standing on a trapdoor labeled scope.',
+            label: 'You hear the scope expanding before anyone admits it.',
             weights: [
               { resultId: 'hidden-assumptions', value: 2 },
               { resultId: 'budget-tab', value: 1 },
@@ -918,7 +918,7 @@ export const quizManifests = defineQuizManifestCollection([
           },
           {
             id: 'version-memory',
-            label: 'You remember the last time quick became a folder called final-final-2.',
+            label: 'You remember the last time "quick" produced six file versions.',
             weights: [{ resultId: 'old-pivot-table', value: 2 }],
           },
         ],
@@ -929,7 +929,7 @@ export const quizManifests = defineQuizManifestCollection([
         options: [
           {
             id: 'resources-are-real',
-            label: 'Resources are real, even when the vibes are immaculate.',
+            label: 'Resources are real, even when the idea is exciting.',
             weights: [{ resultId: 'budget-tab', value: 2 }],
           },
           {
@@ -980,17 +980,17 @@ export const quizManifests = defineQuizManifestCollection([
         options: [
           {
             id: 'clear-and-warm',
-            label: 'With one clear sentence and a warmth nobody has to decode.',
+            label: 'You name what is happening and say what needs to happen next.',
             weights: [{ resultId: 'tomato-soup', value: 3 }],
           },
           {
             id: 'hands-full',
-            label: 'Already carrying water, tissues, chargers, and a plan.',
+            label: 'You arrive with water, chargers, and a practical next step.',
             weights: [{ resultId: 'chicken-noodle', value: 3 }],
           },
           {
             id: 'lower-the-volume',
-            label: 'By making the room calmer before anyone notices you did it.',
+            label: 'You speak quietly, slow the pace, and give people room to breathe.',
             weights: [{ resultId: 'miso-soup', value: 3 }],
           },
         ],
@@ -1001,7 +1001,7 @@ export const quizManifests = defineQuizManifestCollection([
         options: [
           {
             id: 'simple-truth',
-            label: 'A simple truth said kindly, without decorating the problem.',
+            label: 'A simple truth said kindly, without pretending it is fine.',
             weights: [{ resultId: 'tomato-soup', value: 3 }],
           },
           {
@@ -1011,7 +1011,7 @@ export const quizManifests = defineQuizManifestCollection([
           },
           {
             id: 'gentle-presence',
-            label: 'Gentle presence that lets people recover without performing gratitude.',
+            label: 'Quiet presence that lets people recover without explaining themselves.',
             weights: [{ resultId: 'miso-soup', value: 3 }],
           },
         ],
@@ -1022,7 +1022,7 @@ export const quizManifests = defineQuizManifestCollection([
         options: [
           {
             id: 'too-blunt',
-            label: 'Being so clear that someone briefly misses the tenderness underneath.',
+            label: 'Being so clear that someone briefly misses the care underneath.',
             weights: [{ resultId: 'tomato-soup', value: 2 }],
           },
           {
@@ -1032,7 +1032,7 @@ export const quizManifests = defineQuizManifestCollection([
           },
           {
             id: 'disappearing-act',
-            label: 'Becoming so low-impact that people forget to check on you.',
+            label: 'Staying so quiet that people forget to check on you.',
             weights: [
               { resultId: 'miso-soup', value: 2 },
               { resultId: 'chicken-noodle', value: 1 },
@@ -1056,7 +1056,7 @@ export const quizManifests = defineQuizManifestCollection([
           },
           {
             id: 'be-quiet-together',
-            label: 'Sit quietly until everyone remembers they have a body.',
+            label: 'Sit quietly until everyone has enough room to think again.',
             weights: [{ resultId: 'miso-soup', value: 2 }],
           },
         ],
@@ -1087,7 +1087,7 @@ export const quizManifests = defineQuizManifestCollection([
         id: 'lake-monster',
         title: 'Lake Monster',
         description:
-          'The lake monster borrows your hoodie because it likes your softness and ignores your laundry instructions. The hoodie returns damp, iconic, and emotionally changed.',
+          'The lake monster borrows your hoodie because it likes your softness and ignores your laundry instructions. The hoodie returns damp, stretched, and emotionally complicated.',
       },
     ],
     questions: [
@@ -1118,17 +1118,17 @@ export const quizManifests = defineQuizManifestCollection([
         options: [
           {
             id: 'ominous-vague',
-            label: 'They say they need it "for tonight" and refuse to explain the sky.',
+            label: 'They need it tonight, but will not say where they are going.',
             weights: [{ resultId: 'mothman', value: 3 }],
           },
           {
             id: 'vanishing',
-            label: 'They are reliable, but nobody has technically seen them since Tuesday.',
+            label: 'They are careful with things, but very bad at replying on time.',
             weights: [{ resultId: 'bigfoot', value: 3 }],
           },
           {
             id: 'near-water',
-            label: 'They keep standing near water with the confidence of a lawsuit.',
+            label: 'They promise to keep it clean, then wear it near a lake.',
             weights: [{ resultId: 'lake-monster', value: 3 }],
           },
         ],
@@ -1149,7 +1149,7 @@ export const quizManifests = defineQuizManifestCollection([
           },
           {
             id: 'deep-feeling',
-            label: 'Someone emotionally deep enough to be inconvenient but sincere.',
+            label: 'Someone who feels things deeply and means well, even when it is messy.',
             weights: [
               { resultId: 'lake-monster', value: 2 },
               { resultId: 'mothman', value: 1 },
@@ -1163,17 +1163,17 @@ export const quizManifests = defineQuizManifestCollection([
         options: [
           {
             id: 'creased-note',
-            label: 'There is a creased note in the pocket that only says "bridge".',
+            label: 'There is a note in the pocket explaining why they needed it.',
             weights: [{ resultId: 'mothman', value: 2 }],
           },
           {
             id: 'pine-clean',
-            label: 'It smells like cedar, campfire, and someone doing their best.',
+            label: 'It smells like cedar, campfire, and careful outdoor use.',
             weights: [{ resultId: 'bigfoot', value: 2 }],
           },
           {
             id: 'damp-legend',
-            label: 'It is damp in a way that feels historic, not careless.',
+            label: 'It is clean enough, but unmistakably damp.',
             weights: [{ resultId: 'lake-monster', value: 2 }],
           },
         ],

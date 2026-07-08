@@ -1,6 +1,8 @@
 # Quiz Authoring
 
-Just Quiz Me quizzes should be absurd, but they should not feel random. A good quiz has a clear premise, answer options that map to understandable result paths, and results that feel specific enough to share.
+Just Quiz Me quizzes should be absurd, but they should not feel random. A good quiz has a clear premise, answer options that map to understandable result paths, and results that feel specific enough to share. The subject matter can be weird; the choices should still sound like things a person might actually do, prefer, or worry about.
+
+For larger writing passes, generated draft review, or quality fixes, use the repo skill at `.codex/skills/quiz-writing`.
 
 ## Draft Flow
 
@@ -75,9 +77,11 @@ npm run content:review -- reject --revision quiz:which-office-plant-knows-too-mu
 ## Editorial Rules
 
 - Every question should describe a situation a person can actually imagine.
-- Every answer should imply a behavioral pattern, not just a funny noun.
+- Every answer should directly answer the prompt as a behavior, preference, concern, or decision.
+- Every answer set should stay homogeneous: same kind of answer, similar length, similar level of detail.
 - Every result should represent a distinct path through the quiz.
 - Keep jokes calm and specific. Weird is good; nonsense is not.
+- Let the premise carry the absurdity. Do not make every option sound zany.
 - Prefer three results and four questions until the quiz has a reason to be larger.
 - Result descriptions stay short for cards and metadata; longer payoff copy belongs in `result-enhancements.ts`.
 
@@ -92,8 +96,10 @@ Voice: dry, internet-native, specific, grounded absurdity.
 Structure: 3 results, 4 questions, 3 options per question.
 Rules:
 - Questions must be coherent situations.
-- Options must map clearly to result personalities.
+- Options must directly answer the question as plausible human choices.
+- Options must be comparable in shape and map clearly to result personalities.
 - Results must be distinct and shareable.
+- The humor should come from specific observation, not random surreal phrasing.
 - Keep copy concise enough for mobile.
 - Return only JSON matching the draft skeleton.
 ```

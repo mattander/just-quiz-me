@@ -118,7 +118,7 @@ const resultEnhancementsByKey: Record<string, ResultEnhancement> = {
   'which-haunted-spreadsheet-tab-are-you:budget-tab': {
     detail:
       'You are haunted by the budget tab because you can feel reality entering the room before anyone else hears the door. The numbers are not trying to ruin the idea; they are trying to save it from becoming a group text with invoices. Your gift is making optimism survivable. Your curse is that everyone learns this only after asking why you look concerned.',
-    shareText: 'I am the haunted budget tab. The vibes have costs and I can see them.',
+    shareText: 'I am the haunted budget tab. The plan has costs and I can see them.',
   },
   'which-haunted-spreadsheet-tab-are-you:hidden-assumptions': {
     detail:
@@ -158,7 +158,7 @@ const resultEnhancementsByKey: Record<string, ResultEnhancement> = {
   'which-cryptid-would-borrow-your-hoodie:lake-monster': {
     detail:
       'The lake monster would borrow your hoodie because you are soft-hearted around sincere disasters. You knew there would be moisture. You knew the laundry instructions would become folklore. Still, some friendships are worth the dampness. The hoodie returns changed, but so do most things that spend time with creatures who feel deeply underwater.',
-    shareText: 'The lake monster would borrow my hoodie. Damp, iconic, emotionally complicated.',
+    shareText: 'The lake monster would borrow my hoodie. Damp, sincere, emotionally complicated.',
   },
 }
 
