@@ -6,7 +6,6 @@
   --muted: #57534e;
   --rule: rgba(23, 23, 23, 0.12);
   --rule-strong: rgba(23, 23, 23, 0.2);
-  --paper-line: rgba(23, 23, 23, 0.045);
   --surface: rgba(255, 255, 255, 0.42);
   --surface-strong: rgba(255, 255, 255, 0.72);
   --accent: #146356;
@@ -31,14 +30,7 @@ body {
   margin: 0;
   color: var(--ink);
   font-family: "Avenir Next", "Segoe UI", "Helvetica Neue", sans-serif;
-  background:
-    repeating-linear-gradient(
-      180deg,
-      transparent 0,
-      transparent 35px,
-      var(--paper-line) 36px
-    ),
-    var(--page);
+  background: var(--page);
 }
 
 a {
@@ -281,7 +273,6 @@ a {
     --muted: #d6d3d1;
     --rule: rgba(245, 245, 244, 0.14);
     --rule-strong: rgba(245, 245, 244, 0.24);
-    --paper-line: rgba(245, 245, 244, 0.045);
     --surface: rgba(255, 255, 255, 0.03);
     --surface-strong: rgba(255, 255, 255, 0.05);
     --accent: #7ed2c6;
@@ -291,17 +282,6 @@ a {
     --warning-rule: rgba(255, 163, 117, 0.24);
     --sun: #fbbf24;
     --moon: #a5b4fc;
-  }
-
-  body {
-    background:
-      repeating-linear-gradient(
-        180deg,
-        transparent 0,
-        transparent 35px,
-        var(--paper-line) 36px
-      ),
-      var(--page);
   }
 
   :root:not([data-theme="light"]) .theme-logo-mark--light {
@@ -321,7 +301,6 @@ html[data-theme="light"] {
   --muted: #57534e;
   --rule: rgba(23, 23, 23, 0.12);
   --rule-strong: rgba(23, 23, 23, 0.2);
-  --paper-line: rgba(23, 23, 23, 0.045);
   --surface: rgba(255, 255, 255, 0.42);
   --surface-strong: rgba(255, 255, 255, 0.72);
   --accent: #146356;
@@ -349,7 +328,6 @@ html[data-theme="dark"] {
   --muted: #d6d3d1;
   --rule: rgba(245, 245, 244, 0.14);
   --rule-strong: rgba(245, 245, 244, 0.24);
-  --paper-line: rgba(245, 245, 244, 0.045);
   --surface: rgba(255, 255, 255, 0.03);
   --surface-strong: rgba(255, 255, 255, 0.05);
   --accent: #7ed2c6;
