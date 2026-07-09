@@ -13,7 +13,7 @@ test('createPageMetadata includes canonical sharing fields and optional robots',
     title: 'Buttered Toast | Just Quiz Me',
     description: 'Warm, capable, and suspiciously steady under pressure.',
     canonicalUrl:
-      'https://justquiz.me/quiz/which-chaotic-breakfast-are-you/result?resultId=buttered-toast&answered=4',
+      'https://justquiz.me/quiz/which-chaotic-breakfast-are-you/result?resultId=buttered-toast&answered=6',
     robots: 'noindex,follow',
   })
 
@@ -26,7 +26,7 @@ test('createPageMetadata includes canonical sharing fields and optional robots',
         'property' in entry &&
         entry.property === 'og:url' &&
         entry.content ===
-          'https://justquiz.me/quiz/which-chaotic-breakfast-are-you/result?resultId=buttered-toast&answered=4',
+          'https://justquiz.me/quiz/which-chaotic-breakfast-are-you/result?resultId=buttered-toast&answered=6',
     ),
     true,
   )
@@ -74,13 +74,13 @@ test('buildAbsoluteUrl preserves search parameters', () => {
     '/quiz/example/result',
     new URLSearchParams({
       resultId: 'steady',
-      answered: '4',
+      answered: '6',
     }),
   )
 
   assert.equal(
     url,
-    'https://justquiz.me/quiz/example/result?resultId=steady&answered=4',
+    'https://justquiz.me/quiz/example/result?resultId=steady&answered=6',
   )
 })
 

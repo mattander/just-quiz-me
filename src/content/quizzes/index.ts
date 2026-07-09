@@ -119,6 +119,48 @@ export const quizManifests = defineQuizManifestCollection([
           },
         ],
       },
+      {
+        id: 'feedback-request',
+        prompt: 'Someone asks for honest feedback five minutes before logging off. You...',
+        options: [
+          {
+            id: 'organize-the-truth',
+            label: 'Give them the truth, separated into what matters now and what can wait.',
+            weights: [{ resultId: 'athena', value: 3 }],
+          },
+          {
+            id: 'soften-with-a-bit',
+            label: 'Say the real thing, then add one joke so nobody has to sit in silence.',
+            weights: [{ resultId: 'dionysus', value: 3 }],
+          },
+          {
+            id: 'surgical-sentence',
+            label: 'Send one exact sentence and let the period do the rest.',
+            weights: [{ resultId: 'hades', value: 3 }],
+          },
+        ],
+      },
+      {
+        id: 'slack-status',
+        prompt: 'What Slack status would quietly explain why a god blocked you?',
+        options: [
+          {
+            id: 'aligning-on-scope',
+            label: 'Aligning on scope before anyone touches the lightning.',
+            weights: [{ resultId: 'athena', value: 2 }],
+          },
+          {
+            id: 'morale-side-quest',
+            label: 'Taking a morale side quest. Back when the room feels human.',
+            weights: [{ resultId: 'dionysus', value: 2 }],
+          },
+          {
+            id: 'done-here',
+            label: 'Done here. Please respect the underworld office hours.',
+            weights: [{ resultId: 'hades', value: 2 }],
+          },
+        ],
+      },
     ],
   },
   {
@@ -239,6 +281,48 @@ export const quizManifests = defineQuizManifestCollection([
           },
         ],
       },
+      {
+        id: 'kitchen-truce',
+        prompt: 'The kitchen calls a temporary truce. What job do you take?',
+        options: [
+          {
+            id: 'coordinate-supplies',
+            label: 'Assign stations, inventory supplies, and pretend this is not a leadership moment.',
+            weights: [{ resultId: 'stand-mixer', value: 3 }],
+          },
+          {
+            id: 'guard-the-exit',
+            label: 'Stand by the door and say the thing everyone else is whispering.',
+            weights: [{ resultId: 'toaster', value: 3 }],
+          },
+          {
+            id: 'watch-the-room',
+            label: 'Keep stirring, keep listening, and notice who relaxes too soon.',
+            weights: [{ resultId: 'slow-cooker', value: 3 }],
+          },
+        ],
+      },
+      {
+        id: 'historical-evidence',
+        prompt: 'A historian finds one clue after the betrayal. What is it?',
+        options: [
+          {
+            id: 'annotated-recipe',
+            label: 'A recipe covered in notes, arrows, and suspiciously excellent planning.',
+            weights: [{ resultId: 'stand-mixer', value: 2 }],
+          },
+          {
+            id: 'burn-mark',
+            label: 'A tiny burn mark exactly where someone claimed nothing happened.',
+            weights: [{ resultId: 'toaster', value: 2 }],
+          },
+          {
+            id: 'timer-set-early',
+            label: 'A timer set hours ago by someone patient enough to look innocent.',
+            weights: [{ resultId: 'slow-cooker', value: 2 }],
+          },
+        ],
+      },
     ],
   },
   {
@@ -352,6 +436,48 @@ export const quizManifests = defineQuizManifestCollection([
           {
             id: 'set-the-tone',
             label: 'Say what needs saying, then leave before it becomes a discussion.',
+            weights: [{ resultId: 'bell-tower-voice', value: 2 }],
+          },
+        ],
+      },
+      {
+        id: 'too-accurate-detail',
+        prompt: 'Which detail makes the town decide the story must be supernatural?',
+        options: [
+          {
+            id: 'same-bridge-time',
+            label: 'You keep crossing the bridge at the exact moment fog gets theatrical.',
+            weights: [{ resultId: 'bridge-figure', value: 3 }],
+          },
+          {
+            id: 'advice-worked',
+            label: 'Your boring practical advice works three times in a row.',
+            weights: [{ resultId: 'polite-witch', value: 3 }],
+          },
+          {
+            id: 'voice-carried-again',
+            label: 'Someone quotes you from a place you did not realize could hear you.',
+            weights: [{ resultId: 'bell-tower-voice', value: 3 }],
+          },
+        ],
+      },
+      {
+        id: 'historical-marker',
+        prompt: 'Years later, what does the little historical marker say?',
+        options: [
+          {
+            id: 'seen-here-at-dusk',
+            label: 'Seen here at dusk, minding business in a way locals found suspicious.',
+            weights: [{ resultId: 'bridge-figure', value: 2 }],
+          },
+          {
+            id: 'helped-too-well',
+            label: 'Helped too accurately and was therefore accused of knowing things.',
+            weights: [{ resultId: 'polite-witch', value: 2 }],
+          },
+          {
+            id: 'said-one-sentence',
+            label: 'Said one sentence so clearly the town made it everyone else’s problem.',
             weights: [{ resultId: 'bell-tower-voice', value: 2 }],
           },
         ],
@@ -476,6 +602,48 @@ export const quizManifests = defineQuizManifestCollection([
           },
         ],
       },
+      {
+        id: 'reply-all-crime',
+        prompt: 'Someone hits reply-all with a thought that should have stayed private. You...',
+        options: [
+          {
+            id: 'restore-order',
+            label: 'Reply with the facts, the owner, and a colder subject line.',
+            weights: [{ resultId: 'regards', value: 3 }],
+          },
+          {
+            id: 'move-task-forward',
+            label: 'Thank them, extract the task, and make forward motion legally unavoidable.',
+            weights: [{ resultId: 'thanks-in-advance', value: 3 }],
+          },
+          {
+            id: 'surgical-acknowledgment',
+            label: 'Acknowledge only what matters and leave the rest floating in space.',
+            weights: [{ resultId: 'best', value: 3 }],
+          },
+        ],
+      },
+      {
+        id: 'sent-folder-evidence',
+        prompt: 'Future historians open your sent folder. What line do they underline?',
+        options: [
+          {
+            id: 'as-previously-noted',
+            label: 'As previously noted, the deadline remains Friday.',
+            weights: [{ resultId: 'regards', value: 2 }],
+          },
+          {
+            id: 'looking-forward',
+            label: 'Looking forward to your update by end of day.',
+            weights: [{ resultId: 'thanks-in-advance', value: 2 }],
+          },
+          {
+            id: 'that-works',
+            label: 'That works.',
+            weights: [{ resultId: 'best', value: 2 }],
+          },
+        ],
+      },
     ],
   },
   {
@@ -589,6 +757,48 @@ export const quizManifests = defineQuizManifestCollection([
           {
             id: 'promise-context',
             label: 'Promise context later, which makes everyone more curious.',
+            weights: [{ resultId: 'soft-launch', value: 2 }],
+          },
+        ],
+      },
+      {
+        id: 'private-dm-check',
+        prompt: 'A friend DMs, "Wait, are you okay?" What caused the concern?',
+        options: [
+          {
+            id: 'emotional-barometer',
+            label: 'You dropped one feeling too honestly and changed the weather.',
+            weights: [{ resultId: 'weather-event', value: 3 }],
+          },
+          {
+            id: 'ancient-receipt',
+            label: 'You produced a receipt from 2019 with alarming speed.',
+            weights: [{ resultId: 'archivist', value: 3 }],
+          },
+          {
+            id: 'major-minor-detail',
+            label: 'You mentioned a major life detail like it was a weather update.',
+            weights: [{ resultId: 'soft-launch', value: 3 }],
+          },
+        ],
+      },
+      {
+        id: 'notification-omen',
+        prompt: 'What notification makes everyone know you have arrived?',
+        options: [
+          {
+            id: 'three-in-a-row',
+            label: 'Three messages in a row, each more emotionally specific than the last.',
+            weights: [{ resultId: 'weather-event', value: 2 }],
+          },
+          {
+            id: 'image-from-archive',
+            label: 'An image attachment from deep storage with no greeting.',
+            weights: [{ resultId: 'archivist', value: 2 }],
+          },
+          {
+            id: 'soft-context-soon',
+            label: 'A calm "context soon" that immediately makes context impossible to ignore.',
             weights: [{ resultId: 'soft-launch', value: 2 }],
           },
         ],
@@ -710,6 +920,48 @@ export const quizManifests = defineQuizManifestCollection([
           },
         ],
       },
+      {
+        id: 'witness-count',
+        prompt: 'What makes the haunting worse is that someone else saw it. Who?',
+        options: [
+          {
+            id: 'person-waiting-for-papers',
+            label: 'The person waiting politely while your neat stack slowly loses integrity.',
+            weights: [{ resultId: 'stapler', value: 3 }],
+          },
+          {
+            id: 'security-desk',
+            label: 'The security desk watching you prove you belong here again.',
+            weights: [{ resultId: 'badge-lanyard', value: 3 }],
+          },
+          {
+            id: 'full-meeting-room',
+            label: 'A full meeting room watching the screen remain aggressively blank.',
+            weights: [{ resultId: 'conference-room-remote', value: 3 }],
+          },
+        ],
+      },
+      {
+        id: 'supply-closet-note',
+        prompt: 'The ghost leaves a final note in the supply closet. What does it say?',
+        options: [
+          {
+            id: 'almost-straight',
+            label: 'Almost straight is still crooked.',
+            weights: [{ resultId: 'stapler', value: 2 }],
+          },
+          {
+            id: 'check-your-pocket',
+            label: 'Check the pocket you already checked.',
+            weights: [{ resultId: 'badge-lanyard', value: 2 }],
+          },
+          {
+            id: 'input-three',
+            label: 'Try input three. Everyone is watching.',
+            weights: [{ resultId: 'conference-room-remote', value: 2 }],
+          },
+        ],
+      },
     ],
   },
   {
@@ -823,6 +1075,48 @@ export const quizManifests = defineQuizManifestCollection([
           {
             id: 'doing-best',
             label: 'Subject is tired, trying, and probably deserves the good parking spot.',
+            weights: [{ resultId: 'pigeon', value: 2 }],
+          },
+        ],
+      },
+      {
+        id: 'errand-flaw',
+        prompt: 'What errand habit would the bird find most revealing?',
+        options: [
+          {
+            id: 'public-confidence',
+            label: 'You commit loudly before checking whether the door says push or pull.',
+            weights: [{ resultId: 'seagull', value: 3 }],
+          },
+          {
+            id: 'rule-observation',
+            label: 'You notice every minor rule violation and pretend you are above caring.',
+            weights: [{ resultId: 'grackle', value: 3 }],
+          },
+          {
+            id: 'soft-delay',
+            label: 'You wait too long because someone else looks like they need the space more.',
+            weights: [{ resultId: 'pigeon', value: 3 }],
+          },
+        ],
+      },
+      {
+        id: 'parking-lot-citation',
+        prompt: 'The bird issues you a tiny citation. What is the charge?',
+        options: [
+          {
+            id: 'snack-negligence',
+            label: 'Possession of fries with insufficient situational awareness.',
+            weights: [{ resultId: 'seagull', value: 2 }],
+          },
+          {
+            id: 'cart-return-commentary',
+            label: 'Forming a strong opinion within fifteen feet of a cart return.',
+            weights: [{ resultId: 'grackle', value: 2 }],
+          },
+          {
+            id: 'overly-considerate',
+            label: 'Making eye contact with a pigeon and briefly considering its feelings.',
             weights: [{ resultId: 'pigeon', value: 2 }],
           },
         ],
@@ -944,6 +1238,48 @@ export const quizManifests = defineQuizManifestCollection([
           },
         ],
       },
+      {
+        id: 'meeting-confession',
+        prompt: 'In the planning meeting, what spreadsheet sentence exposes you?',
+        options: [
+          {
+            id: 'what-does-that-cost',
+            label: 'I just want to understand what this costs if it works.',
+            weights: [{ resultId: 'budget-tab', value: 3 }],
+          },
+          {
+            id: 'who-owns-this',
+            label: 'Who owns that decision after everyone leaves this call?',
+            weights: [{ resultId: 'hidden-assumptions', value: 3 }],
+          },
+          {
+            id: 'old-version-question',
+            label: 'Before we rebuild it, can I see the old version?',
+            weights: [{ resultId: 'old-pivot-table', value: 3 }],
+          },
+        ],
+      },
+      {
+        id: 'cell-note',
+        prompt: 'What note does the haunted tab leave in cell A1?',
+        options: [
+          {
+            id: 'optimism-is-not-a-line-item',
+            label: 'Optimism is not a line item.',
+            weights: [{ resultId: 'budget-tab', value: 2 }],
+          },
+          {
+            id: 'someone-knows-this',
+            label: 'If everyone knows this, write it down anyway.',
+            weights: [{ resultId: 'hidden-assumptions', value: 2 }],
+          },
+          {
+            id: 'do-not-delete',
+            label: 'Do not delete the ugly tab until you know what it feeds.',
+            weights: [{ resultId: 'old-pivot-table', value: 2 }],
+          },
+        ],
+      },
     ],
   },
   {
@@ -1061,6 +1397,48 @@ export const quizManifests = defineQuizManifestCollection([
           },
         ],
       },
+      {
+        id: 'misread-comfort',
+        prompt: 'What do people misunderstand about the comfort you offer?',
+        options: [
+          {
+            id: 'clarity-is-care',
+            label: 'They think your directness is impatience instead of care with edges.',
+            weights: [{ resultId: 'tomato-soup', value: 3 }],
+          },
+          {
+            id: 'helping-is-not-infinite',
+            label: 'They mistake your usefulness for unlimited emotional staffing.',
+            weights: [{ resultId: 'chicken-noodle', value: 3 }],
+          },
+          {
+            id: 'quiet-is-active',
+            label: 'They assume quiet means absent, not actively making the room safer.',
+            weights: [{ resultId: 'miso-soup', value: 3 }],
+          },
+        ],
+      },
+      {
+        id: 'bowl-left-behind',
+        prompt: 'After the crisis, what is left beside the bowl?',
+        options: [
+          {
+            id: 'single-clear-note',
+            label: 'A note with one true sentence and no decorative panic.',
+            weights: [{ resultId: 'tomato-soup', value: 2 }],
+          },
+          {
+            id: 'charger-and-list',
+            label: 'A phone charger, a realistic list, and someone finally sitting down.',
+            weights: [{ resultId: 'chicken-noodle', value: 2 }],
+          },
+          {
+            id: 'quiet-room',
+            label: 'A quieter room where nobody has to perform being okay.',
+            weights: [{ resultId: 'miso-soup', value: 2 }],
+          },
+        ],
+      },
     ],
   },
   {
@@ -1174,6 +1552,48 @@ export const quizManifests = defineQuizManifestCollection([
           {
             id: 'damp-legend',
             label: 'It is clean enough, but unmistakably damp.',
+            weights: [{ resultId: 'lake-monster', value: 2 }],
+          },
+        ],
+      },
+      {
+        id: 'loan-terms',
+        prompt: 'What clause do you wish you had added before lending it out?',
+        options: [
+          {
+            id: 'no-omens-after-midnight',
+            label: 'No omens after midnight unless they directly concern my safety.',
+            weights: [{ resultId: 'mothman', value: 3 }],
+          },
+          {
+            id: 'text-before-disappearing',
+            label: 'Text once before disappearing into any forested area.',
+            weights: [{ resultId: 'bigfoot', value: 3 }],
+          },
+          {
+            id: 'define-dry',
+            label: 'Dry means dry, not emotionally damp with good intentions.',
+            weights: [{ resultId: 'lake-monster', value: 3 }],
+          },
+        ],
+      },
+      {
+        id: 'friend-retelling',
+        prompt: 'A friend retells the hoodie story later. What detail do they emphasize?',
+        options: [
+          {
+            id: 'note-in-pocket',
+            label: 'The note in the pocket that made the whole thing feel foretold.',
+            weights: [{ resultId: 'mothman', value: 2 }],
+          },
+          {
+            id: 'warmer-somehow',
+            label: 'The annoying fact that it came back late but somehow warmer.',
+            weights: [{ resultId: 'bigfoot', value: 2 }],
+          },
+          {
+            id: 'damp-but-sincere',
+            label: 'The dampness, obviously, but also how sincere the apology was.',
             weights: [{ resultId: 'lake-monster', value: 2 }],
           },
         ],

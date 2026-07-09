@@ -82,7 +82,7 @@ function HomePage() {
               Small, strange quizzes for people avoiding the group chat correctly.
             </h1>
             <p className="mt-6 max-w-2xl text-lg leading-8 text-[var(--muted)]">
-              Pick a short quiz, answer four suspiciously specific questions,
+              Pick a short quiz, answer six suspiciously specific questions,
               and get a result that feels rude enough to send but harmless enough
               to survive the reply thread.
             </p>

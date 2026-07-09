@@ -53,16 +53,30 @@ test('homepage to quiz to result flow stays playable', async ({ page }) => {
     page.locator('input[name="desk-object"][value="annotated-notebook"]'),
   ).toBeChecked()
 
+  await page
+    .locator('input[name="feedback-request"][value="organize-the-truth"]')
+    .check()
+  await expect(
+    page.locator('input[name="feedback-request"][value="organize-the-truth"]'),
+  ).toBeChecked()
+
+  await page
+    .locator('input[name="slack-status"][value="aligning-on-scope"]')
+    .check()
+  await expect(
+    page.locator('input[name="slack-status"][value="aligning-on-scope"]'),
+  ).toBeChecked()
+
   await page.getByRole('button', { name: 'See my result' }).click()
 
   await expect(page).toHaveURL(
-    /\/quiz\/which-greek-god-would-block-you-on-slack\/result\?resultId=athena&answered=4$/,
+    /\/quiz\/which-greek-god-would-block-you-on-slack\/result\?resultId=athena&answered=6$/,
   )
   await expect(
     page.getByRole('heading', { level: 1, name: 'Athena' }),
   ).toBeVisible()
   await expect(page.getByRole('button', { name: 'Share this result' })).toBeVisible()
-  await expect(page.getByText('You answered 4 of 4 questions in this round.')).toBeVisible()
+  await expect(page.getByText('You answered 6 of 6 questions in this round.')).toBeVisible()
 })
 
 test('theme toggle defaults to system theme and supports a persisted override', async ({
