@@ -1,4 +1,0 @@
-interface:
-  display_name: "Quiz Writing"
-  short_description: "Write grounded, funny quiz content"
-  default_prompt: "Use $quiz-writing to rewrite this quiz so every question and answer is concrete, coherent, and funny without relying on random zaniness."

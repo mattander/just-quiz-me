@@ -1,5 +1,22 @@
 # Just Quiz Me Quiz Craft
 
+## Table of Contents
+
+- [Product Promise](#product-promise)
+- [The Missing Quality](#the-missing-quality)
+- [House Voice](#house-voice)
+- [Quiz Architecture](#quiz-architecture)
+- [Titles](#titles)
+- [Questions](#questions)
+- [Answer Options](#answer-options)
+- [Results](#results)
+- [Horoscope Effect](#horoscope-effect)
+- [Humor Mechanics](#humor-mechanics)
+- [Clarity Rules](#clarity-rules)
+- [Consistency Checks](#consistency-checks)
+- [Revision Moves](#revision-moves)
+- [Source Touchstones](#source-touchstones)
+
 ## Product Promise
 
 Just Quiz Me is a fast, weird, highly shareable internet quiz site. People land on a quiz, answer a short set of multiple-choice questions, get a ridiculous result, and immediately want to send it to a friend.
@@ -209,6 +226,53 @@ Avoid:
 - Explaining why the premise is funny.
 - Repeating the same sentence rhythm across all options.
 
+## Clarity Rules
+
+This is not an exam, but strong multiple-choice craft still matters. Options must be good choices before they are good jokes.
+
+Strong prompts:
+
+- Name a specific situation.
+- Ask one thing.
+- Use everyday wording.
+- Give enough context for the answers to make sense.
+- Stand alone without requiring the answer options to explain the setup.
+
+Strong options:
+
+- Directly answer the prompt.
+- Describe a decision, reaction, preference, fear, or habit.
+- Live in the same category as the other options.
+- Feel plausible, mutually distinct, and similar in level of detail.
+- Use funny detail to clarify the behavior instead of replacing it.
+
+Weak options:
+
+- Require the reader to decode a metaphor.
+- Use a punchline instead of a behavior.
+- Depend on internet tone rather than observation.
+- Could belong to any quiz after swapping nouns.
+
+Quick repair pattern:
+
+1. Identify the real behavior hiding inside the incoherent line.
+2. Rewrite the option in plain language.
+3. Add one domain-specific detail back in.
+
+Example:
+
+Bad:
+
+> They keep standing near water with the confidence of a lawsuit.
+
+Better:
+
+> They promise to return it clean, but they keep bringing it to damp places.
+
+Best:
+
+> They promise to return it clean, then wear it on a canoe trip.
+
 ## Consistency Checks
 
 Run this checklist before shipping or committing quiz copy:
@@ -248,3 +312,21 @@ When copy feels too tame:
 - Add a flaw the player can admit.
 - Make one option more incriminating.
 - Make the result consequence more theatrical while keeping the psychology real.
+
+## Source Touchstones
+
+Use these as background principles, not as citations that must appear in quiz copy:
+
+- Multiple-choice guidance: clear, focused stems; plausible, homogeneous, mutually exclusive answer choices; similar length and detail.
+- Plain-language guidance: write for the reader; keep sentences clear, concise, and easy to understand.
+- Web-writing guidance: make short copy scannable, specific, and useful; avoid fluffy or overhyped prose.
+- Shareability research: people share content to entertain others, define themselves, nourish relationships, and create shared understanding.
+- Humor craft: specificity, contrast, recognition, and surprise beat random weirdness.
+
+Useful source links:
+
+- https://teaching-resources.delta.ncsu.edu/multiplechoice/
+- https://lsa.umich.edu/technology-services/news-events/all-news/teaching-tip-of-the-week/a-refresh-on-writing-quality-multiple-choice-questions.html
+- https://digital.gov/guides/plain-language
+- https://www.nngroup.com/articles/microcontent-how-to-write-headlines-page-titles-and-subject-lines/
+- https://ideas.repec.org/a/vrs/gfkmir/v5y2013i1p18-23n1004.html
