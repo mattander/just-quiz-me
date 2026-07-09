@@ -82,7 +82,8 @@ npm run content:review -- reject --revision quiz:which-office-plant-knows-too-mu
 - Every result should represent a distinct path through the quiz.
 - Keep jokes calm and specific. Weird is good; nonsense is not.
 - Let the premise carry the absurdity. Do not make every option sound zany.
-- Prefer three results and four questions until the quiz has a reason to be larger.
+- Prefer three results and six questions unless a quiz has a specific reason to be larger.
+- Treat quizzes as horoscope-style entertainment, not real assessments; every result should feel plausibly true and shareable.
 - Result descriptions stay short for cards and metadata; longer payoff copy belongs in `result-enhancements.ts`.
 
 ## LLM Prompt Shape
@@ -93,12 +94,15 @@ Use this shape when generating a first pass:
 Write a Just Quiz Me quiz manifest for: [TITLE]
 
 Voice: dry, internet-native, specific, grounded absurdity.
-Structure: 3 results, 4 questions, 3 options per question.
+Structure: 3 results, 6 questions, 3 options per question.
 Rules:
+- Treat the quiz as horoscope-style entertainment, not a real assessment.
 - Questions must be coherent situations.
+- Use a six-question arc: recognition, social context, pressure, object or scene, gently incriminating flaw, final verdict.
 - Options must directly answer the question as plausible human choices.
 - Options must be comparable in shape and map clearly to result personalities.
-- Results must be distinct and shareable.
+- Results must be distinct, shareable, and true-feeling no matter which one wins.
+- Include a compact share-worthy line inside each result description.
 - The humor should come from specific observation, not random surreal phrasing.
 - Keep copy concise enough for mobile.
 - Return only JSON matching the draft skeleton.
