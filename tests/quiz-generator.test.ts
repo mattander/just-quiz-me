@@ -118,6 +118,48 @@ const validGeneratedManifest = {
         },
       ],
     },
+    {
+      id: 'watering-confession',
+      prompt: 'What office confession does watering day reveal?',
+      options: [
+        {
+          id: 'quiet-policy-note',
+          label: 'Someone mentions policy like it is a personal weather system.',
+          weights: [{ resultId: 'peace-lily-in-legal', value: 2 }],
+        },
+        {
+          id: 'printer-witness',
+          label: 'Someone admits the printer saw more than it should have.',
+          weights: [{ resultId: 'snake-plant-by-printer', value: 2 }],
+        },
+        {
+          id: 'timeline-correction',
+          label: 'Someone gets the timeline wrong and you rustle on instinct.',
+          weights: [{ resultId: 'fern-with-receipts', value: 2 }],
+        },
+      ],
+    },
+    {
+      id: 'pot-label',
+      prompt: 'What warning should be written on your pot?',
+      options: [
+        {
+          id: 'legal-advice-adjacent',
+          label: 'Not legal advice, but somehow legally useful.',
+          weights: [{ resultId: 'peace-lily-in-legal', value: 2 }],
+        },
+        {
+          id: 'printer-heard-that',
+          label: 'The printer heard that and so did I.',
+          weights: [{ resultId: 'snake-plant-by-printer', value: 2 }],
+        },
+        {
+          id: 'photosynthesis-with-receipts',
+          label: 'Photosynthesis with receipts.',
+          weights: [{ resultId: 'fern-with-receipts', value: 2 }],
+        },
+      ],
+    },
   ],
 }
 
@@ -137,6 +179,8 @@ test('OpenAI request targets structured quiz manifest output', () => {
   assert.match(serializedRequest, /json_schema/)
   assert.match(serializedRequest, /just_quiz_me_quiz_manifest/)
   assert.match(serializedRequest, /which-office-plant-knows-too-much/)
+  assert.match(serializedRequest, /exactly 6 questions/)
+  assert.match(serializedRequest, /horoscope-style entertainment/)
 })
 
 test('OpenAI generator validates model output into a generated draft payload', async () => {
@@ -175,6 +219,7 @@ test('OpenAI generator validates model output into a generated draft payload', a
 
   assert.equal(draft.manifest.status, 'draft')
   assert.equal(draft.manifest.slug, 'which-office-plant-knows-too-much')
+  assert.equal(draft.manifest.questions.length, 6)
   assert.equal(
     draft.source.identifier,
     'github-actions:123:which-office-plant-knows-too-much',
