@@ -1,0 +1,4 @@
+interface:
+  display_name: "Quiz Writing"
+  short_description: "Write shareable Just Quiz Me quizzes"
+  default_prompt: "Use $quiz-writing to draft or revise a Just Quiz Me quiz."
