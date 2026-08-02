@@ -7,6 +7,9 @@ type SeoPageInput = {
   pageType?: SeoPageType
   robots?: string
   imageUrl?: string
+  imageAlt?: string
+  imageWidth?: number
+  imageHeight?: number
 }
 
 type SitemapEntry = {
@@ -44,6 +47,9 @@ export function createPageMetadata(input: SeoPageInput) {
   const pageType = input.pageType ?? 'website'
   const imageUrl =
     input.imageUrl ?? new URL('/images/logo-card.png', input.canonicalUrl).toString()
+  const imageAlt = input.imageAlt ?? 'Just Quiz Me logo mark'
+  const imageWidth = input.imageWidth ?? 1200
+  const imageHeight = input.imageHeight ?? 630
   const metadata: PageMetadataEntry[] = [
     {
       title: input.title,
@@ -78,15 +84,15 @@ export function createPageMetadata(input: SeoPageInput) {
     },
     {
       property: 'og:image:width',
-      content: '1200',
+      content: String(imageWidth),
     },
     {
       property: 'og:image:height',
-      content: '630',
+      content: String(imageHeight),
     },
     {
       property: 'og:image:alt',
-      content: 'Just Quiz Me logo mark',
+      content: imageAlt,
     },
     {
       name: 'twitter:card',
@@ -106,7 +112,7 @@ export function createPageMetadata(input: SeoPageInput) {
     },
     {
       name: 'twitter:image:alt',
-      content: 'Just Quiz Me logo mark',
+      content: imageAlt,
     },
   ]
 

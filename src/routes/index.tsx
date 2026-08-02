@@ -1,4 +1,5 @@
 import { Link, createFileRoute } from '@tanstack/react-router'
+import { getQuizCoverImage } from '../content/quiz-images.ts'
 import { getAppSettings } from '../lib/app-settings-service.ts'
 import { getRuntimeConfig } from '../lib/runtime-config.ts'
 import {
@@ -36,6 +37,9 @@ export const Route = createFileRoute('/')({
     }
 
     const canonicalUrl = buildAbsoluteUrl(loaderData.siteUrl, '/')
+    const featuredImage = loaderData.feed.featuredQuiz
+      ? getQuizCoverImage(loaderData.feed.featuredQuiz.slug)
+      : null
 
     return {
       meta: createPageMetadata({
@@ -43,6 +47,14 @@ export const Route = createFileRoute('/')({
         description:
           'Answer a few ridiculous questions, get a strangely specific result, and send it to someone who will regret laughing at it.',
         canonicalUrl,
+        ...(featuredImage
+          ? {
+              imageUrl: buildAbsoluteUrl(loaderData.siteUrl, featuredImage.src),
+              imageAlt: featuredImage.alt,
+              imageWidth: featuredImage.width,
+              imageHeight: featuredImage.height,
+            }
+          : {}),
       }),
       links: createCanonicalLinks(canonicalUrl),
     }
@@ -53,6 +65,9 @@ export const Route = createFileRoute('/')({
 function HomePage() {
   const { feed } = Route.useLoaderData()
   const { featuredQuiz, moreQuizzes } = feed
+  const featuredImage = featuredQuiz
+    ? getQuizCoverImage(featuredQuiz.slug)
+    : null
 
   return (
     <main className="mx-auto flex min-h-screen w-full max-w-6xl px-5 pb-16 pt-8 sm:px-8 sm:pb-20 sm:pt-12">
@@ -102,31 +117,54 @@ function HomePage() {
 
         {featuredQuiz ? (
           <section className="mt-10 sm:mt-14">
-            <div className="featured-quiz grid gap-7 border-y border-[color:var(--rule)] py-7 lg:grid-cols-[8rem_minmax(0,1fr)_auto] lg:items-center">
-              <div>
+            <div className="featured-quiz border-y border-[color:var(--rule)] py-7">
+              {featuredImage ? (
+                <Link
+                  to="/quiz/$quizSlug"
+                  params={{
+                    quizSlug: featuredQuiz.slug,
+                  }}
+                  className="featured-quiz__media no-underline"
+                  aria-label={`Play ${featuredQuiz.title}`}
+                >
+                  <img
+                    src={featuredImage.src}
+                    srcSet={
+                      featuredImage.smallSrc
+                        ? `${featuredImage.smallSrc} 480w, ${featuredImage.src} 1200w`
+                        : undefined
+                    }
+                    sizes="(min-width: 1024px) 58vw, 100vw"
+                    alt=""
+                    width={featuredImage.width}
+                    height={featuredImage.height}
+                    fetchPriority="high"
+                    decoding="async"
+                  />
+                </Link>
+              ) : null}
+
+              <div className="featured-quiz__copy">
                 <p className="eyebrow">Start here</p>
                 <p className="mt-3 text-sm leading-6 text-[var(--muted)]">
                   Lead quiz from the shelf.
                 </p>
-              </div>
-              <div className="max-w-3xl">
-                <h2 className="display-type text-4xl leading-[0.98] tracking-[-0.04em] text-[var(--ink)] sm:text-5xl">
+                <h2 className="display-type mt-5 text-4xl leading-[0.98] tracking-[-0.04em] text-[var(--ink)] sm:text-5xl">
                   {featuredQuiz.title}
                 </h2>
                 <p className="mt-4 max-w-2xl text-base leading-7 text-[var(--muted)]">
                   {featuredQuiz.description}
                 </p>
+                <Link
+                  to="/quiz/$quizSlug"
+                  params={{
+                    quizSlug: featuredQuiz.slug,
+                  }}
+                  className="button-primary mt-6"
+                >
+                  Play this quiz
+                </Link>
               </div>
-
-              <Link
-                to="/quiz/$quizSlug"
-                params={{
-                  quizSlug: featuredQuiz.slug,
-                }}
-                className="button-primary"
-              >
-                Play this quiz
-              </Link>
             </div>
           </section>
         ) : null}
@@ -147,32 +185,51 @@ function HomePage() {
             </div>
 
             <ol className="quiz-ledger" start={2}>
-              {moreQuizzes.map((quiz, index) => (
-                <li key={quiz.slug}>
-                  <Link
-                    to="/quiz/$quizSlug"
-                    params={{
-                      quizSlug: quiz.slug,
-                    }}
-                    className="quiz-ledger__item group no-underline"
-                  >
-                    <span className="quiz-ledger__number">
-                      {String(index + 2).padStart(2, '0')}
-                    </span>
-                    <div className="max-w-3xl">
-                      <h3 className="display-type text-3xl leading-[1.02] tracking-[-0.035em] text-[var(--ink)] transition group-hover:opacity-75">
-                        {quiz.title}
-                      </h3>
-                      <p className="mt-2 text-base leading-7 text-[var(--muted)]">
-                        {quiz.description}
-                      </p>
-                    </div>
-                    <span className="quiz-ledger__action">
-                      Open
-                    </span>
-                  </Link>
-                </li>
-              ))}
+              {moreQuizzes.map((quiz, index) => {
+                const quizImage = getQuizCoverImage(quiz.slug)
+
+                return (
+                  <li key={quiz.slug}>
+                    <Link
+                      to="/quiz/$quizSlug"
+                      params={{
+                        quizSlug: quiz.slug,
+                      }}
+                      className={
+                        quizImage
+                          ? 'quiz-ledger__item group no-underline'
+                          : 'quiz-ledger__item quiz-ledger__item--text-only group no-underline'
+                      }
+                    >
+                      <span className="quiz-ledger__number">
+                        {String(index + 2).padStart(2, '0')}
+                      </span>
+                      {quizImage ? (
+                        <img
+                          src={quizImage.smallSrc ?? quizImage.src}
+                          alt=""
+                          width="480"
+                          height="320"
+                          loading="lazy"
+                          decoding="async"
+                          className="quiz-ledger__image"
+                        />
+                      ) : null}
+                      <div className="quiz-ledger__content max-w-3xl">
+                        <h3 className="display-type text-3xl leading-[1.02] tracking-[-0.035em] text-[var(--ink)] transition group-hover:opacity-75">
+                          {quiz.title}
+                        </h3>
+                        <p className="mt-2 text-base leading-7 text-[var(--muted)]">
+                          {quiz.description}
+                        </p>
+                      </div>
+                      <span className="quiz-ledger__action">
+                        Open
+                      </span>
+                    </Link>
+                  </li>
+                )
+              })}
             </ol>
           </section>
         ) : null}

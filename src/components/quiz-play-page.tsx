@@ -3,6 +3,7 @@
 import { Link, useNavigate } from '@tanstack/react-router'
 import type { FormEvent } from 'react'
 import { useEffect, useRef, useState } from 'react'
+import { getQuizQuestionImage } from '../content/quiz-images.ts'
 import type { QuizAnswerSelection } from '../lib/quiz-domain.ts'
 import { createQuizAnalyticsTracker } from '../lib/quiz-analytics.ts'
 import type { PublishedQuiz } from '../lib/quiz-repository.ts'
@@ -159,55 +160,72 @@ export function QuizPlayPage({ quiz }: { quiz: PublishedQuiz }) {
           </header>
 
           <form className="mt-9 space-y-8" method="get" onSubmit={handleSubmit}>
-            {quiz.questions.map((question, questionIndex) => (
-              <fieldset
-                key={question.id}
-                className="grid gap-4 border-t border-[color:var(--rule)] pt-6 first:border-t-0 first:pt-0 sm:grid-cols-[5rem_minmax(0,1fr)]"
-              >
-                <legend className="sr-only">{question.prompt}</legend>
-                <p className="eyebrow pt-1">Q{String(questionIndex + 1).padStart(2, '0')}</p>
+            {quiz.questions.map((question, questionIndex) => {
+              const questionImage = getQuizQuestionImage(quiz.slug, question.id)
 
-                <div>
-                  <h2 className="text-xl font-semibold leading-7 text-[var(--ink)] sm:text-2xl">
-                    {question.prompt}
-                  </h2>
+              return (
+                <fieldset
+                  key={question.id}
+                  className="grid gap-4 border-t border-[color:var(--rule)] pt-6 first:border-t-0 first:pt-0 sm:grid-cols-[5rem_minmax(0,1fr)]"
+                >
+                  <legend className="sr-only">{question.prompt}</legend>
+                  <p className="eyebrow pt-1">Q{String(questionIndex + 1).padStart(2, '0')}</p>
 
-                  <div className="mt-4">
-                    {question.options.map((option) => {
-                      const isSelected = selectedOptionIds[question.id] === option.id
+                  <div>
+                    <h2 className="text-xl font-semibold leading-7 text-[var(--ink)] sm:text-2xl">
+                      {question.prompt}
+                    </h2>
 
-                      return (
-                        <label
-                          key={option.id}
-                          className={
-                            isSelected
-                              ? 'answer-choice answer-choice--selected'
-                              : 'answer-choice'
-                          }
-                        >
-                          <input
-                            type="radio"
-                            name={question.id}
-                            value={option.id}
-                            checked={isSelected}
-                            onChange={() => {
-                              setSelectedOptionIds((current) => ({
-                                ...current,
-                                [question.id]: option.id,
-                              }))
-                            }}
-                            className="h-5 w-5 shrink-0 cursor-pointer accent-[color:var(--accent)]"
-                          />
-                          <span className="text-base leading-7 text-[var(--ink)]">
-                            {option.label}
-                          </span>
-                        </label>
-                      )
-                    })}
+                    {questionImage ? (
+                      <figure className="question-illustration mt-5">
+                        <img
+                          src={questionImage.src}
+                          alt={questionImage.alt}
+                          width={questionImage.width}
+                          height={questionImage.height}
+                          loading="lazy"
+                          decoding="async"
+                        />
+                      </figure>
+                    ) : null}
+
+                    <div className="mt-4">
+                      {question.options.map((option) => {
+                        const isSelected = selectedOptionIds[question.id] === option.id
+
+                        return (
+                          <label
+                            key={option.id}
+                            className={
+                              isSelected
+                                ? 'answer-choice answer-choice--selected'
+                                : 'answer-choice'
+                            }
+                          >
+                            <input
+                              type="radio"
+                              name={question.id}
+                              value={option.id}
+                              checked={isSelected}
+                              onChange={() => {
+                                setSelectedOptionIds((current) => ({
+                                  ...current,
+                                  [question.id]: option.id,
+                                }))
+                              }}
+                              className="h-5 w-5 shrink-0 cursor-pointer accent-[color:var(--accent)]"
+                            />
+                            <span className="text-base leading-7 text-[var(--ink)]">
+                              {option.label}
+                            </span>
+                          </label>
+                        )
+                      })}
+                    </div>
                   </div>
-                </div>
-              </fieldset>
-            ))}
+                </fieldset>
+              )
+            })}
 
             {clientError ? (
               <p className="rounded-2xl border border-[color:var(--warning-rule)] bg-[color:var(--warning-soft)] px-4 py-3 text-sm leading-6 text-[var(--ink)]">
