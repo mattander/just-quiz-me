@@ -1,5 +1,6 @@
 import { Link, createFileRoute, notFound } from '@tanstack/react-router'
 import { ResultShareActions } from '../components/result-share-actions.tsx'
+import { getQuizResultImage } from '../content/quiz-images.ts'
 import { getResultEnhancement } from '../content/result-enhancements.ts'
 import { getRuntimeConfig } from '../lib/runtime-config.ts'
 import {
@@ -54,6 +55,10 @@ export const Route = createFileRoute('/quiz/$quizSlug/result')({
         answered: String(loaderData.answeredQuestionCount),
       }),
     )
+    const resultImage = getQuizResultImage(
+      loaderData.quiz.slug,
+      loaderData.result.id,
+    )
 
     return {
       meta: createPageMetadata({
@@ -62,6 +67,14 @@ export const Route = createFileRoute('/quiz/$quizSlug/result')({
         canonicalUrl,
         pageType: 'article',
         robots: 'noindex,follow',
+        ...(resultImage
+          ? {
+              imageUrl: buildAbsoluteUrl(loaderData.siteUrl, resultImage.src),
+              imageAlt: resultImage.alt,
+              imageWidth: resultImage.width,
+              imageHeight: resultImage.height,
+            }
+          : {}),
       }),
       links: createCanonicalLinks(canonicalUrl),
     }
@@ -78,6 +91,7 @@ function QuizResultPage() {
     sessionId,
     siteUrl,
   } = Route.useLoaderData()
+  const resultImage = getQuizResultImage(quiz.slug, result.id)
   const shareUrl = buildAbsoluteUrl(
     siteUrl,
     `/quiz/${quiz.slug}/result`,
@@ -91,14 +105,27 @@ function QuizResultPage() {
     <main className="mx-auto flex min-h-screen w-full max-w-5xl px-5 py-12 sm:px-8 sm:py-16">
       <section className="w-full">
         <div className="mx-auto max-w-3xl">
-          <header className="border-y border-[color:var(--rule)] py-7">
-            <p className="eyebrow">Your result</p>
-            <h1 className="display-type mt-4 text-5xl leading-[0.94] tracking-[-0.055em] text-[var(--ink)] sm:text-6xl">
-              {result.title}
-            </h1>
-            <p className="mt-5 text-base leading-7 text-[var(--muted)] sm:text-lg">
-              {result.description}
-            </p>
+          <header className="result-hero border-y border-[color:var(--rule)] py-7">
+            {resultImage ? (
+              <img
+                src={resultImage.src}
+                alt={resultImage.alt}
+                width={resultImage.width}
+                height={resultImage.height}
+                fetchPriority="high"
+                decoding="async"
+                className="result-hero__image"
+              />
+            ) : null}
+            <div className="result-hero__copy">
+              <p className="eyebrow">Your result</p>
+              <h1 className="display-type mt-4 text-5xl leading-[0.94] tracking-[-0.055em] text-[var(--ink)] sm:text-6xl">
+                {result.title}
+              </h1>
+              <p className="mt-5 text-base leading-7 text-[var(--muted)] sm:text-lg">
+                {result.description}
+              </p>
+            </div>
           </header>
 
           <div className="result-panel mt-8">

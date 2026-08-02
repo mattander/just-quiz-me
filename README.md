@@ -21,7 +21,8 @@ Just Quiz Me is a TanStack Start app on Cloudflare Workers for fast, absurd, hig
 - `src/styles.css` defines the shared visual tokens and non-generated app styles.
 - `src/content/settings/index.ts` holds the default seeded runtime settings.
 - `src/content/quizzes/index.ts` holds the authored quiz manifests that seed D1.
-- `public/` holds static assets such as the favicon.
+- `src/content/quiz-images.ts` maps optional cover, result, and question artwork onto authored quiz identifiers without coupling D1 records to static asset paths.
+- `public/` holds static assets such as the favicon and optimized quiz artwork.
 - `migrations/` contains the D1 schema migrations for Phase 1 quiz data.
 - `wrangler.jsonc` points Cloudflare at the built Start server bundle and client assets.
 - `worker-configuration.d.ts` is generated from Wrangler config via `npm run cf:typegen`, then sanitized to remove build-only type imports so clean-checkout typechecks stay reliable.
@@ -67,7 +68,7 @@ Generate a cloud draft from GitHub Actions:
 - `npm run dev` also refreshes and sanitizes `worker-configuration.d.ts`, then loads the `env.local` bindings from `wrangler.jsonc` into the Node SSR process before Vite starts.
 - `npm run dev:e2e` starts the app on port `4173` without long-running watchers so Playwright can run against a stable local target.
 - Production deploys should go through `npm run deploy`, which builds the TanStack Start output and then hands the generated Cloudflare bundle to Wrangler while explicitly targeting the top-level production environment.
-- The homepage is intentionally simple and text-first, with the featured quiz and the rest of the published quiz pile available from the root route.
+- The homepage uses a media-led featured quiz and compact illustrated shelf. Authored quizzes can also provide distinct result art and selected question scenes; runtime quizzes without registered images continue to render with the text-only fallback.
 - `workers_dev` remains disabled so the existing custom-domain deployment setup stays intact.
 - Runtime config is currently validated from two Wrangler-managed bindings: `APP_ENV` and `PUBLIC_SITE_URL`, with production defaults plus preview and local-development overrides defined in `wrangler.jsonc`.
 - Cloudflare Web Analytics is wired as the free hosted analytics provider. Set `PUBLIC_CLOUDFLARE_WEB_ANALYTICS_TOKEN` to the Web Analytics site token to emit the deferred Cloudflare beacon; leave it blank to disable analytics without code changes. The GitHub deploy workflow can inject this from the repository variable `CLOUDFLARE_WEB_ANALYTICS_TOKEN`.

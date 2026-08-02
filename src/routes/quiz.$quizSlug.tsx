@@ -6,6 +6,7 @@ import {
   useChildMatches,
 } from '@tanstack/react-router'
 import { QuizPlayPage } from '../components/quiz-play-page.tsx'
+import { getQuizCoverImage } from '../content/quiz-images.ts'
 import {
   resolveCompletedQuizAnswers,
   type QuizAnswerSelection,
@@ -76,12 +77,21 @@ export const Route = createFileRoute('/quiz/$quizSlug')({
       loaderData.siteUrl,
       `/quiz/${loaderData.quiz.slug}`,
     )
+    const coverImage = getQuizCoverImage(loaderData.quiz.slug)
 
     return {
       meta: createPageMetadata({
         title: `${loaderData.quiz.title} | Just Quiz Me`,
         description: loaderData.quiz.description,
         canonicalUrl,
+        ...(coverImage
+          ? {
+              imageUrl: buildAbsoluteUrl(loaderData.siteUrl, coverImage.src),
+              imageAlt: coverImage.alt,
+              imageWidth: coverImage.width,
+              imageHeight: coverImage.height,
+            }
+          : {}),
       }),
       links: createCanonicalLinks(canonicalUrl),
     }

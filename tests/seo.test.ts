@@ -59,6 +59,37 @@ test('createPageMetadata includes canonical sharing fields and optional robots',
   )
 })
 
+test('createPageMetadata describes a custom editorial sharing image', () => {
+  const metadata = createPageMetadata({
+    title: 'Pigeon | Just Quiz Me',
+    description: 'A weary parking-lot judgment.',
+    canonicalUrl: 'https://justquiz.me/quiz/bird/result',
+    imageUrl: 'https://justquiz.me/images/quizzes/bird/result-pigeon.webp',
+    imageAlt: 'A weary pigeon studies a grocery receipt.',
+    imageWidth: 1200,
+    imageHeight: 800,
+  })
+
+  assert.equal(
+    metadata.some(
+      (entry) =>
+        'property' in entry &&
+        entry.property === 'og:image:height' &&
+        entry.content === '800',
+    ),
+    true,
+  )
+  assert.equal(
+    metadata.some(
+      (entry) =>
+        'name' in entry &&
+        entry.name === 'twitter:image:alt' &&
+        entry.content === 'A weary pigeon studies a grocery receipt.',
+    ),
+    true,
+  )
+})
+
 test('createCanonicalLinks returns a canonical link tag descriptor', () => {
   assert.deepEqual(createCanonicalLinks('https://justquiz.me/quiz/example'), [
     {

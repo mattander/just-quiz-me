@@ -1,5 +1,13 @@
 import assert from 'node:assert/strict'
+import { existsSync } from 'node:fs'
 import test from 'node:test'
+import {
+  getQuizCoverImage,
+  getQuizQuestionImage,
+  getQuizResultImage,
+  type QuizImage,
+} from '../src/content/quiz-images.ts'
+import { quizManifests } from '../src/content/quizzes/index.ts'
 import { seededAppSettings } from '../src/content/settings/index.ts'
 import { validateAuthoredContent } from '../src/lib/content-validation.ts'
 import {
@@ -128,3 +136,59 @@ test('quiz manifest collection parsing rejects duplicate slugs', () => {
     /Quiz manifest slugs must be unique across the content registry\./,
   )
 })
+
+test('published quizzes have complete, buildable image sets', () => {
+  const publishedQuizzes = quizManifests.filter(
+    (manifest) => manifest.status === 'published',
+  )
+
+  for (const quiz of publishedQuizzes) {
+    const coverImage = getQuizCoverImage(quiz.slug)
+
+    assert.ok(coverImage, `${quiz.slug} needs a cover image.`)
+    assertImageExists(coverImage)
+
+    if (coverImage.smallSrc) {
+      assert.equal(
+        existsSync(fileUrlForPublicAsset(coverImage.smallSrc)),
+        true,
+        `${coverImage.smallSrc} does not exist.`,
+      )
+    }
+
+    for (const result of quiz.results) {
+      const resultImage = getQuizResultImage(quiz.slug, result.id)
+
+      assert.ok(resultImage, `${quiz.slug}:${result.id} needs a result image.`)
+      assertImageExists(resultImage)
+    }
+
+    const questionImages = quiz.questions
+      .map((question) => getQuizQuestionImage(quiz.slug, question.id))
+      .filter((image): image is QuizImage => image !== null)
+
+    assert.ok(
+      questionImages.length >= 2,
+      `${quiz.slug} needs images on at least two questions.`,
+    )
+
+    for (const questionImage of questionImages) {
+      assertImageExists(questionImage)
+    }
+  }
+})
+
+function assertImageExists(image: QuizImage): void {
+  assert.equal(
+    existsSync(fileUrlForPublicAsset(image.src)),
+    true,
+    `${image.src} does not exist.`,
+  )
+  assert.equal(image.width, 1200)
+  assert.equal(image.height, 800)
+  assert.ok(image.alt.length > 20, `${image.src} needs useful alternative text.`)
+}
+
+function fileUrlForPublicAsset(assetPath: string): URL {
+  return new URL(`../public${assetPath}`, import.meta.url)
+}
